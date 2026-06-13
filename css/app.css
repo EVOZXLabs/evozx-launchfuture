@@ -473,7 +473,7 @@ footer{
 
 .footer{
 
-  height:90px;
+  height:45px;
 
   display:flex;
 
@@ -496,7 +496,7 @@ MOBILE
 
   color:var(--gold-light);
 
-  font-size:14px;
+  font-size:9px;
 
   transition:.25s;
 }
@@ -533,7 +533,7 @@ MOBILE
 
   .hero p{
 
-    font-size:18px;
+    font-size:15px;
   }
 
   .footer{
