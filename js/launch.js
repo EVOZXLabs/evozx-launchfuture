@@ -105,14 +105,11 @@ async function loadBaseFee() {
 
     baseFeeEl.textContent = "Loading...";
 
+    const factory =
+      await getFactory();
+
     const fee =
-      await getDeploymentFee();
-
-    if (!fee) {
-
-      baseFeeEl.textContent = "Failed";
-      return;
-    }
+      await factory.BASE_FEE();
 
     baseFeeValue =
       Number(formatEther(fee));
