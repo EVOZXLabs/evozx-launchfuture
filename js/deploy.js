@@ -32,16 +32,6 @@ document.getElementById("ownership");
 let isDeploying = false;
 
 // ==========================
-// HELPER
-// ==========================
-
-function getChainIdHex() {
-
-  return "0x" +
-    Number(window.ethereum.chainId).toString(16);
-}
-
-// ==========================
 // DEPLOY TOKEN
 // ==========================
 
@@ -56,26 +46,39 @@ async function deployToken() {
       return;
     }
 
-    isDeploying = true;
-
-    continueBtn.disabled = true;
-    continueBtn.textContent = "Deploying...";
-
     const factory =
       await getFactoryForWrite();
 
+    if (!factory) {
+      alert("Wallet not connected");
+      return;
+    }
+
+    isDeploying = true;
+
+    if (continueBtn) {
+      continueBtn.disabled = true;
+      continueBtn.textContent = "Deploying...";
+    }
+
+    const owner =
+      await factory.signer.getAddress();
+
+    const chainId =
+      BigInt(window.ethereum.chainId || 0);
+
     // ==========================
-    // BUILD CONFIG (WAJIB SESUAI ABI)
+    // BUILD CONFIG
     // ==========================
 
     const config = {
 
-      name: tokenName.value.trim(),
-      symbol: tokenSymbol.value.trim(),
-      supply: BigInt(tokenSupply.value || 0),
+      name: tokenName?.value?.trim() || "",
+      symbol: tokenSymbol?.value?.trim() || "",
+      supply: BigInt(tokenSupply?.value || 0),
 
-      owner: await factory.signer.getAddress(),
-      chainId: BigInt(window.ethereum.chainId),
+      owner,
+      chainId,
 
       launchKitVersion: 1,
 
@@ -105,73 +108,89 @@ async function deployToken() {
 
       burnTaxShare: 0,
 
-      marketingWallet: await factory.signer.getAddress(),
-      developmentWallet: await factory.signer.getAddress()
+      marketingWallet: owner,
+      developmentWallet: owner
     };
 
     // ==========================
-    // SEND TRANSACTION
+    // SEND TX
     // ==========================
 
     const tx =
-  await factory.createToken(config);
+      await factory.createToken(config);
 
-console.log("TX SENT:", tx.hash);
+    console.log("TX SENT:", tx.hash);
 
-const receipt =
-  await tx.wait();
+    const receipt =
+      await tx.wait();
 
-console.log("RECEIPT:", receipt);
+    console.log("RECEIPT:", receipt);
 
-// ==========================
-// FIND TOKEN CREATED EVENT
-// ==========================
+    // ==========================
+    // EXTRACT EVENT
+    // ==========================
 
-let tokenAddress = null;
+    let tokenAddress = null;
 
-for (const log of receipt.logs) {
+    try {
 
-  try {
+      for (const log of receipt.logs) {
 
-    const parsed =
-      factory.interface.parseLog(log);
+        try {
 
-    if (parsed.name === "TokenCreated") {
+          const parsed =
+            factory.interface.parseLog(log);
 
-      tokenAddress = parsed.args.token;
-      break;
+          if (parsed?.name === "TokenCreated") {
+
+            tokenAddress =
+              parsed.args.token;
+
+            break;
+          }
+
+        } catch (e) {
+          continue;
+        }
+      }
+
+    } catch (e) {
+      console.error("Event parse error:", e);
     }
-
-  } catch (e) {
-    continue;
-  }
 
     console.log("TX CONFIRMED:", receipt);
 
-    alert("Token created successfully!");
+    // ==========================
+    // SAVE HISTORY
+    // ==========================
 
     if (tokenAddress) {
 
-  const data = {
-    token: tokenAddress,
-    name: config.name,
-    symbol: config.symbol,
-    supply: config.supply.toString(),
-    creator: config.owner,
-    txHash: tx.hash,
-    time: Date.now()
-  };
+      const data = {
+        token: tokenAddress,
+        name: config.name,
+        symbol: config.symbol,
+        supply: config.supply.toString(),
+        creator: owner,
+        txHash: tx.hash,
+        time: Date.now()
+      };
 
-  const old =
-    JSON.parse(localStorage.getItem("myTokens") || "[]");
+      const old =
+        JSON.parse(localStorage.getItem("myTokens") || "[]");
 
-  old.push(data);
+      old.push(data);
 
-  localStorage.setItem(
-    "myTokens",
-    JSON.stringify(old)
-  );
-}
+      localStorage.setItem(
+        "myTokens",
+        JSON.stringify(old)
+      );
+    }
+
+    // ==========================
+    // SUCCESS REDIRECT
+    // ==========================
+
     window.location.href =
       "./success.html";
 
@@ -189,8 +208,10 @@ for (const log of receipt.logs) {
 
     isDeploying = false;
 
-    continueBtn.disabled = false;
-    continueBtn.textContent = "Continue";
+    if (continueBtn) {
+      continueBtn.disabled = false;
+      continueBtn.textContent = "Continue";
+    }
   }
 }
 
