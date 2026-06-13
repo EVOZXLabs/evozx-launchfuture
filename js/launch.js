@@ -1,9 +1,12 @@
-import { symbolExists } from "./factory.js";
-import { getDeploymentFee } from "./factory.js";
+import {
+  symbolExists,
+  getDeploymentFee
+} from "./factory.js";
+
 import { formatEther } from "https://esm.sh/ethers@6";
 
 // ==========================
-// ELEMENTS (SAFE INIT)
+// ELEMENTS
 // ==========================
 
 const burnable =
@@ -33,6 +36,13 @@ document.getElementById("symbolInput");
 const symbolStatus =
 document.getElementById("symbolStatus");
 
+const baseFeeEl =
+document.getElementById("baseFee");
+
+// ==========================
+// STATE
+// ==========================
+
 let baseFeeValue = 0;
 
 // ==========================
@@ -48,7 +58,8 @@ function calculate() {
     !treasuryAmount
   ) return;
 
-  let baseFee = 10;
+  const baseFee = baseFeeValue;
+
   let feature = 0;
 
   if (burnable?.checked) feature += 5;
@@ -71,22 +82,24 @@ function calculate() {
 }
 
 // ==========================
-// EVENT LISTENERS (SAFE)
+// EVENT LISTENERS
 // ==========================
 
 burnable?.addEventListener("change", calculate);
 mintable?.addEventListener("change", calculate);
 ownership?.addEventListener("change", calculate);
 
-// initial calc
-calculate();
+// ==========================
+// LOAD BASE FEE (CONTRACT)
+// ==========================
 
 async function loadBaseFee() {
 
-  const baseFeeEl =
-    document.getElementById("baseFee");
-
   try {
+
+    if (!baseFeeEl) return;
+
+    baseFeeEl.textContent = "Loading...";
 
     const fee =
       await getDeploymentFee();
@@ -108,7 +121,9 @@ async function loadBaseFee() {
   } catch (error) {
 
     console.error(error);
-    baseFeeEl.textContent = "Error";
+
+    if (baseFeeEl)
+      baseFeeEl.textContent = "Error";
   }
 }
 
@@ -133,8 +148,11 @@ tokenSymbol?.addEventListener("input", () => {
     return;
   }
 
-  if (symbolStatus)
+  if (symbolStatus) {
+
     symbolStatus.textContent = "Checking...";
+    symbolStatus.style.color = "black";
+  }
 
   symbolTimeout = setTimeout(async () => {
 
@@ -166,10 +184,18 @@ tokenSymbol?.addEventListener("input", () => {
 
       if (symbolStatus)
         symbolStatus.textContent = "";
-
     }
 
   }, 500);
 
 });
-loadBaseFee();
+
+// ==========================
+// INIT
+// ==========================
+
+calculate();
+
+window.addEventListener("DOMContentLoaded", () => {
+  loadBaseFee();
+});
