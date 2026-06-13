@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>
+Launch Token | EVOZX LaunchFuture
+</title>
+
+<link
+rel="stylesheet"
+href="./css/app.css">
+
+<link
+rel="stylesheet"
+href="./css/launch.css">
+
+</head>
+
+<body>
+
+<div class="bg-blur blur-1"></div>
+<div class="bg-blur blur-2"></div>
+
+<header>
+
+<nav class="container navbar">
+
+<div class="brand">
+
+<div class="brand-dot"></div>
+
+<span>
+
+EVOZX LaunchFuture
+
+</span>
+
+</div>
+
+<div class="nav-links">
+
+<a href="./index.html">
+
+Home
+
+</a>
+
+<a href="#">
+
+Launch
+
+</a>
+
+</div>
+
+<button
+id="connectBtn"
+class="btn btn-gold">
+
+Connect Wallet
+
+</button>
+
+</nav>
+
+</header>
+
+<main>
+
+<section class="launch-page container">
+
+<div class="launch-left">
+
+<div class="wizard-card">
+
+<div class="wizard-header">
+
+<h1>
+
+Token Builder
+
+</h1>
+
+<p>
+
+Create a token on EVOZ without coding.
+
+</p>
+
+</div>
+
+<div class="form-group">
+
+<label>
+
+Token Name
+
+</label>
+
+<input
+id="tokenName"
+type="text"
+placeholder="Example Token">
+
+</div>
+
+<div class="form-group">
+
+<label>
+
+Token Symbol
+
+</label>
+
+<input
+id="tokenSymbol"
+type="text"
+placeholder="EXT">
+
+</div>
+
+<div class="form-group">
+
+<label>
+
+Total Supply
+
+</label>
+
+<input
+id="tokenSupply"
+type="number"
+placeholder="1000000">
+
+</div>
+
+<div class="feature-box">
+
+<h3>
+
+Features
+
+</h3>
+
+<label>
+
+<input
+type="checkbox"
+id="burnable">
+
+Burnable
+
+</label>
+
+<label>
+
+<input
+type="checkbox"
+id="mintable">
+
+Mintable
+
+</label>
+
+<label>
+
+<input
+type="checkbox"
+id="ownership">
+
+Ownership
+
+</label>
+
+</div>
+
+<button
+id="continueBtn"
+class="btn btn-gold launch-btn">
+
+Continue
+
+</button>
+
+</div>
+
+</div>
+
+<div class="launch-right">
+
+<div class="summary-card">
+
+<h2>
+
+Deployment Summary
+
+</h2>
+
+<div class="summary-row">
+
+<span>
+
+Base Fee
+
+</span>
+
+<span id="baseFee">
+
+10 EVOZX
+
+</span>
+
+</div>
+
+<div class="summary-row">
+
+<span>
+
+Features Fee
+
+</span>
+
+<span id="featureFee">
+
+0 EVOZX
+
+</span>
+
+</div>
+
+<div class="summary-row">
+
+<span>
+
+Total Fee
+
+</span>
+
+<span id="totalFee">
+
+10 EVOZX
+
+</span>
+
+</div>
+
+<hr>
+
+<div class="summary-row">
+
+<span>
+
+Burn (30%)
+
+</span>
+
+<span id="burnAmount">
+
+3 EVOZX
+
+</span>
+
+</div>
+
+<div class="summary-row">
+
+<span>
+
+Treasury (70%)
+
+</span>
+
+<span id="treasuryAmount">
+
+7 EVOZX
+
+</span>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+</main>
+
+<script
+type="module"
+src="./js/launch.js">
+</script>
+
+</body>
+</html>
