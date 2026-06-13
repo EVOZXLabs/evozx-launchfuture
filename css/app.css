@@ -304,7 +304,7 @@ section{
 
 .section-title{
 
-  font-size:32px;
+  font-size:33px;
 
   font-weight:700;
 
@@ -324,7 +324,7 @@ NETWORK GRID
   auto-fit,
   minmax(220px,1fr));
 
-  gap:20px;
+  gap:18px;
 
   margin-bottom:24px;
 }
@@ -378,7 +378,7 @@ NETWORK BOX
 
   flex-direction:column;
 
-  gap:20px;
+  gap:18px;
 }
 
 .network-box h4{
@@ -408,7 +408,7 @@ CONTRACTS
 
   display:grid;
 
-  gap:20px;
+  gap:18px;
 }
 
 .contract-card{
