@@ -1,249 +1,156 @@
-import { Contract } from "https://esm.sh/ethers@6";
-
 import {
   connectWallet,
   switchToEVOZ
-} from "./wallet.js";
+}
+from "./wallet.js";
 
 import {
-  CONTRACTS
-} from "./config.js";
-
-let factory = null;
-let walletData = null;
+  CONTRACTS,
+  LINKS
+}
+from "./config.js";
 
 const connectBtn =
-  document.getElementById("connectBtn");
+document.getElementById(
+  "connectBtn"
+);
 
-const totalTokensEl =
-  document.getElementById("totalTokens");
+const addNetworkBtn =
+document.getElementById(
+  "addNetworkBtn"
+);
 
-const factoryVersionEl =
-  document.getElementById("factoryVersion");
+function shortAddress(addr){
 
-const launchkitVersionEl =
-  document.getElementById("launchkitVersion");
+  return `${addr.slice(0,6)}
+  ...
+  ${addr.slice(-4)}`;
 
-const factoryNameEl =
-  document.getElementById("factoryName");
-
-function shortAddress(address) {
-
-  if (!address) return "";
-
-  return `${address.slice(0, 6)}...${address.slice(-4)}`;
 }
 
-async function loadFactoryAbi() {
+async function handleConnect(){
 
-  const response =
-    await fetch("./abi/factory.json");
-
-  if (!response.ok) {
-    throw new Error(
-      "Unable to load Factory ABI"
-    );
-  }
-
-  return await response.json();
-}
-
-async function initializeFactory() {
-
-  const abi = await loadFactoryAbi();
-
-  factory = new Contract(
-    CONTRACTS.FACTORY,
-    abi,
-    walletData.signer
-  );
-}
-
-async function loadFactoryInfo() {
-
-  if (!factory) return;
-
-  try {
-
-    if (typeof factory.FACTORY_NAME === "function") {
-
-      const name =
-        await factory.FACTORY_NAME();
-
-      if (factoryNameEl) {
-        factoryNameEl.textContent = name;
-      }
-    }
-
-  } catch (error) {
-
-    console.warn(
-      "FACTORY_NAME not found",
-      error
-    );
-
-  }
-
-  try {
-
-    if (typeof factory.VERSION === "function") {
-
-      const version =
-        await factory.VERSION();
-
-      if (factoryVersionEl) {
-        factoryVersionEl.textContent =
-          version;
-      }
-    }
-
-  } catch (error) {
-
-    console.warn(
-      "VERSION not found",
-      error
-    );
-
-  }
-
-  try {
-
-    if (
-      typeof factory.LAUNCHKIT_VERSION ===
-      "function"
-    ) {
-
-      const version =
-        await factory.LAUNCHKIT_VERSION();
-
-      if (launchkitVersionEl) {
-        launchkitVersionEl.textContent =
-          version;
-      }
-    }
-
-  } catch (error) {
-
-    console.warn(
-      "LAUNCHKIT_VERSION not found",
-      error
-    );
-
-  }
-}
-
-async function loadStatistics() {
-
-  if (!factory) return;
-
-  try {
-
-    const total =
-      await factory.totalTokens();
-
-    if (totalTokensEl) {
-      totalTokensEl.textContent =
-        total.toString();
-    }
-
-  } catch (error) {
-
-    console.error(
-      "Failed loading statistics",
-      error
-    );
-  }
-}
-
-async function connect() {
-
-  try {
+  try{
 
     connectBtn.disabled = true;
+
     connectBtn.textContent =
-      "Connecting...";
+    "Connecting...";
 
     await switchToEVOZ();
 
-    walletData =
-      await connectWallet();
+    const wallet =
+    await connectWallet();
 
     connectBtn.textContent =
-      shortAddress(walletData.address);
+    shortAddress(
+      wallet.address
+    );
 
-    await initializeFactory();
-
-    await loadFactoryInfo();
-
-    await loadStatistics();
-
-  } catch (error) {
+  }catch(error){
 
     console.error(error);
 
     alert(
       error.message ||
-      "Wallet connection failed"
+      "Wallet connection failed."
     );
 
     connectBtn.textContent =
-      "Connect Wallet";
+    "Connect Wallet";
 
-  } finally {
+  }finally{
 
     connectBtn.disabled = false;
+
   }
+
 }
 
-async function autoReconnect() {
+async function handleAddNetwork(){
 
-  try {
-
-    if (!window.ethereum) {
-      return;
-    }
-
-    const accounts =
-      await window.ethereum.request({
-        method: "eth_accounts"
-      });
-
-    if (!accounts.length) {
-      return;
-    }
+  try{
 
     await switchToEVOZ();
 
-    walletData =
-      await connectWallet();
+  }catch(error){
 
-    connectBtn.textContent =
-      shortAddress(walletData.address);
+    console.error(error);
 
-    await initializeFactory();
-
-    await loadFactoryInfo();
-
-    await loadStatistics();
-
-  } catch (error) {
-
-    console.warn(
-      "Auto reconnect skipped",
-      error
-    );
   }
+
 }
 
-function setupWalletEvents() {
+function setupWalletEvents(){
 
-  if (!window.ethereum) return;
+  if(!window.ethereum) return;
 
   window.ethereum.on(
+
     "accountsChanged",
+
     () => {
+
       window.location.reload();
+
     }
+
   );
 
-  window.ethereum.on
+  window.ethereum.on(
+
+    "chainChanged",
+
+    () => {
+
+      window.location.reload();
+
+    }
+
+  );
+
+}
+
+function setupExplorerLinks(){
+
+  document
+  .querySelectorAll(
+    "[data-address]"
+  )
+  .forEach(el => {
+
+    const address =
+    el.dataset.address;
+
+    el.href =
+    LINKS.ADDRESS + address;
+
+  });
+
+}
+
+function init(){
+
+  connectBtn?.addEventListener(
+
+    "click",
+
+    handleConnect
+
+  );
+
+  addNetworkBtn?.addEventListener(
+
+    "click",
+
+    handleAddNetwork
+
+  );
+
+  setupWalletEvents();
+
+  setupExplorerLinks();
+
+}
+
+init();
