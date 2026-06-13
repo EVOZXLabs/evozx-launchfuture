@@ -4,6 +4,23 @@ let provider = null;
 let signer = null;
 let currentAccount = null;
 
+export async function checkNetwork() {
+
+  if (!window.ethereum) return false;
+
+  const chainId = await window.ethereum.request({
+    method: "eth_chainId"
+  });
+
+  if (chainId !== "0x325") {
+
+    alert("Please switch to EVOZ Network");
+    return false;
+  }
+
+  return true;
+}
+
 export async function connectWallet() {
 
   if (!window.ethereum) {
