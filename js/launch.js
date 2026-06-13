@@ -39,11 +39,15 @@ document.getElementById("symbolStatus");
 const baseFeeEl =
 document.getElementById("baseFee");
 
+const continueBtn =
+document.getElementById("continueBtn");
+
 // ==========================
 // STATE
 // ==========================
 
 let baseFeeValue = 0;
+let isSymbolValid = false;
 
 // ==========================
 // FEE CALCULATOR
@@ -131,6 +135,27 @@ async function loadBaseFee() {
 // SYMBOL CHECKER (LIVE)
 // ==========================
 
+function updateContinueState() {
+
+  if (!continueBtn) return;
+
+  const symbol =
+    tokenSymbol?.value.trim();
+
+  if (!symbol || !isSymbolValid) {
+
+    continueBtn.disabled = true;
+    continueBtn.style.opacity = "0.5";
+    continueBtn.style.cursor = "not-allowed";
+
+  } else {
+
+    continueBtn.disabled = false;
+    continueBtn.style.opacity = "1";
+    continueBtn.style.cursor = "pointer";
+  }
+}
+
 let symbolTimeout;
 
 tokenSymbol?.addEventListener("input", () => {
@@ -159,31 +184,30 @@ tokenSymbol?.addEventListener("input", () => {
     try {
 
       const exists =
-        await symbolExists(symbol);
+  await symbolExists(symbol);
 
-      if (!symbolStatus) return;
+if (!symbolStatus) return;
 
-      if (exists) {
+if (exists) {
 
-        symbolStatus.textContent =
-          "❌ Symbol already exists";
+  isSymbolValid = false;
 
-        symbolStatus.style.color = "red";
+  symbolStatus.textContent =
+    "❌ Symbol already exists";
 
-      } else {
+  symbolStatus.style.color = "red";
 
-        symbolStatus.textContent =
-          "✅ Symbol available";
+} else {
 
-        symbolStatus.style.color = "green";
-      }
+  isSymbolValid = true;
 
-    } catch (error) {
+  symbolStatus.textContent =
+    "✅ Symbol available";
 
-      console.error(error);
+  symbolStatus.style.color = "green";
+}
 
-      if (symbolStatus)
-        symbolStatus.textContent = "";
+updateContinueState();
     }
 
   }, 500);
