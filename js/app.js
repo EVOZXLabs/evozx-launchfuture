@@ -1,18 +1,22 @@
 import {
+
   connectWallet,
-  switchToEVOZ
+
+  disconnectWallet,
+
+  getAccount
+
 }
 from "./wallet.js";
-
-import {
-  CONTRACTS,
-  LINKS
-}
-from "./config.js";
 
 const connectBtn =
 document.getElementById(
   "connectBtn"
+);
+
+const launchBtn =
+document.getElementById(
+  "launchBtn"
 );
 
 const addNetworkBtn =
@@ -20,170 +24,124 @@ document.getElementById(
   "addNetworkBtn"
 );
 
-function shortAddress(addr){
+connectBtn?.addEventListener(
 
-  return `${addr.slice(0,6)}
-  ...
-  ${addr.slice(-4)}`;
+  "click",
 
-}
+  async () => {
 
-async function handleConnect(){
+    const connected =
+    getAccount();
 
-  try{
+    if (connected) {
 
-    connectBtn.disabled = true;
+      const confirmDisconnect =
 
-    connectBtn.textContent =
-    "Connecting...";
+      confirm(
+        "Disconnect wallet?"
+      );
 
-    await switchToEVOZ();
+      if (
+        confirmDisconnect
+      ) {
 
-    const wallet =
+        disconnectWallet();
+
+      }
+
+      return;
+    }
+
     await connectWallet();
 
-    connectBtn.textContent =
-    shortAddress(
-      wallet.address
-    );
+  }
 
-  }catch(error){
+);
 
-    console.error(error);
+launchBtn?.addEventListener(
 
-    alert(
-      error.message ||
-      "Wallet connection failed."
-    );
+  "click",
 
-    connectBtn.textContent =
-    "Connect Wallet";
+  () => {
 
-  }finally{
-
-    connectBtn.disabled = false;
+    window.location.href =
+    "./launch.html";
 
   }
 
-}
+);
 
-async function handleAddNetwork(){
+addNetworkBtn?.addEventListener(
 
-  try{
+  "click",
 
-    await switchToEVOZ();
+  async () => {
 
-  }catch(error){
+    if (!window.ethereum) {
 
-    console.error(error);
+      alert(
+        "Wallet not detected."
+      );
+
+      return;
+    }
+
+    try {
+
+      await window.ethereum.request({
+
+        method:
+        "wallet_addEthereumChain",
+
+        params: [
+
+          {
+
+            chainId:
+            "0x325",
+
+            chainName:
+            "EVOZ Mainnet",
+
+            nativeCurrency: {
+
+              name:
+              "EVOZ",
+
+              symbol:
+              "EVOZ",
+
+              decimals:
+              18
+
+            },
+
+            rpcUrls: [
+
+              "https://rpc.evozscan.com"
+
+            ],
+
+            blockExplorerUrls: [
+
+              "https://evozscan.com"
+
+            ]
+
+          }
+
+        ]
+
+      });
+
+    } catch (error) {
+
+      console.error(
+        error
+      );
+
+    }
 
   }
 
-}
-
-function setupWalletEvents(){
-
-  if(!window.ethereum) return;
-
-  window.ethereum.on(
-
-    "accountsChanged",
-
-    () => {
-
-      window.location.reload();
-
-    }
-
-  );
-
-  window.ethereum.on(
-
-    "chainChanged",
-
-    () => {
-
-      window.location.reload();
-
-    }
-
-  );
-
-}
-
-function setupExplorerLinks(){
-
-  document
-  .querySelectorAll(
-    "[data-address]"
-  )
-  .forEach(el => {
-
-    const address =
-    el.dataset.address;
-
-    el.href =
-    LINKS.ADDRESS + address;
-
-  });
-
-}
-
-async function autoReconnect(){
-
-  try{
-
-    if(!window.ethereum) return;
-
-    const accounts =
-    await window.ethereum.request({
-
-      method:"eth_accounts"
-
-    });
-
-    if(accounts.length){
-
-      const wallet =
-      await connectWallet();
-
-      connectBtn.textContent =
-      shortAddress(wallet.address);
-
-    }
-
-  }catch(error){
-
-    console.error(error);
-
-  }
-
-}
-
-function init(){
-
-  connectBtn?.addEventListener(
-
-    "click",
-
-    handleConnect
-
-  );
-
-  addNetworkBtn?.addEventListener(
-
-    "click",
-
-    handleAddNetwork
-
-  );
-
-  setupWalletEvents();
-
-  setupExplorerLinks();
-
-}
-
-autoReconnect();
-
-init();
+);
