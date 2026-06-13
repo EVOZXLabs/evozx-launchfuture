@@ -1,3 +1,10 @@
+import {
+
+  symbolExists
+
+}
+from "./factory.js";
+
 const burnable =
 document.getElementById(
   "burnable"
@@ -75,4 +82,85 @@ ownership.addEventListener(
   calculate
 );
 
+const tokenSymbol =
+
+document.getElementById(
+  "tokenSymbol"
+);
+
+const symbolStatus =
+
+document.getElementById(
+  "symbolStatus"
+);
+
 calculate();
+
+let symbolTimeout;
+
+tokenSymbol?.addEventListener(
+
+  "input",
+
+  () => {
+
+    clearTimeout(
+      symbolTimeout
+    );
+
+    const symbol =
+    tokenSymbol.value.trim();
+
+    if (!symbol) {
+
+      symbolStatus.textContent =
+      "";
+
+      return;
+    }
+
+    symbolTimeout =
+
+    setTimeout(
+
+      async () => {
+
+        try {
+
+          const exists =
+
+          await symbolExists(
+            symbol
+          );
+
+          if (exists) {
+
+            symbolStatus.textContent =
+
+            "Symbol already exists";
+
+          } else {
+
+            symbolStatus.textContent =
+
+            "Symbol available";
+
+          }
+
+        } catch {
+
+          symbolStatus.textContent =
+
+          "";
+
+        }
+
+      },
+
+      600
+
+    );
+
+  }
+
+);
