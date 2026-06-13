@@ -3,8 +3,6 @@ import {
   getDeploymentFee
 } from "./factory.js";
 
-import { formatEther } from "https://esm.sh/ethers@6";
-
 // ==========================
 // ELEMENTS
 // ==========================
@@ -31,7 +29,7 @@ const treasuryAmount =
 document.getElementById("treasuryAmount");
 
 const tokenSymbol =
-document.getElementById("symbolInput");
+document.getElementById("tokenSymbol") || document.getElementById("symbolInput");
 
 const symbolStatus =
 document.getElementById("symbolStatus");
@@ -55,14 +53,7 @@ let isSymbolValid = false;
 
 function calculate() {
 
-  if (
-    !featureFee ||
-    !totalFee ||
-    !burnAmount ||
-    !treasuryAmount
-  ) return;
-
-  const baseFee = baseFeeValue;
+  if (!featureFee || !totalFee || !burnAmount || !treasuryAmount) return;
 
   let feature = 0;
 
@@ -70,7 +61,7 @@ function calculate() {
   if (mintable?.checked) feature += 10;
   if (ownership?.checked) feature += 5;
 
-  const total = baseFee + feature;
+  const total = baseFeeValue + feature;
 
   featureFee.textContent =
     `${feature} EVOZX`;
@@ -83,6 +74,8 @@ function calculate() {
 
   treasuryAmount.textContent =
     `${(total * 0.70).toFixed(2)} EVOZX`;
+
+  updateContinueState();
 }
 
 // ==========================
@@ -94,7 +87,7 @@ mintable?.addEventListener("change", calculate);
 ownership?.addEventListener("change", calculate);
 
 // ==========================
-// LOAD BASE FEE (CONTRACT)
+// LOAD BASE FEE (FROM CONTRACT)
 // ==========================
 
 async function loadBaseFee() {
@@ -105,23 +98,23 @@ async function loadBaseFee() {
 
     baseFeeEl.textContent = "Loading...";
 
-    const factory =
-      await getFactory();
+    const feeData =
+      await getDeploymentFee();
 
-    const base =
-      await factory.BASE_FEE();
+    if (!feeData) {
 
-    const multiplier =
-      await factory.feeMultiplier();
+      baseFeeValue = 10;
 
-    const baseNum =
-      Number(formatEther(base || 0));
+      baseFeeEl.textContent =
+        "10 EVOZX (fallback)";
 
-    const multiNum =
-      Number(multiplier || 1);
+      calculate();
+
+      return;
+    }
 
     baseFeeValue =
-      baseNum * multiNum;
+      Number(feeData.total || 0);
 
     baseFeeEl.textContent =
       `${baseFeeValue} EVOZX`;
@@ -132,7 +125,7 @@ async function loadBaseFee() {
 
     console.error("BASE_FEE ERROR:", error);
 
-    baseFeeValue = 10; // fallback biar UI hidup
+    baseFeeValue = 10;
 
     if (baseFeeEl)
       baseFeeEl.textContent =
@@ -153,22 +146,20 @@ function updateContinueState() {
   const symbol =
     tokenSymbol?.value.trim();
 
-  if (!symbol || !isSymbolValid) {
+  const valid =
+    symbol && isSymbolValid;
 
-    continueBtn.disabled = true;
-    continueBtn.style.opacity = "0.5";
-    continueBtn.style.cursor = "not-allowed";
+  continueBtn.disabled = !valid;
 
-  } else {
+  continueBtn.style.opacity =
+    valid ? "1" : "0.5";
 
-    continueBtn.disabled = false;
-    continueBtn.style.opacity = "1";
-    continueBtn.style.cursor = "pointer";
-  }
+  continueBtn.style.cursor =
+    valid ? "pointer" : "not-allowed";
 }
 
 // ==========================
-// SYMBOL CHECKER (LIVE)
+// SYMBOL CHECKER
 // ==========================
 
 let symbolTimeout;
@@ -180,7 +171,6 @@ tokenSymbol?.addEventListener("input", () => {
   const symbol =
     tokenSymbol.value.trim();
 
-  // EMPTY INPUT
   if (!symbol) {
 
     isSymbolValid = false;
@@ -195,7 +185,6 @@ tokenSymbol?.addEventListener("input", () => {
     return;
   }
 
-  // CHECKING STATE
   if (symbolStatus) {
 
     symbolStatus.textContent = "Checking...";
