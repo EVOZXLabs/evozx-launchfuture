@@ -132,7 +132,7 @@ async function loadBaseFee() {
 }
 
 // ==========================
-// SYMBOL CHECKER (LIVE)
+// CONTINUE BUTTON STATE
 // ==========================
 
 function updateContinueState() {
@@ -156,6 +156,10 @@ function updateContinueState() {
   }
 }
 
+// ==========================
+// SYMBOL CHECKER (LIVE)
+// ==========================
+
 let symbolTimeout;
 
 tokenSymbol?.addEventListener("input", () => {
@@ -165,14 +169,22 @@ tokenSymbol?.addEventListener("input", () => {
   const symbol =
     tokenSymbol.value.trim();
 
+  // EMPTY INPUT
   if (!symbol) {
 
-    if (symbolStatus)
+    isSymbolValid = false;
+
+    if (symbolStatus) {
       symbolStatus.textContent = "";
+      symbolStatus.style.color = "";
+    }
+
+    updateContinueState();
 
     return;
   }
 
+  // CHECKING STATE
   if (symbolStatus) {
 
     symbolStatus.textContent = "Checking...";
@@ -184,30 +196,43 @@ tokenSymbol?.addEventListener("input", () => {
     try {
 
       const exists =
-  await symbolExists(symbol);
+        await symbolExists(symbol);
 
-if (!symbolStatus) return;
+      if (!symbolStatus) return;
 
-if (exists) {
+      if (exists) {
 
-  isSymbolValid = false;
+        isSymbolValid = false;
 
-  symbolStatus.textContent =
-    "❌ Symbol already exists";
+        symbolStatus.textContent =
+          "❌ Symbol already exists";
 
-  symbolStatus.style.color = "red";
+        symbolStatus.style.color = "red";
 
-} else {
+      } else {
 
-  isSymbolValid = true;
+        isSymbolValid = true;
 
-  symbolStatus.textContent =
-    "✅ Symbol available";
+        symbolStatus.textContent =
+          "✅ Symbol available";
 
-  symbolStatus.style.color = "green";
-}
+        symbolStatus.style.color = "green";
+      }
 
-updateContinueState();
+      updateContinueState();
+
+    } catch (error) {
+
+      console.error(error);
+
+      isSymbolValid = false;
+
+      if (symbolStatus) {
+        symbolStatus.textContent = "";
+        symbolStatus.style.color = "";
+      }
+
+      updateContinueState();
     }
 
   }, 500);
