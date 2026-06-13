@@ -108,11 +108,20 @@ async function loadBaseFee() {
     const factory =
       await getFactory();
 
-    const fee =
+    const base =
       await factory.BASE_FEE();
 
+    const multiplier =
+      await factory.feeMultiplier();
+
+    const baseNum =
+      Number(formatEther(base));
+
+    const multiNum =
+      Number(multiplier);
+
     baseFeeValue =
-      Number(formatEther(fee));
+      baseNum * multiNum;
 
     baseFeeEl.textContent =
       `${baseFeeValue} EVOZX`;
