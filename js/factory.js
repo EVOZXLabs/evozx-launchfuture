@@ -1,21 +1,24 @@
-import { Contract } from "https://esm.sh/ethers@6";
+import { BrowserProvider, Contract } from "https://esm.sh/ethers@6";
 
 import { CONTRACTS } from "./config.js";
-
 import { getSigner } from "./wallet.js";
 
 let FACTORY_ABI = null;
 let EVOZX_ABI = null;
+
+// ===============================
+// LOAD ABI (CACHE)
+// ===============================
 
 async function loadFactoryAbi() {
 
   if (FACTORY_ABI) return FACTORY_ABI;
 
   const response =
-  await fetch("./abi/factory.json");
+    await fetch("./abi/factory.json");
 
   FACTORY_ABI =
-  await response.json();
+    await response.json();
 
   return FACTORY_ABI;
 }
@@ -25,122 +28,152 @@ async function loadEvozxAbi() {
   if (EVOZX_ABI) return EVOZX_ABI;
 
   const response =
-  await fetch("./abi/evozx.json");
+    await fetch("./abi/evozx.json");
 
   EVOZX_ABI =
-  await response.json();
+    await response.json();
 
   return EVOZX_ABI;
 }
 
-export async function getFactory() {
+// ===============================
+// PROVIDER (READ ONLY)
+// ===============================
 
-  const signer =
-  getSigner();
+function getReadProvider() {
 
-  if (!signer) {
+  if (!window.ethereum) return null;
 
-    throw new Error(
-      "Wallet not connected."
-    );
+  return new BrowserProvider(window.ethereum);
+}
 
+// ===============================
+// CONTRACT (READ)
+// ===============================
+
+async function getFactoryRead() {
+
+  const provider =
+    getReadProvider();
+
+  if (!provider) {
+    throw new Error("Provider not available.");
   }
 
   const abi =
-  await loadFactoryAbi();
+    await loadFactoryAbi();
 
   return new Contract(
-
     CONTRACTS.FACTORY,
-
     abi,
-
-    signer
-
+    provider
   );
-
 }
 
-export async function getEVOZX() {
+// ===============================
+// CONTRACT (WRITE)
+// ===============================
+
+async function getFactoryWrite() {
 
   const signer =
-  getSigner();
+    getSigner();
 
   if (!signer) {
-
-    throw new Error(
-      "Wallet not connected."
-    );
-
+    throw new Error("Wallet not connected.");
   }
 
   const abi =
-  await loadEvozxAbi();
+    await loadFactoryAbi();
 
   return new Contract(
-
-    CONTRACTS.EVOZX,
-
+    CONTRACTS.FACTORY,
     abi,
-
     signer
-
   );
-
 }
+
+// ===============================
+// BASIC INFO (READ)
+// ===============================
 
 export async function getFactoryName() {
 
   const factory =
-  await getFactory();
+    await getFactoryRead();
 
   return await factory.FACTORY_NAME();
-
 }
 
 export async function getVersion() {
 
   const factory =
-  await getFactory();
+    await getFactoryRead();
 
   return await factory.LAUNCHKIT_VERSION();
-
 }
 
 export async function getTreasury() {
 
   const factory =
-  await getFactory();
+    await getFactoryRead();
 
   return await factory.treasury();
-
 }
+
+// ===============================
+// CORE READ FUNCTIONS
+// ===============================
 
 export async function symbolExists(symbol) {
 
   const factory =
-  await getFactory();
+    await getFactoryRead();
 
-  return await factory.symbolExists(
-    symbol
-  );
-
+  return await factory.symbolExists(symbol);
 }
 
 export async function getTotalTokens() {
 
   const factory =
-  await getFactory();
+    await getFactoryRead();
 
   return await factory.totalTokens();
-
 }
 
 export async function getAllTokens() {
 
   const factory =
-  await getFactory();
+    await getFactoryRead();
 
   return await factory.getAllTokens();
+}
 
+// ===============================
+// DEPLOYMENT FEE (READ)
+// ===============================
+
+export async function getDeploymentFee() {
+
+  try {
+
+    const factory =
+      await getFactoryRead();
+
+    return await factory.getDeploymentFee();
+
+  } catch (error) {
+
+    console.error(error);
+    return null;
+  }
+}
+
+// ===============================
+// WRITE EXAMPLE (DEPLOY NANTI)
+// ===============================
+
+export async function getFactoryForWrite() {
+
+  return await getFactoryWrite();
 }
