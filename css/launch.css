@@ -119,4 +119,15 @@
     grid-template-columns:1fr;
   }
 
+  .symbol-status{
+
+  margin-top:8px;
+
+  font-size:13px;
+
+  min-height:18px;
+
+  color:#94a3b8;
+  }
+  
 }
