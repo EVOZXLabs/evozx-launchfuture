@@ -1,5 +1,4 @@
 import { BrowserProvider, Contract } from "https://esm.sh/ethers@6";
-
 import { CONTRACTS } from "./config.js";
 import { getSigner } from "./wallet.js";
 
@@ -7,37 +6,53 @@ let FACTORY_ABI = null;
 let EVOZX_ABI = null;
 
 // ===============================
-// LOAD ABI (CACHE)
+// ABI LOADER (CACHE SAFE)
 // ===============================
 
 async function loadFactoryAbi() {
 
   if (FACTORY_ABI) return FACTORY_ABI;
 
-  const response =
-    await fetch("./abi/factory.json");
+  try {
 
-  FACTORY_ABI =
-    await response.json();
+    const response =
+      await fetch("./abi/factory.json");
 
-  return FACTORY_ABI;
+    FACTORY_ABI =
+      await response.json();
+
+    return FACTORY_ABI;
+
+  } catch (error) {
+
+    console.error("ABI load error:", error);
+    return null;
+  }
 }
 
 async function loadEvozxAbi() {
 
   if (EVOZX_ABI) return EVOZX_ABI;
 
-  const response =
-    await fetch("./abi/evozx.json");
+  try {
 
-  EVOZX_ABI =
-    await response.json();
+    const response =
+      await fetch("./abi/evozx.json");
 
-  return EVOZX_ABI;
+    EVOZX_ABI =
+      await response.json();
+
+    return EVOZX_ABI;
+
+  } catch (error) {
+
+    console.error("ABI load error:", error);
+    return null;
+  }
 }
 
 // ===============================
-// PROVIDER (READ ONLY)
+// READ PROVIDER (SAFE)
 // ===============================
 
 function getReadProvider() {
@@ -48,7 +63,7 @@ function getReadProvider() {
 }
 
 // ===============================
-// CONTRACT (READ)
+// READ CONTRACT (SAFE)
 // ===============================
 
 async function getFactoryRead() {
@@ -57,11 +72,15 @@ async function getFactoryRead() {
     getReadProvider();
 
   if (!provider) {
-    throw new Error("Provider not available.");
+    throw new Error("No Web3 provider found.");
   }
 
   const abi =
     await loadFactoryAbi();
+
+  if (!abi) {
+    throw new Error("Factory ABI not loaded.");
+  }
 
   return new Contract(
     CONTRACTS.FACTORY,
@@ -71,7 +90,7 @@ async function getFactoryRead() {
 }
 
 // ===============================
-// CONTRACT (WRITE)
+// WRITE CONTRACT (SAFE)
 // ===============================
 
 async function getFactoryWrite() {
@@ -86,6 +105,10 @@ async function getFactoryWrite() {
   const abi =
     await loadFactoryAbi();
 
+  if (!abi) {
+    throw new Error("Factory ABI not loaded.");
+  }
+
   return new Contract(
     CONTRACTS.FACTORY,
     abi,
@@ -94,7 +117,7 @@ async function getFactoryWrite() {
 }
 
 // ===============================
-// BASIC INFO (READ)
+// BASIC READ FUNCTIONS
 // ===============================
 
 export async function getFactoryName() {
@@ -122,15 +145,23 @@ export async function getTreasury() {
 }
 
 // ===============================
-// CORE READ FUNCTIONS
+// CORE FUNCTIONS
 // ===============================
 
 export async function symbolExists(symbol) {
 
-  const factory =
-    await getFactoryRead();
+  try {
 
-  return await factory.symbolExists(symbol);
+    const factory =
+      await getFactoryRead();
+
+    return await factory.symbolExists(symbol);
+
+  } catch (error) {
+
+    console.error("symbolExists error:", error);
+    return false;
+  }
 }
 
 export async function getTotalTokens() {
@@ -150,7 +181,7 @@ export async function getAllTokens() {
 }
 
 // ===============================
-// DEPLOYMENT FEE (READ)
+// BASE FEE (FIXED LOGIC)
 // ===============================
 
 export async function getDeploymentFee() {
@@ -160,17 +191,33 @@ export async function getDeploymentFee() {
     const factory =
       await getFactoryRead();
 
-    return await factory.getDeploymentFee();
+    const base =
+      await factory.BASE_FEE();
+
+    const multiplier =
+      await factory.feeMultiplier();
+
+    // FINAL FEE = BASE × MULTIPLIER
+    return {
+      base,
+      multiplier,
+      total: base * multiplier
+    };
 
   } catch (error) {
 
-    console.error(error);
-    return null;
+    console.error("getDeploymentFee error:", error);
+
+    return {
+      base: 0,
+      multiplier: 1,
+      total: 0
+    };
   }
 }
 
 // ===============================
-// WRITE EXAMPLE (DEPLOY NANTI)
+// WRITE ACCESS (FOR STEP 6)
 // ===============================
 
 export async function getFactoryForWrite() {
