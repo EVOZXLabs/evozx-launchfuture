@@ -115,10 +115,10 @@ async function loadBaseFee() {
       await factory.feeMultiplier();
 
     const baseNum =
-      Number(formatEther(base));
+      Number(formatEther(base || 0));
 
     const multiNum =
-      Number(multiplier);
+      Number(multiplier || 1);
 
     baseFeeValue =
       baseNum * multiNum;
@@ -130,10 +130,15 @@ async function loadBaseFee() {
 
   } catch (error) {
 
-    console.error(error);
+    console.error("BASE_FEE ERROR:", error);
+
+    baseFeeValue = 10; // fallback biar UI hidup
 
     if (baseFeeEl)
-      baseFeeEl.textContent = "Error";
+      baseFeeEl.textContent =
+        "10 EVOZX (fallback)";
+
+    calculate();
   }
 }
 
