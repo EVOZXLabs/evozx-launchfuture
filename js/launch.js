@@ -1,4 +1,6 @@
 import { symbolExists } from "./factory.js";
+import { getDeploymentFee } from "./factory.js";
+import { formatEther } from "https://esm.sh/ethers@6";
 
 // ==========================
 // ELEMENTS (SAFE INIT)
@@ -30,6 +32,8 @@ document.getElementById("symbolInput");
 
 const symbolStatus =
 document.getElementById("symbolStatus");
+
+let baseFeeValue = 0;
 
 // ==========================
 // FEE CALCULATOR
@@ -76,6 +80,37 @@ ownership?.addEventListener("change", calculate);
 
 // initial calc
 calculate();
+
+async function loadBaseFee() {
+
+  const baseFeeEl =
+    document.getElementById("baseFee");
+
+  try {
+
+    const fee =
+      await getDeploymentFee();
+
+    if (!fee) {
+
+      baseFeeEl.textContent = "Failed";
+      return;
+    }
+
+    baseFeeValue =
+      Number(formatEther(fee));
+
+    baseFeeEl.textContent =
+      `${baseFeeValue} EVOZX`;
+
+    calculate();
+
+  } catch (error) {
+
+    console.error(error);
+    baseFeeEl.textContent = "Error";
+  }
+}
 
 // ==========================
 // SYMBOL CHECKER (LIVE)
@@ -137,3 +172,4 @@ tokenSymbol?.addEventListener("input", () => {
   }, 500);
 
 });
+loadBaseFee();
