@@ -1,35 +1,81 @@
-import {
-  BrowserProvider
-}
-from "https://esm.sh/ethers@6";
-
-import {
-  NETWORK
-}
-from "./config.js";
+import { BrowserProvider } from "https://esm.sh/ethers@6";
 
 let provider = null;
-
 let signer = null;
-
-let address = null;
+let currentAccount = null;
 
 export async function connectWallet() {
 
   if (!window.ethereum) {
 
-    throw new Error(
-      "No Web3 wallet detected."
+    alert(
+      "Web3 wallet not detected."
     );
 
+    return null;
   }
 
+  try {
+
+    await window.ethereum.request({
+      method: "eth_requestAccounts"
+    });
+
+    provider =
+    new BrowserProvider(
+      window.ethereum
+    );
+
+    signer =
+    await provider.getSigner();
+
+    currentAccount =
+    await signer.getAddress();
+
+    localStorage.setItem(
+      "walletConnected",
+      "true"
+    );
+
+    updateWalletButtons();
+
+    return currentAccount;
+
+  } catch (error) {
+
+    console.error(error);
+
+    return null;
+  }
+}
+
+export async function restoreConnection() {
+
+  if (
+    localStorage.getItem(
+      "walletConnected"
+    ) !== "true"
+  ) {
+    return;
+  }
+
+  if (!window.ethereum) {
+    return;
+  }
+
+  const accounts =
   await window.ethereum.request({
-
-    method:
-    "eth_requestAccounts"
-
+    method: "eth_accounts"
   });
+
+  if (!accounts.length) {
+
+    localStorage.removeItem(
+      "walletConnected"
+    );
+
+    return;
+  }
 
   provider =
   new BrowserProvider(
@@ -39,99 +85,120 @@ export async function connectWallet() {
   signer =
   await provider.getSigner();
 
-  address =
-  await signer.getAddress();
+  currentAccount =
+  accounts[0];
 
-  return {
-
-    provider,
-
-    signer,
-
-    address
-
-  };
-
+  updateWalletButtons();
 }
 
-export async function switchToEVOZ() {
+export function disconnectWallet() {
 
-  try {
+  localStorage.removeItem(
+    "walletConnected"
+  );
 
-    await window.ethereum.request({
+  provider = null;
+  signer = null;
+  currentAccount = null;
 
-      method:
-      "wallet_switchEthereumChain",
-
-      params: [
-
-        {
-          chainId:
-          NETWORK.chainHex
-        }
-
-      ]
-
-    });
-
-  } catch (error) {
-
-    if (error.code === 4902) {
-
-      await window.ethereum.request({
-
-        method:
-        "wallet_addEthereumChain",
-
-        params: [
-
-          {
-
-            chainId:
-            NETWORK.chainHex,
-
-            chainName:
-            NETWORK.chainName,
-
-            rpcUrls:
-            NETWORK.rpcUrls,
-
-            blockExplorerUrls:
-            NETWORK.blockExplorerUrls,
-
-            nativeCurrency:
-            NETWORK.nativeCurrency
-
-          }
-
-        ]
-
-      });
-
-    } else {
-
-      throw error;
-
-    }
-
-  }
-
+  updateWalletButtons();
 }
 
 export function getProvider() {
-
   return provider;
-
 }
 
 export function getSigner() {
-
   return signer;
+}
+
+export function getAccount() {
+  return currentAccount;
+}
+
+export function shortAddress(address) {
+
+  if (!address) return "";
+
+  return (
+    address.slice(0, 6) +
+    "..." +
+    address.slice(-4)
+  );
+}
+
+export function updateWalletButtons() {
+
+  const buttons =
+  document.querySelectorAll(
+    "#connectBtn"
+  );
+
+  buttons.forEach((btn) => {
+
+    if (!btn) return;
+
+    if (currentAccount) {
+
+      btn.textContent =
+      shortAddress(
+        currentAccount
+      );
+
+      btn.dataset.connected =
+      "true";
+
+    } else {
+
+      btn.textContent =
+      "Connect Wallet";
+
+      btn.dataset.connected =
+      "false";
+
+    }
+
+  });
 
 }
 
-export function getAddress() {
+window.addEventListener(
 
-  return address;
+  "DOMContentLoaded",
 
-}
+  async () => {
+
+    await restoreConnection();
+
+  }
+
+);
+
+if (window.ethereum) {
+
+  window.ethereum.on(
+
+    "accountsChanged",
+
+    async (accounts) => {
+
+      if (
+        !accounts ||
+        !accounts.length
+      ) {
+
+        disconnectWallet();
+
+        return;
+      }
+
+      currentAccount =
+      accounts[0];
+
+      updateWalletButtons();
+
+    }
+
+  );
+
+  }
