@@ -5,29 +5,15 @@
 
 <meta charset="UTF-8">
 
-<meta
-name="viewport"
-content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>
-Launch Token | EVOZX Launch Future
-</title>
+<title>Launch Token | EVOZX Launch Future</title>
 
-<link
-rel="stylesheet"
-href="./css/app.css">
-
-<link
-rel="stylesheet"
-href="./css/launch.css">
+<link rel="stylesheet" href="./css/app.css">
+<link rel="stylesheet" href="./css/launch.css">
 
 </head>
 
-  <script
-type="module"
-src="./js/app.js">
-  </script>
-  
 <body>
 
 <div class="bg-blur blur-1"></div>
@@ -41,27 +27,14 @@ src="./js/app.js">
 
 <div class="brand-dot"></div>
 
-<span>
-
-EVOZX Launch Future
-
-</span>
+<span>EVOZX Launch Future</span>
 
 </div>
 
 <div class="nav-links">
 
-<a href="./index.html">
-
-Home
-
-</a>
-
-<a href="#">
-
-Launch
-
-</a>
+<a href="./index.html">Home</a>
+<a href="#">Launch</a>
 
 </div>
 
@@ -87,27 +60,16 @@ Connect Wallet
 
 <div class="wizard-header">
 
-<h1>
+<h1>Token Builder</h1>
 
-Token Builder
-
-</h1>
-
-<p>
-
-Create a token on EVOZ without coding.
-
-</p>
+<p>Create a token on EVOZ without coding.</p>
 
 </div>
 
+<!-- TOKEN NAME -->
 <div class="form-group">
 
-<label>
-
-Token Name
-
-</label>
+<label>Token Name</label>
 
 <input
 id="tokenName"
@@ -116,16 +78,13 @@ placeholder="Example Token">
 
 </div>
 
+<!-- TOKEN SYMBOL -->
 <div class="form-group">
 
-<label>
-
-Token Symbol
-
-</label>
+<label>Token Symbol</label>
 
 <input
-id="tokenSymbol"
+id="symbolInput"
 type="text"
 placeholder="EXT">
 
@@ -136,13 +95,10 @@ class="symbol-status">
 
 </div>
 
+<!-- TOTAL SUPPLY -->
 <div class="form-group">
 
-<label>
-
-Total Supply
-
-</label>
+<label>Total Supply</label>
 
 <input
 id="tokenSupply"
@@ -151,42 +107,24 @@ placeholder="1000000">
 
 </div>
 
+<!-- FEATURES -->
 <div class="feature-box">
 
-<h3>
-
-Features
-
-</h3>
+<h3>Features</h3>
 
 <label>
-
-<input
-type="checkbox"
-id="burnable">
-
+<input type="checkbox" id="burnable">
 Burnable
-
 </label>
 
 <label>
-
-<input
-type="checkbox"
-id="mintable">
-
+<input type="checkbox" id="mintable">
 Mintable
-
 </label>
 
 <label>
-
-<input
-type="checkbox"
-id="ownership">
-
+<input type="checkbox" id="ownership">
 Ownership
-
 </label>
 
 </div>
@@ -203,96 +141,38 @@ Continue
 
 </div>
 
+<!-- SUMMARY -->
 <div class="launch-right">
 
 <div class="summary-card">
 
-<h2>
-
-Deployment Summary
-
-</h2>
+<h2>Deployment Summary</h2>
 
 <div class="summary-row">
-
-<span>
-
-Base Fee
-
-</span>
-
-<span id="baseFee">
-
-10 EVOZX
-
-</span>
-
+<span>Base Fee</span>
+<span id="baseFee">Loading...</span>
 </div>
 
 <div class="summary-row">
-
-<span>
-
-Features Fee
-
-</span>
-
-<span id="featureFee">
-
-0 EVOZX
-
-</span>
-
+<span>Features Fee</span>
+<span id="featureFee">0 EVOZ</span>
 </div>
 
 <div class="summary-row">
-
-<span>
-
-Total Fee
-
-</span>
-
-<span id="totalFee">
-
-10 EVOZX
-
-</span>
-
+<span>Total Fee</span>
+<span id="totalFee">Loading...</span>
 </div>
 
 <hr>
 
 <div class="summary-row">
-
-<span>
-
-Burn (30%)
-
-</span>
-
-<span id="burnAmount">
-
-3 EVOZX
-
-</span>
-
+<span>Burn (30%)</span>
+<span id="burnAmount">-</span>
 </div>
 
 <div class="summary-row">
-
-<span>
-
-Treasury (70%)
-
-</span>
-
-<span id="treasuryAmount">
-
-7 EVOZX
-
-</span>
-
+<span>Treasury (70%)</span>
+<span id="treasuryAmount">-</span>
 </div>
 
 </div>
@@ -303,10 +183,9 @@ Treasury (70%)
 
 </main>
 
-<script
-type="module"
-src="./js/launch.js">
-</script>
+<!-- APP SCRIPT -->
+<script type="module" src="./js/app.js"></script>
+<script type="module" src="./js/launch.js"></script>
 
 </body>
 </html>
