@@ -488,6 +488,24 @@ footer{
 MOBILE
 ========== */
 
+.explorer-link{
+
+  display:inline-block;
+
+  margin-top:14px;
+
+  color:var(--gold-light);
+
+  font-size:14px;
+
+  transition:.25s;
+}
+
+.explorer-link:hover{
+
+  opacity:.8;
+}
+
 @media(max-width:900px){
 
   .navbar{
