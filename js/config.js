@@ -1,6 +1,3 @@
-// EVOZX LaunchKit
-// Network & Contract Configuration
-
 export const NETWORK = {
   chainId: 805,
   chainHex: "0x325",
@@ -23,6 +20,7 @@ export const NETWORK = {
 };
 
 export const CONTRACTS = {
+
   FACTORY:
     "0xbA40773bCF0d30e83c4319796Ec45CA31d6e64bB",
 
@@ -31,9 +29,4 @@ export const CONTRACTS = {
 
   TREASURY:
     "0x50Cd30Ff7f0fbBD9d0FDe1F60DE8c52D6F390c5C"
-};
-
-export const EXPLORER = {
-  ADDRESS: "https://evozscan.com/address/",
-  TX: "https://evozscan.com/tx/"
 };
