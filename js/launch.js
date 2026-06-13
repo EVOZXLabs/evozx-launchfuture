@@ -1,166 +1,139 @@
-import {
+import { symbolExists } from "./factory.js";
 
-  symbolExists
-
-}
-from "./factory.js";
+// ==========================
+// ELEMENTS (SAFE INIT)
+// ==========================
 
 const burnable =
-document.getElementById(
-  "burnable"
-);
+document.getElementById("burnable");
 
 const mintable =
-document.getElementById(
-  "mintable"
-);
+document.getElementById("mintable");
 
 const ownership =
-document.getElementById(
-  "ownership"
-);
+document.getElementById("ownership");
 
 const featureFee =
-document.getElementById(
-  "featureFee"
-);
+document.getElementById("featureFee");
 
 const totalFee =
-document.getElementById(
-  "totalFee"
-);
+document.getElementById("totalFee");
 
 const burnAmount =
-document.getElementById(
-  "burnAmount"
-);
+document.getElementById("burnAmount");
 
 const treasuryAmount =
-document.getElementById(
-  "treasuryAmount"
-);
-
-function calculate(){
-
-  let fee = 10;
-
-  if(burnable.checked)
-    fee += 5;
-
-  if(mintable.checked)
-    fee += 10;
-
-  if(ownership.checked)
-    fee += 5;
-
-  featureFee.textContent =
-  `${fee - 10} EVOZX`;
-
-  totalFee.textContent =
-  `${fee} EVOZX`;
-
-  burnAmount.textContent =
-  `${(fee*0.30).toFixed(2)} EVOZX`;
-
-  treasuryAmount.textContent =
-  `${(fee*0.70).toFixed(2)} EVOZX`;
-
-}
-
-burnable.addEventListener(
-  "change",
-  calculate
-);
-
-mintable.addEventListener(
-  "change",
-  calculate
-);
-
-ownership.addEventListener(
-  "change",
-  calculate
-);
+document.getElementById("treasuryAmount");
 
 const tokenSymbol =
-
-document.getElementById(
-  "tokenSymbol"
-);
+document.getElementById("symbolInput");
 
 const symbolStatus =
+document.getElementById("symbolStatus");
 
-document.getElementById(
-  "symbolStatus"
-);
+// ==========================
+// FEE CALCULATOR
+// ==========================
 
+function calculate() {
+
+  if (
+    !featureFee ||
+    !totalFee ||
+    !burnAmount ||
+    !treasuryAmount
+  ) return;
+
+  let baseFee = 10;
+  let feature = 0;
+
+  if (burnable?.checked) feature += 5;
+  if (mintable?.checked) feature += 10;
+  if (ownership?.checked) feature += 5;
+
+  const total = baseFee + feature;
+
+  featureFee.textContent =
+    `${feature} EVOZX`;
+
+  totalFee.textContent =
+    `${total} EVOZX`;
+
+  burnAmount.textContent =
+    `${(total * 0.30).toFixed(2)} EVOZX`;
+
+  treasuryAmount.textContent =
+    `${(total * 0.70).toFixed(2)} EVOZX`;
+}
+
+// ==========================
+// EVENT LISTENERS (SAFE)
+// ==========================
+
+burnable?.addEventListener("change", calculate);
+mintable?.addEventListener("change", calculate);
+ownership?.addEventListener("change", calculate);
+
+// initial calc
 calculate();
+
+// ==========================
+// SYMBOL CHECKER (LIVE)
+// ==========================
 
 let symbolTimeout;
 
-tokenSymbol?.addEventListener(
+tokenSymbol?.addEventListener("input", () => {
 
-  "input",
+  clearTimeout(symbolTimeout);
 
-  () => {
-
-    clearTimeout(
-      symbolTimeout
-    );
-
-    const symbol =
+  const symbol =
     tokenSymbol.value.trim();
 
-    if (!symbol) {
+  if (!symbol) {
 
-      symbolStatus.textContent =
-      "";
+    if (symbolStatus)
+      symbolStatus.textContent = "";
 
-      return;
-    }
-
-    symbolTimeout =
-
-    setTimeout(
-
-      async () => {
-
-        try {
-
-          const exists =
-
-          await symbolExists(
-            symbol
-          );
-
-          if (exists) {
-
-            symbolStatus.textContent =
-
-            "Symbol already exists";
-
-          } else {
-
-            symbolStatus.textContent =
-
-            "Symbol available";
-
-          }
-
-        } catch {
-
-          symbolStatus.textContent =
-
-          "";
-
-        }
-
-      },
-
-      600
-
-    );
-
+    return;
   }
 
-);
+  if (symbolStatus)
+    symbolStatus.textContent = "Checking...";
+
+  symbolTimeout = setTimeout(async () => {
+
+    try {
+
+      const exists =
+        await symbolExists(symbol);
+
+      if (!symbolStatus) return;
+
+      if (exists) {
+
+        symbolStatus.textContent =
+          "❌ Symbol already exists";
+
+        symbolStatus.style.color = "red";
+
+      } else {
+
+        symbolStatus.textContent =
+          "✅ Symbol available";
+
+        symbolStatus.style.color = "green";
+      }
+
+    } catch (error) {
+
+      console.error(error);
+
+      if (symbolStatus)
+        symbolStatus.textContent = "";
+
+    }
+
+  }, 500);
+
+});
