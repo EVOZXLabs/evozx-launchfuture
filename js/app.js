@@ -129,6 +129,37 @@ function setupExplorerLinks(){
 
 }
 
+async function autoReconnect(){
+
+  try{
+
+    if(!window.ethereum) return;
+
+    const accounts =
+    await window.ethereum.request({
+
+      method:"eth_accounts"
+
+    });
+
+    if(accounts.length){
+
+      const wallet =
+      await connectWallet();
+
+      connectBtn.textContent =
+      shortAddress(wallet.address);
+
+    }
+
+  }catch(error){
+
+    console.error(error);
+
+  }
+
+}
+
 function init(){
 
   connectBtn?.addEventListener(
@@ -152,5 +183,7 @@ function init(){
   setupExplorerLinks();
 
 }
+
+autoReconnect();
 
 init();
