@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width,initial-scale=1.0">
+
+<title>
+EVOZX LaunchKit
+</title>
+
+<link
+rel="stylesheet"
+href="./css/app.css">
+
+<link
+rel="icon"
+href="./assets/favicon.ico">
+
+</head>
+
+<body>
+
+<nav class="navbar container">
+
+<div class="logo">
+
+<img
+src="./assets/logo.svg"
+height="42">
+
+<span>
+EVOZX LaunchKit
+</span>
+
+</div>
+
+<div class="nav-links">
+
+<a href="#">
+Home</a>
+
+<a href="./launch.html">
+Launch
+</a>
+
+<a href="./registry.html">
+Registry
+</a>
+
+<a href="./verify.html">
+Verify
+</a>
+
+</div>
+
+<button
+id="connectBtn"
+class="btn btn-primary">
+
+Connect Wallet
+
+</button>
+
+</nav>
+
+<section class="hero container">
+
+<div class="hero-content">
+
+<h1>
+
+Build.
+Deploy.
+Launch.
+
+</h1>
+
+<p>
+
+Create custom tokens
+on EVOZ without
+writing code.
+
+</p>
+
+<button
+onclick="location.href='launch.html'"
+class="btn btn-primary">
+
+Launch Token
+
+</button>
+
+</div>
+
+</section>
+
+<section
+class="container stats">
+
+<div class="card">
+
+<h3>
+Tokens Created
+</h3>
+
+<p id="totalTokens">
+--
+</p>
+
+</div>
+
+<div class="card">
+
+<h3>
+Creators
+</h3>
+
+<p>
+--
+</p>
+
+</div>
+
+<div class="card">
+
+<h3>
+EVOZX Burned
+</h3>
+
+<p>
+--
+</p>
+
+</div>
+
+<div class="card">
+
+<h3>
+Version
+</h3>
+
+<p>
+v1.0
+</p>
+
+</div>
+
+</section>
+
+<script
+type="module"
+src="./js/app.js">
+</script>
+
+</body>
+</html>
