@@ -114,19 +114,64 @@ async function deployToken() {
     // ==========================
 
     const tx =
-      await factory.createToken(config);
+  await factory.createToken(config);
 
-    console.log("TX SENT:", tx.hash);
+console.log("TX SENT:", tx.hash);
 
-    // optional: loading wait
-    const receipt =
-      await tx.wait();
+const receipt =
+  await tx.wait();
+
+console.log("RECEIPT:", receipt);
+
+// ==========================
+// FIND TOKEN CREATED EVENT
+// ==========================
+
+let tokenAddress = null;
+
+for (const log of receipt.logs) {
+
+  try {
+
+    const parsed =
+      factory.interface.parseLog(log);
+
+    if (parsed.name === "TokenCreated") {
+
+      tokenAddress = parsed.args.token;
+      break;
+    }
+
+  } catch (e) {
+    continue;
+  }
 
     console.log("TX CONFIRMED:", receipt);
 
     alert("Token created successfully!");
 
-    // redirect nanti (STEP 7)
+    if (tokenAddress) {
+
+  const data = {
+    token: tokenAddress,
+    name: config.name,
+    symbol: config.symbol,
+    supply: config.supply.toString(),
+    creator: config.owner,
+    txHash: tx.hash,
+    time: Date.now()
+  };
+
+  const old =
+    JSON.parse(localStorage.getItem("myTokens") || "[]");
+
+  old.push(data);
+
+  localStorage.setItem(
+    "myTokens",
+    JSON.stringify(old)
+  );
+}
     window.location.href =
       "./success.html";
 
