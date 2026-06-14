@@ -5,26 +5,27 @@ import { FEES } from "./config.js";
 // ELEMENTS
 // =====================================================
 const tokenName = document.getElementById("tokenName");
+const tokenSymbol = document.getElementById("symbolInput"); 
 const tokenSupply = document.getElementById("tokenSupply");
-const tokenSymbol = document.getElementById("symbolInput"); // Sesuaikan dengan ID di HTML
-const deployBtn = document.getElementById("deployBtn");   // Sesuaikan dengan ID di HTML
+const deployBtn = document.getElementById("deployBtn");
 
-// Checkboxes & Inputs
+// Checkboxes
 const burnable = document.getElementById("burnable");
 const mintable = document.getElementById("mintable");
 const ownership = document.getElementById("ownership");
 const maxWallet = document.getElementById("maxWalletEnabled");
 const maxTx = document.getElementById("maxTxEnabled");
 const tradingControl = document.getElementById("tradingControlEnabled");
+
+// Inputs
 const buyTax = document.getElementById("buyTax");
 const sellTax = document.getElementById("sellTax");
-
 const website = document.getElementById("website");
 const telegram = document.getElementById("telegram");
 const twitter = document.getElementById("twitter");
 const logoURI = document.getElementById("logoURI");
 
-// Stats
+// Stats Labels
 const featureFee = document.getElementById("featureFee");
 const totalFee = document.getElementById("totalFee");
 const burnAmount = document.getElementById("burnAmount");
@@ -33,22 +34,19 @@ const baseFeeEl = document.getElementById("baseFee");
 const symbolStatus = document.getElementById("symbolStatus");
 
 // =====================================================
-// STATE
+// STATE & HELPERS
 // =====================================================
 let baseFeeValue = FEES.BASE;
 let isSymbolValid = false;
 let isCheckingSymbol = false;
 
-// =====================================================
-// HELPERS
-// =====================================================
-function setText(element, value) {
-    if (element) element.textContent = value;
-}
+const setText = (el, val) => el && (el.textContent = val);
 
-function isChecked(element) {
-    return !!element?.checked;
-}
+// Mengambil nilai input dengan aman. Jika checkbox mati, return 0.
+const getSafeValue = (checkbox, inputEl) => {
+    if (!checkbox?.checked) return 0;
+    return parseFloat(inputEl?.value) || 0;
+};
 
 // =====================================================
 // FEE ENGINE
@@ -56,15 +54,15 @@ function isChecked(element) {
 function calculate() {
     let feature = 0;
 
-    if (isChecked(burnable)) feature += FEES.BURNABLE;
-    if (isChecked(mintable)) feature += FEES.MINTABLE;
-    if (isChecked(ownership)) feature += FEES.OWNERSHIP;
-    if (isChecked(maxWallet)) feature += FEES.MAX_WALLET;
-    if (isChecked(maxTx)) feature += FEES.MAX_TX;
-    if (isChecked(tradingControl)) feature += FEES.TRADING_CONTROL;
+    if (burnable?.checked) feature += FEES.BURNABLE;
+    if (mintable?.checked) feature += FEES.MINTABLE;
+    if (ownership?.checked) feature += FEES.OWNERSHIP;
+    if (maxWallet?.checked) feature += FEES.MAX_WALLET;
+    if (maxTx?.checked) feature += FEES.MAX_TX;
+    if (tradingControl?.checked) feature += FEES.TRADING_CONTROL;
     
-    // Logic tambahan untuk tax & link
-    if (buyTax?.value > 0 || sellTax?.value > 0) feature += FEES.TAX;
+    // Tax & Social Link Fees
+    if ((parseFloat(buyTax?.value) || 0) > 0 || (parseFloat(sellTax?.value) || 0) > 0) feature += FEES.TAX;
     if (website?.value?.trim()) feature += FEES.WEBSITE;
     if (telegram?.value?.trim()) feature += FEES.TELEGRAM;
     if (twitter?.value?.trim()) feature += FEES.TWITTER;
@@ -72,7 +70,6 @@ function calculate() {
 
     const total = baseFeeValue + feature;
 
-    // Perhatikan penggunaan Backtick (`) di sini, bukan kutip dua (")
     setText(baseFeeEl, `${baseFeeValue} EVOZX`);
     setText(featureFee, `${feature} EVOZX`);
     setText(totalFee, `${total} EVOZX`);
@@ -96,7 +93,6 @@ function updateDeployState() {
 
     deployBtn.disabled = !valid;
     deployBtn.style.opacity = valid ? "1" : "0.5";
-    deployBtn.style.cursor = valid ? "pointer" : "not-allowed";
 }
 
 // =====================================================
@@ -124,17 +120,17 @@ tokenSymbol?.addEventListener("input", () => {
             const exists = await symbolExists(symbol);
             if (exists) {
                 isSymbolValid = false;
-                setText(symbolStatus, "❌ Symbol already exists");
+                setText(symbolStatus, "❌ Symbol taken");
                 symbolStatus.style.color = "#ff4d4f";
             } else {
                 isSymbolValid = true;
-                setText(symbolStatus, "✅ Symbol available");
+                setText(symbolStatus, "✅ Available");
                 symbolStatus.style.color = "#52c41a";
             }
         } catch (error) {
             console.error(error);
             isSymbolValid = false;
-            setText(symbolStatus, "⚠️ Error checking symbol");
+            setText(symbolStatus, "⚠️ Error");
         }
         isCheckingSymbol = false;
         updateDeployState();
@@ -142,19 +138,16 @@ tokenSymbol?.addEventListener("input", () => {
 });
 
 // =====================================================
-// EVENTS
+// EVENT LISTENERS
 // =====================================================
-[burnable, mintable, ownership, maxWallet, maxTx, tradingControl].forEach(el => {
-    el?.addEventListener("change", calculate);
-});
+const allInputs = [tokenName, tokenSymbol, tokenSupply, buyTax, sellTax, website, telegram, twitter, logoURI];
+const allToggles = [burnable, mintable, ownership, maxWallet, maxTx, tradingControl];
 
-[tokenName, tokenSupply, symbolInput, website, telegram, twitter, logoURI, buyTax, sellTax].forEach(el => {
-    el?.addEventListener("input", calculate);
-});
+allToggles.forEach(el => el?.addEventListener("change", calculate));
+allInputs.forEach(el => el?.addEventListener("input", calculate));
 
-// INIT
 window.addEventListener("DOMContentLoaded", () => {
     calculate();
     updateDeployState();
 });
-              
+            
