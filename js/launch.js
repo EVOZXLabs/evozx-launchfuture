@@ -12,33 +12,42 @@ const NETWORK = {
 const getVal = (id) => document.getElementById(id)?.value || "";
 const isChecked = (id) => document.getElementById(id)?.checked || false;
 
+/**
+ * STRUKTUR CONFIG HARUS SAMA PERSIS DENGAN ABI
+ * Urutan ini mengikuti tuple LaunchKitTypes.TokenConfig di Smart Contract
+ */
 export function buildTokenConfig() {
     const supplyRaw = parseFloat(getVal("tokenSupply") || 0);
     
     return {
+        // 1-6
         name: getVal("tokenName"),
         symbol: getVal("symbolInput"),
-        supply: BigInt(Math.floor(supplyRaw * 10**18)), 
+        supply: BigInt(Math.floor(supplyRaw * 10**18)),
         owner: window.ethereum?.selectedAddress || "0x0000000000000000000000000000000000000000",
-        chainId: NETWORK.chainId, 
+        chainId: NETWORK.chainId, // 805n
         launchKitVersion: 200, 
         
-        ownershipEnabled: isChecked("ownership"),
+        // 7-9: Fitur
         burnable: isChecked("burnable"),
         mintable: isChecked("mintable"),
+        ownershipEnabled: isChecked("ownership"),
         
+        // 10-13: Metadata
         website: getVal("website"),
         telegram: getVal("telegram"),
         twitter: getVal("twitter"),
         logoURI: getVal("logoURI"),
         
+        // 14-19: Trading & Security
         maxWalletEnabled: isChecked("maxWalletEnabled"),
         maxWalletPercent: parseInt(getVal("maxWalletPercent") || 0),
         maxTxEnabled: isChecked("maxTxEnabled"),
         maxTxPercent: parseInt(getVal("maxTxPercent") || 0),
         tradingControlEnabled: isChecked("tradingControlEnabled"),
-        tradingEnabled: true,
+        tradingEnabled: true, // Default to true
         
+        // 20-26: Tax & Wallets
         buyTaxEnabled: parseInt(getVal("buyTax") || 0) > 0,
         buyTax: parseInt(getVal("buyTax") || 0),
         sellTaxEnabled: parseInt(getVal("sellTax") || 0) > 0,
@@ -64,6 +73,10 @@ document.getElementById("deployBtn")?.addEventListener("click", async () => {
         btn.textContent = "Deploying...";
         
         const config = buildTokenConfig();
+        
+        // Debugging log untuk memastikan urutan object benar
+        console.log("Config to be sent:", config);
+        
         const tx = await createToken(config);
         
         alert("Transaction submitted! Waiting for confirmation...");
@@ -92,7 +105,7 @@ function calculate() {
     const total = FEES.BASE + feature;
     
     const setText = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
-    // Kembalikan ke EVOZX
+    
     setText("baseFee", `${FEES.BASE} EVOZX`);
     setText("featureFee", `${feature} EVOZX`);
     setText("totalFee", `${total} EVOZX`);
