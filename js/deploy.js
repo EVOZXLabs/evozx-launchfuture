@@ -1,499 +1,177 @@
-import {
-Contract,
-formatEther
-} from "https://esm.sh/ethers@6";
-
-import {
-getFactoryForWrite,
-getDeploymentFee
-} from "./factory.js";
-
-import {
-autoTopupEVOZX
-} from "./exchange.js";
-
-import {
-CONTRACTS
-} from "./config.js";
-
-import {
-getSigner
-} from "./wallet.js";
+import { Contract, formatEther } from "https://esm.sh/ethers@6";
+import { getFactoryForWrite, getDeploymentFee } from "./factory.js";
+import { autoTopupEVOZX } from "./exchange.js";
+import { CONTRACTS } from "./config.js";
+import { getSigner } from "./wallet.js";
 
 // =====================================================
 // ELEMENTS
 // =====================================================
+const deployBtn = document.getElementById("deployBtn");
 
-const continueBtn =
-document.getElementById(
-"continueBtn"
-);
-
-const tokenName =
-document.getElementById(
-"tokenName"
-);
-
-const tokenSymbol =
-document.getElementById(
-"tokenSymbol"
-) ||
-document.getElementById(
-"symbolInput"
-);
-
-const tokenSupply =
-document.getElementById(
-"tokenSupply"
-);
-
-const burnable =
-document.getElementById(
-"burnable"
-);
-
-const mintable =
-document.getElementById(
-"mintable"
-);
-
-const ownership =
-document.getElementById(
-"ownership"
-);
+// Helper untuk mengambil value input dengan aman
+const getVal = (id) => document.getElementById(id)?.value || "";
+const getChecked = (id) => document.getElementById(id)?.checked || false;
 
 // =====================================================
-// STATE
+// STATE & ABI
 // =====================================================
-
 let isDeploying = false;
-
-// =====================================================
-// EVOZX ABI
-// =====================================================
-
 const EVOZX_ABI = [
-
-"function balanceOf(address) view returns (uint256)",
-
-"function allowance(address,address) view returns (uint256)",
-
-"function approve(address,uint256) returns (bool)"
-
+    "function balanceOf(address) view returns (uint256)",
+    "function allowance(address,address) view returns (uint256)",
+    "function approve(address,uint256) returns (bool)"
 ];
 
 // =====================================================
-// VALIDATION
+// VALIDATION & CONFIG
 // =====================================================
-
 function validateInput() {
-
-const name =
-tokenName?.value?.trim();
-
-const symbol =
-tokenSymbol?.value?.trim();
-
-const supply =
-tokenSupply?.value;
-
-if (!name) {
-return "Token name required";
+    if (!getVal("tokenName")) return "Token name required";
+    if (!getVal("symbolInput")) return "Token symbol required";
+    if (Number(getVal("tokenSupply")) <= 0) return "Invalid supply";
+    return null;
 }
-
-if (!symbol) {
-return "Token symbol required";
-}
-
-if (
-!supply ||
-isNaN(supply) ||
-Number(supply) <= 0
-) {
-return "Invalid supply";
-}
-
-return null;
-}
-
-// =====================================================
-// BUILD CONFIG
-// =====================================================
 
 async function buildConfig() {
+    const signer = getSigner();
+    const owner = await signer.getAddress();
+    const network = await signer.provider.getNetwork();
 
-const signer =
-getSigner();
-
-const owner =
-await signer.getAddress();
-
-const network =
-await signer.provider.getNetwork();
-
-return {
-
-name:
-  tokenName.value.trim(),
-
-symbol:
-  tokenSymbol.value.trim(),
-
-supply:
-  BigInt(
-    tokenSupply.value
-  ),
-
-owner,
-
-chainId:
-  BigInt(
-    network.chainId
-  ),
-
-launchKitVersion:
-  200,
-
-burnable:
-  burnable?.checked || false,
-
-mintable:
-  mintable?.checked || false,
-
-ownershipEnabled:
-  ownership?.checked || false,
-
-website: "",
-telegram: "",
-twitter: "",
-logoURI: "",
-
-maxWalletEnabled: false,
-maxWalletPercent: 0,
-
-maxTxEnabled: false,
-maxTxPercent: 0,
-
-tradingControlEnabled: false,
-tradingEnabled: true,
-
-buyTaxEnabled: false,
-buyTax: 0,
-
-sellTaxEnabled: false,
-sellTax: 0,
-
-burnTaxShare: 0,
-
-marketingWallet:
-  owner,
-
-developmentWallet:
-  owner
-
-};
+    return {
+        name: getVal("tokenName"),
+        symbol: getVal("symbolInput"),
+        supply: BigInt(getVal("tokenSupply") || 0),
+        owner: owner,
+        chainId: BigInt(network.chainId),
+        launchKitVersion: 200,
+        
+        // Features
+        burnable: getChecked("burnable"),
+        mintable: getChecked("mintable"),
+        ownershipEnabled: getChecked("ownership"),
+        
+        // Trading & Security
+        tradingControlEnabled: getChecked("tradingControlEnabled"),
+        tradingEnabled: getChecked("tradingEnabled"),
+        maxWalletEnabled: getChecked("maxWalletEnabled"),
+        maxWalletPercent: Number(getVal("maxWalletPercent") || 0),
+        maxTxPercent: Number(getVal("maxTxPercent") || 0),
+        
+        // Tokenomics
+        buyTaxEnabled: Number(getVal("buyTax")) > 0,
+        buyTax: Number(getVal("buyTax") || 0),
+        sellTaxEnabled: Number(getVal("sellTax")) > 0,
+        sellTax: Number(getVal("sellTax") || 0),
+        burnTaxShare: Number(getVal("burnTaxShare") || 0),
+        
+        // Wallets & Metadata
+        marketingWallet: getVal("marketingWallet") || owner,
+        developmentWallet: getVal("developmentWallet") || owner,
+        website: getVal("website"),
+        telegram: getVal("telegram"),
+        twitter: getVal("twitter"),
+        logoURI: getVal("logoURI")
+    };
 }
 
 // =====================================================
-// EVOZX BALANCE
+// ACTIONS
 // =====================================================
 
 async function getBalance() {
-
-const signer =
-getSigner();
-
-const owner =
-await signer.getAddress();
-
-const token =
-new Contract(
-CONTRACTS.EVOZX,
-EVOZX_ABI,
-signer
-);
-
-return await token.balanceOf(
-owner
-);
+    const signer = getSigner();
+    const owner = await signer.getAddress();
+    const token = new Contract(CONTRACTS.EVOZX, EVOZX_ABI, signer);
+    return await token.balanceOf(owner);
 }
 
-// =====================================================
-// APPROVE FACTORY
-// =====================================================
-
-async function approveFactory(
-amount
-) {
-
-const signer =
-getSigner();
-
-const owner =
-await signer.getAddress();
-
-const token =
-new Contract(
-CONTRACTS.EVOZX,
-EVOZX_ABI,
-signer
-);
-
-const allowance =
-await token.allowance(
-owner,
-CONTRACTS.FACTORY
-);
-
-if (
-allowance >= amount
-) {
-return;
+async function approveFactory(amount) {
+    const signer = getSigner();
+    const token = new Contract(CONTRACTS.EVOZX, EVOZX_ABI, signer);
+    const allowance = await token.allowance(await signer.getAddress(), CONTRACTS.FACTORY);
+    
+    if (allowance >= amount) return;
+    
+    const tx = await token.approve(CONTRACTS.FACTORY, amount);
+    await tx.wait();
 }
-
-const tx =
-await token.approve(
-CONTRACTS.FACTORY,
-amount
-);
-
-await tx.wait();
-}
-
-// =====================================================
-// DEPLOY
-// =====================================================
 
 async function deployToken() {
+    if (isDeploying) return;
 
-if (isDeploying) {
-return;
-}
+    try {
+        const validation = validateInput();
+        if (validation) {
+            alert(validation);
+            return;
+        }
 
-try {
+        isDeploying = true;
+        deployBtn.disabled = true;
+        deployBtn.textContent = "Preparing...";
 
-const validation =
-  validateInput();
+        const factory = await getFactoryForWrite();
+        if (!factory) {
+            alert("Wallet not connected");
+            isDeploying = false;
+            deployBtn.disabled = false;
+            return;
+        }
 
-if (validation) {
+        const config = await buildConfig();
 
-  alert(validation);
-  return;
-}
+        // Fee logic
+        deployBtn.textContent = "Calculating Fee...";
+        const deployFee = await getDeploymentFee(config);
 
-isDeploying = true;
+        // Balance Check
+        deployBtn.textContent = "Checking Balance...";
+        const balance = await getBalance();
+        if (balance < deployFee) {
+            const missing = Number(formatEther(deployFee - balance));
+            await autoTopupEVOZX(missing);
+        }
 
-continueBtn.disabled =
-  true;
+        // Approve
+        deployBtn.textContent = "Approving EVOZX...";
+        await approveFactory(deployFee);
 
-continueBtn.textContent =
-  "Preparing...";
+        // Create Token
+        deployBtn.textContent = "Deploying...";
+        const tx = await factory.createToken(config);
+        const receipt = await tx.wait();
 
-const factory =
-  await getFactoryForWrite();
+        // Success logic
+        let tokenAddress = receipt.logs.find(log => log.fragment?.name === "TokenCreated")?.args[0];
 
-if (!factory) {
+        const historyItem = {
+            token: tokenAddress,
+            name: config.name,
+            symbol: config.symbol,
+            txHash: tx.hash,
+            time: Date.now()
+        };
 
-  alert(
-    "Wallet not connected"
-  );
+        const history = JSON.parse(localStorage.getItem("myTokens") || "[]");
+        history.push(historyItem);
+        localStorage.setItem("myTokens", JSON.stringify(history));
+        localStorage.setItem("lastDeployedToken", JSON.stringify(historyItem));
 
-  return;
-}
+        window.location.href = "./success.html";
 
-// =================================
-// BUILD CONFIG
-// =================================
-
-const config =
-  await buildConfig();
-
-// =================================
-// GET REAL FEE FROM CONTRACT
-// =================================
-
-continueBtn.textContent =
-  "Calculating Fee...";
-
-const deployFee =
-  await getDeploymentFee(
-    config
-  );
-
-// =================================
-// CHECK BALANCE
-// =================================
-
-continueBtn.textContent =
-  "Checking EVOZX...";
-
-const balance =
-  await getBalance();
-
-if (
-  balance < deployFee
-) {
-
-  const missing =
-    Number(
-      formatEther(
-        deployFee - balance
-      )
-    );
-
-  await autoTopupEVOZX(
-    missing
-  );
-}
-
-// =================================
-// APPROVE
-// =================================
-
-continueBtn.textContent =
-  "Approving EVOZX...";
-
-await approveFactory(
-  deployFee
-);
-
-// =================================
-// DEPLOY TOKEN
-// =================================
-
-continueBtn.textContent =
-  "Deploying Token...";
-
-const tx =
-  await factory.createToken(
-    config
-  );
-
-const receipt =
-  await tx.wait();
-
-let tokenAddress =
-  null;
-
-for (
-  const log
-  of receipt.logs
-) {
-
-  try {
-
-    const parsed =
-      factory.interface.parseLog(
-        log
-      );
-
-    if (
-      parsed?.name ===
-      "TokenCreated"
-    ) {
-
-      tokenAddress =
-        parsed.args.token;
-
-      break;
+    } catch (error) {
+        console.error("DEPLOY ERROR:", error);
+        alert(error?.reason || error?.message || "Deploy failed");
+    } finally {
+        isDeploying = false;
+        deployBtn.disabled = false;
+        deployBtn.textContent = "Deploy Token";
     }
-
-  } catch {}
-}
-
-const signer =
-  getSigner();
-
-const owner =
-  await signer.getAddress();
-
-const historyItem = {
-
-  token:
-    tokenAddress,
-
-  name:
-    config.name,
-
-  symbol:
-    config.symbol,
-
-  supply:
-    config.supply.toString(),
-
-  creator:
-    owner,
-
-  txHash:
-    tx.hash,
-
-  time:
-    Date.now()
-
-};
-
-const history =
-  JSON.parse(
-    localStorage.getItem(
-      "myTokens"
-    ) || "[]"
-  );
-
-history.push(
-  historyItem
-);
-
-localStorage.setItem(
-  "myTokens",
-  JSON.stringify(
-    history
-  )
-);
-
-localStorage.setItem(
-  "lastDeployedToken",
-  JSON.stringify(
-    historyItem
-  )
-);
-
-window.location.href =
-  "./success.html";
-
-} catch (error) {
-
-console.error(
-  "DEPLOY ERROR:",
-  error
-);
-
-alert(
-  error?.reason ||
-  error?.message ||
-  "Deploy failed"
-);
-
-} finally {
-
-isDeploying = false;
-
-if (continueBtn) {
-
-  continueBtn.disabled =
-    false;
-
-  continueBtn.textContent =
-    "Deploy Token";
-}
-
-}
 }
 
 // =====================================================
 // INIT
 // =====================================================
-
-continueBtn?.addEventListener(
-"click",
-deployToken
-);
+deployBtn?.addEventListener("click", deployToken);
+      
