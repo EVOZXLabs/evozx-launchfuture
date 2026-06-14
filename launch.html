@@ -9,18 +9,12 @@
     <link rel="stylesheet" href="./css/launch.css">
     <style>
         .nav-logo { height: 40px; width: auto; object-fit: contain; }
-        
-        /* Layout Utama Terpusat */
         .launch-container { max-width: 700px; margin: 0 auto; padding: 20px; }
-
-        /* Styling Accordion */
         details { background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 15px; transition: 0.3s; }
         summary { padding: 15px; cursor: pointer; font-weight: 600; list-style: none; display: flex; justify-content: space-between; align-items: center; }
         summary::after { content: '▼'; font-size: 0.8rem; opacity: 0.6; }
         details[open] summary::after { content: '▲'; }
         .accordion-content { padding: 0 15px 15px 15px; }
-
-        /* Styling Summary Card */
         .summary-card { border: 1px solid var(--gold); background: rgba(255, 215, 0, 0.05); }
         .total { font-size: 1.2rem; font-weight: bold; border-top: 1px solid var(--border); margin-top: 10px; padding-top: 10px; }
     </style>
@@ -44,7 +38,7 @@
     <main class="launch-container">
         <div class="page-header" style="margin-bottom: 30px; text-align: center;">
             <h1>Token Builder</h1>
-            <p style="color: var(--muted);">Configure your smart contract parameters below to deploy on EVOZ Mainnet.</p>
+            <p style="color: var(--muted);">Configure your smart contract parameters to deploy on EVOZ Mainnet.</p>
         </div>
 
         <div class="card">
@@ -82,17 +76,17 @@
             <div class="accordion-content">
                 <div class="checkbox-grid" style="margin-bottom: 20px;">
                     <label class="checkbox-item"><input type="checkbox" id="tradingControlEnabled"> Trading Control</label>
-                    <label class="checkbox-item"><input type="checkbox" id="tradingEnabled"> Enable Trading</label>
                     <label class="checkbox-item"><input type="checkbox" id="maxWalletEnabled"> Max Wallet</label>
+                    <label class="checkbox-item"><input type="checkbox" id="maxTxEnabled"> Max Tx</label>
                 </div>
                 <div class="input-grid">
                     <div class="form-group">
                         <label>Max Wallet %</label>
-                        <input id="maxWalletPercent" type="number" placeholder="5">
+                        <input id="maxWalletInput" type="number" placeholder="5">
                     </div>
                     <div class="form-group">
                         <label>Max Tx %</label>
-                        <input id="maxTxPercent" type="number" placeholder="2">
+                        <input id="maxTxInput" type="number" placeholder="2">
                     </div>
                 </div>
             </div>
@@ -109,18 +103,6 @@
                     <div class="form-group">
                         <label>Sell Tax %</label>
                         <input id="sellTax" type="number" placeholder="0">
-                    </div>
-                    <div class="form-group full-width">
-                        <label>Burn Tax Share %</label>
-                        <input id="burnTaxShare" type="number" placeholder="50">
-                    </div>
-                    <div class="form-group full-width">
-                        <label>Marketing Wallet</label>
-                        <input id="marketingWallet" type="text" placeholder="0x...">
-                    </div>
-                    <div class="form-group full-width">
-                        <label>Dev Wallet</label>
-                        <input id="developmentWallet" type="text" placeholder="0x...">
                     </div>
                 </div>
             </div>
@@ -155,12 +137,11 @@
             <div class="summary-list">
                 <div class="summary-row"><span>Factory</span><span class="val">Ultimate</span></div>
                 <div class="summary-row"><span>Fee Token</span><span class="val">EVOZX</span></div>
-                <div class="summary-row"><span>Base Fee</span><span id="baseFee" class="val">0</span></div>
-                <div class="summary-row"><span>Feature Fee</span><span id="featureFee" class="val">0</span></div>
-                <div class="summary-row total"><span>Total Fee</span><span id="totalFee" class="val">0</span></div>
+                <div class="summary-row"><span>Base Fee</span><span id="baseFee" class="val">0 EVOZX</span></div>
+                <div class="summary-row"><span>Feature Fee</span><span id="featureFee" class="val">0 EVOZX</span></div>
+                <div class="summary-row total"><span>Total Fee</span><span id="totalFee" class="val">0 EVOZX</span></div>
                 <div class="summary-row"><span>Burn (30%)</span><span id="burnAmount" class="val">-</span></div>
                 <div class="summary-row"><span>Treasury (70%)</span><span id="treasuryAmount" class="val">-</span></div>
-                <div class="summary-row"><span>Status</span><span id="deployStatus" class="val" style="color: var(--gold);">Ready</span></div>
             </div>
         </div>
 
@@ -177,6 +158,5 @@
 
     <script type="module" src="./js/app.js"></script>
     <script type="module" src="./js/launch.js"></script>
-    <script type="module" src="./js/deploy.js"></script>
 </body>
 </html>
