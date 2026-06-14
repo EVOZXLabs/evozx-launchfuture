@@ -8,6 +8,13 @@
     <link rel="stylesheet" href="./css/app.css">
     <style>
         .nav-logo { height: 40px; width: auto; object-fit: contain; }
+        
+        /* Layout Utama Terpusat */
+        .page-container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+        
+        /* Card Styling */
+        .token-card { background: rgba(0,0,0,0.2); border: 1px solid var(--border); padding: 20px; border-radius: 8px; transition: 0.3s; }
+        .token-card:hover { border-color: var(--gold); }
     </style>
 </head>
 <body>
@@ -16,7 +23,7 @@
         <nav class="container navbar">
             <div class="brand">
                 <img src="./images/logo.png" alt="EVOZX Logo" class="nav-logo">
-                <span>EVOZX Launch Future</span>
+                <span style="color: var(--gold); font-weight: bold; margin-left: 10px;">EVOZX Launch Future</span>
             </div>
             <div class="nav-links">
                 <a href="./index.html">Home</a>
@@ -27,7 +34,7 @@
         </nav>
     </header>
 
-    <main class="container" style="padding: 40px 20px;">
+    <main class="page-container">
         
         <div class="page-header" style="text-align: center; margin-bottom: 40px;">
             <h1>My Tokens</h1>
@@ -35,14 +42,14 @@
         </div>
 
         <div id="tokenList" class="grid" style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));">
-            <div class="card" style="grid-column: 1 / -1; text-align: center; padding: 60px;">
+            <div class="card" style="grid-column: 1 / -1; text-align: center; padding: 60px; border: 1px dashed var(--border);">
                 <p style="color: var(--muted);">Connect your wallet to view your deployed tokens.</p>
             </div>
         </div>
 
     </main>
 
-    <footer>
+    <footer style="margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--border); text-align: center;">
         <div class="container footer-content">
             <div class="footer-brand">EVOZX Launch Future</div>
             <span class="footer-copyright">© 2026 EVOZXLabs. All rights reserved.</span>
