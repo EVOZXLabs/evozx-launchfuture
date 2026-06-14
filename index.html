@@ -7,13 +7,28 @@
     <meta name="description" content="Launch custom tokens on EVOZ without writing smart contract code.">
     <link rel="stylesheet" href="./css/app.css">
     <style>
-        /* Styling tambahan untuk logo dan layout */
         .nav-logo { height: 40px; width: auto; object-fit: contain; }
-        .hero-actions { display: flex; gap: 15px; margin-top: 20px; justify-content: center; }
         
-        /* Memastikan style accordion konsisten */
-        details { padding: 10px; }
-        summary { cursor: pointer; font-weight: 600; font-size: 1.2rem; margin-bottom: 10px; }
+        /* Gradient Gold Styling */
+        .gradient-text {
+            background: linear-gradient(180deg, #FFD700 0%, #B8860B 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+
+        /* Styling Accordion */
+        details { background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 15px; transition: 0.3s; }
+        summary { padding: 15px; cursor: pointer; font-weight: 600; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+        summary::after { content: '▼'; font-size: 0.8rem; opacity: 0.6; }
+        details[open] summary::after { content: '▲'; }
+        
+        .hero-actions { display: flex; gap: 15px; margin-top: 20px; justify-content: center; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; padding: 0 15px 15px 15px; }
+        .info-card { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; text-align: center; }
     </style>
 </head>
 <body>
@@ -22,7 +37,7 @@
         <nav class="container navbar">
             <div class="brand">
                 <img src="./images/logo.png" alt="EVOZX Logo" class="nav-logo">
-                <span>EVOZX Launch Future</span>
+                <span style="color: var(--gold); font-weight: bold; margin-left: 10px;">EVOZX Launch Future</span>
             </div>
             <div class="nav-links">
                 <a href="#network">Network</a>
@@ -34,8 +49,11 @@
     </header>
 
     <main>
-        <section class="hero container">
-            <h1>Launch Your Token of the Future</h1>
+        <section class="hero container" style="text-align: center; padding: 80px 0;">
+            <h1 class="gradient-text" style="font-size: 3rem;">
+                Launch Your<br>
+                Token of the Future
+            </h1>
             <p>Create custom tokens directly on EVOZ without writing Solidity code. Simple. Fast. On-chain.</p>
             <div class="hero-actions">
                 <a href="./launch.html" class="btn btn-gold">Launch Token</a>
@@ -43,11 +61,11 @@
             </div>
         </section>
 
-        <section id="network" class="container" style="padding-top: 40px; margin-bottom: 40px;">
-            <div class="card">
+        <section id="network" class="container" style="padding-bottom: 20px;">
+            <div class="card" style="padding: 0;">
                 <details>
-                    <summary>Network Information</summary>
-                    <div class="grid" style="margin-top: 20px;">
+                    <summary style="padding: 20px;">Network Information</summary>
+                    <div class="grid">
                         <div class="info-card"><h3>Network</h3><p>EVOZ Mainnet</p></div>
                         <div class="info-card"><h3>Chain ID</h3><p>805</p></div>
                         <div class="info-card"><h3>Currency</h3><p>EVOZ</p></div>
@@ -58,10 +76,10 @@
         </section>
 
         <section id="contracts" class="container" style="padding-bottom: 40px;">
-            <div class="card">
+            <div class="card" style="padding: 0;">
                 <details>
-                    <summary>View Core Contracts</summary>
-                    <div style="margin-top: 20px; display: grid; gap: 15px;">
+                    <summary style="padding: 20px;">View Core Contracts</summary>
+                    <div style="padding: 0 20px 20px 20px; display: grid; gap: 15px;">
                         <div class="card" style="background: rgba(255,255,255,0.03);">
                             <h3>Factory Contract</h3>
                             <p style="font-family: monospace; font-size: 0.9rem; margin: 5px 0;">0xBA40...e64bB</p>
@@ -89,7 +107,7 @@
         </section>
     </main>
 
-    <footer>
+    <footer style="margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--border); text-align: center;">
         <div class="container footer-content">
             <div class="footer-brand">EVOZX Launch Future</div>
             <span class="footer-copyright">© 2026 EVOZXLabs. All rights reserved.</span>
