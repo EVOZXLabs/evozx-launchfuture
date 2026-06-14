@@ -10,18 +10,19 @@
     <style>
         .nav-logo { height: 40px; width: auto; object-fit: contain; }
         
+        /* Layout Utama Terpusat */
+        .launch-container { max-width: 700px; margin: 0 auto; padding: 20px; }
+
         /* Styling Accordion */
-        details { background: rgba(0,0,0,0.2); border-radius: 8px; margin-bottom: 10px; transition: 0.3s; }
+        details { background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 15px; transition: 0.3s; }
         summary { padding: 15px; cursor: pointer; font-weight: 600; list-style: none; display: flex; justify-content: space-between; align-items: center; }
         summary::after { content: '▼'; font-size: 0.8rem; opacity: 0.6; }
         details[open] summary::after { content: '▲'; }
         .accordion-content { padding: 0 15px 15px 15px; }
 
-        @media (max-width: 900px) {
-            .launch-layout { display: flex; flex-direction: column; }
-            .form-column { order: 1; }
-            .summary-column { order: 2; margin-top: 20px; }
-        }
+        /* Styling Summary Card */
+        .summary-card { border: 1px solid var(--gold); background: rgba(255, 215, 0, 0.05); }
+        .total { font-size: 1.2rem; font-weight: bold; border-top: 1px solid var(--border); margin-top: 10px; padding-top: 10px; }
     </style>
 </head>
 <body>
@@ -30,7 +31,7 @@
         <nav class="container navbar">
             <div class="brand">
                 <img src="./images/logo.png" alt="EVOZX Logo" class="nav-logo">
-                <span>EVOZX Launch Future</span>
+                <span style="color: var(--gold); font-weight: bold; margin-left: 10px;">EVOZX Launch Future</span>
             </div>
             <div class="nav-links">
                 <a href="./index.html">Home</a>
@@ -40,146 +41,131 @@
         </nav>
     </header>
 
-    <main class="container">
-        <section class="launch-layout">
-            
-            <div class="form-column">
-                <div class="page-header" style="margin-bottom: 30px;">
-                    <h1>Token Builder</h1>
-                    <p style="color: var(--muted);">Configure your smart contract parameters below to deploy on EVOZ Mainnet.</p>
-                </div>
+    <main class="launch-container">
+        <div class="page-header" style="margin-bottom: 30px; text-align: center;">
+            <h1>Token Builder</h1>
+            <p style="color: var(--muted);">Configure your smart contract parameters below to deploy on EVOZ Mainnet.</p>
+        </div>
 
-                <div class="card">
-                    <h3 class="card-title">Basic Information</h3>
-                    <div class="input-grid">
-                        <div class="form-group">
-                            <label>Token Name</label>
-                            <input id="tokenName" type="text" placeholder="e.g. My Token">
-                        </div>
-                        <div class="form-group">
-                            <label>Token Symbol</label>
-                            <input id="symbolInput" type="text" placeholder="e.g. MYTK">
-                            <div id="symbolStatus" class="symbol-status"></div>
-                        </div>
-                        <div class="form-group full-width">
-                            <label>Total Supply</label>
-                            <input id="tokenSupply" type="number" placeholder="1000000">
-                        </div>
-                    </div>
+        <div class="card">
+            <h3 class="card-title">Basic Information</h3>
+            <div class="input-grid">
+                <div class="form-group">
+                    <label>Token Name</label>
+                    <input id="tokenName" type="text" placeholder="e.g. My Token">
                 </div>
-
-                <div class="card" style="padding: 0;">
-                    <details open>
-                        <summary class="card-title">Core Features</summary>
-                        <div class="accordion-content">
-                            <div class="checkbox-grid">
-                                <label class="checkbox-item"><input type="checkbox" id="burnable"> Burnable</label>
-                                <label class="checkbox-item"><input type="checkbox" id="mintable"> Mintable</label>
-                                <label class="checkbox-item"><input type="checkbox" id="ownership"> Ownership</label>
-                            </div>
-                        </div>
-                    </details>
+                <div class="form-group">
+                    <label>Token Symbol</label>
+                    <input id="symbolInput" type="text" placeholder="e.g. MYTK">
+                    <div id="symbolStatus" class="symbol-status"></div>
                 </div>
-
-                <div class="card" style="padding: 0;">
-                    <details>
-                        <summary class="card-title">Trading & Security</summary>
-                        <div class="accordion-content">
-                            <div class="checkbox-grid" style="margin-bottom: 20px;">
-                                <label class="checkbox-item"><input type="checkbox" id="tradingControlEnabled"> Trading Control</label>
-                                <label class="checkbox-item"><input type="checkbox" id="tradingEnabled"> Enable Trading</label>
-                                <label class="checkbox-item"><input type="checkbox" id="maxWalletEnabled"> Max Wallet</label>
-                            </div>
-                            <div class="input-grid">
-                                <div class="form-group">
-                                    <label>Max Wallet %</label>
-                                    <input id="maxWalletPercent" type="number" placeholder="5">
-                                </div>
-                                <div class="form-group">
-                                    <label>Max Tx %</label>
-                                    <input id="maxTxPercent" type="number" placeholder="2">
-                                </div>
-                            </div>
-                        </div>
-                    </details>
+                <div class="form-group full-width">
+                    <label>Total Supply</label>
+                    <input id="tokenSupply" type="number" placeholder="1000000">
                 </div>
-
-                <div class="card" style="padding: 0;">
-                    <details>
-                        <summary class="card-title">Tokenomics & Tax</summary>
-                        <div class="accordion-content">
-                            <div class="input-grid">
-                                <div class="form-group">
-                                    <label>Buy Tax %</label>
-                                    <input id="buyTax" type="number" placeholder="0">
-                                </div>
-                                <div class="form-group">
-                                    <label>Sell Tax %</label>
-                                    <input id="sellTax" type="number" placeholder="0">
-                                </div>
-                                <div class="form-group full-width">
-                                    <label>Burn Tax Share %</label>
-                                    <input id="burnTaxShare" type="number" placeholder="50">
-                                </div>
-                                <div class="form-group full-width">
-                                    <label>Marketing Wallet</label>
-                                    <input id="marketingWallet" type="text" placeholder="0x...">
-                                </div>
-                                <div class="form-group full-width">
-                                    <label>Dev Wallet</label>
-                                    <input id="developmentWallet" type="text" placeholder="0x...">
-                                </div>
-                            </div>
-                        </div>
-                    </details>
-                </div>
-
-                <div class="card" style="padding: 0;">
-                    <details>
-                        <summary class="card-title">Project Metadata</summary>
-                        <div class="accordion-content">
-                            <div class="form-group full-width">
-                                <label>Website</label>
-                                <input id="website" type="text" placeholder="https://...">
-                            </div>
-                            <div class="input-grid">
-                                <div class="form-group">
-                                    <label>Telegram</label>
-                                    <input id="telegram" type="text" placeholder="URL">
-                                </div>
-                                <div class="form-group">
-                                    <label>Twitter/X</label>
-                                    <input id="twitter" type="text" placeholder="URL">
-                                </div>
-                            </div>
-                            <div class="form-group full-width">
-                                <label>Logo URI</label>
-                                <input id="logoURI" type="text" placeholder="https://...">
-                            </div>
-                        </div>
-                    </details>
-                </div>
-
-                <button id="deployBtn" class="btn btn-gold btn-large" style="margin-top: 20px;">Deploy Token</button>
             </div>
+        </div>
 
-            <div class="summary-column">
-                <div class="card summary-card">
-                    <h2 class="card-title">Deployment Summary</h2>
-                    <div class="summary-list">
-                        <div class="summary-row"><span>Factory</span><span class="val">Ultimate</span></div>
-                        <div class="summary-row"><span>Fee Token</span><span class="val">EVOZX</span></div>
-                        <div class="summary-row"><span>Base Fee</span><span id="baseFee" class="val">0</span></div>
-                        <div class="summary-row"><span>Feature Fee</span><span id="featureFee" class="val">0</span></div>
-                        <div class="summary-row total"><span>Total Fee</span><span id="totalFee" class="val">0</span></div>
-                        <div class="summary-row"><span>Burn (30%)</span><span id="burnAmount" class="val">-</span></div>
-                        <div class="summary-row"><span>Treasury (70%)</span><span id="treasuryAmount" class="val">-</span></div>
-                        <div class="summary-row"><span>Status</span><span id="deployStatus" class="val" style="color: var(--gold);">Ready</span></div>
+        <details open>
+            <summary class="card-title">Core Features</summary>
+            <div class="accordion-content">
+                <div class="checkbox-grid">
+                    <label class="checkbox-item"><input type="checkbox" id="burnable"> Burnable</label>
+                    <label class="checkbox-item"><input type="checkbox" id="mintable"> Mintable</label>
+                    <label class="checkbox-item"><input type="checkbox" id="ownership"> Ownership</label>
+                </div>
+            </div>
+        </details>
+
+        <details>
+            <summary class="card-title">Trading & Security</summary>
+            <div class="accordion-content">
+                <div class="checkbox-grid" style="margin-bottom: 20px;">
+                    <label class="checkbox-item"><input type="checkbox" id="tradingControlEnabled"> Trading Control</label>
+                    <label class="checkbox-item"><input type="checkbox" id="tradingEnabled"> Enable Trading</label>
+                    <label class="checkbox-item"><input type="checkbox" id="maxWalletEnabled"> Max Wallet</label>
+                </div>
+                <div class="input-grid">
+                    <div class="form-group">
+                        <label>Max Wallet %</label>
+                        <input id="maxWalletPercent" type="number" placeholder="5">
+                    </div>
+                    <div class="form-group">
+                        <label>Max Tx %</label>
+                        <input id="maxTxPercent" type="number" placeholder="2">
                     </div>
                 </div>
             </div>
+        </details>
 
-        </section>
+        <details>
+            <summary class="card-title">Tokenomics & Tax</summary>
+            <div class="accordion-content">
+                <div class="input-grid">
+                    <div class="form-group">
+                        <label>Buy Tax %</label>
+                        <input id="buyTax" type="number" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Sell Tax %</label>
+                        <input id="sellTax" type="number" placeholder="0">
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Burn Tax Share %</label>
+                        <input id="burnTaxShare" type="number" placeholder="50">
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Marketing Wallet</label>
+                        <input id="marketingWallet" type="text" placeholder="0x...">
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Dev Wallet</label>
+                        <input id="developmentWallet" type="text" placeholder="0x...">
+                    </div>
+                </div>
+            </div>
+        </details>
+
+        <details>
+            <summary class="card-title">Project Metadata</summary>
+            <div class="accordion-content">
+                <div class="form-group full-width">
+                    <label>Website</label>
+                    <input id="website" type="text" placeholder="https://...">
+                </div>
+                <div class="input-grid">
+                    <div class="form-group">
+                        <label>Telegram</label>
+                        <input id="telegram" type="text" placeholder="URL">
+                    </div>
+                    <div class="form-group">
+                        <label>Twitter/X</label>
+                        <input id="twitter" type="text" placeholder="URL">
+                    </div>
+                </div>
+                <div class="form-group full-width">
+                    <label>Logo URI</label>
+                    <input id="logoURI" type="text" placeholder="https://...">
+                </div>
+            </div>
+        </details>
+
+        <div class="card summary-card" style="margin-top: 20px;">
+            <h2 class="card-title" style="text-align: center;">Deployment Summary</h2>
+            <div class="summary-list">
+                <div class="summary-row"><span>Factory</span><span class="val">Ultimate</span></div>
+                <div class="summary-row"><span>Fee Token</span><span class="val">EVOZX</span></div>
+                <div class="summary-row"><span>Base Fee</span><span id="baseFee" class="val">0</span></div>
+                <div class="summary-row"><span>Feature Fee</span><span id="featureFee" class="val">0</span></div>
+                <div class="summary-row total"><span>Total Fee</span><span id="totalFee" class="val">0</span></div>
+                <div class="summary-row"><span>Burn (30%)</span><span id="burnAmount" class="val">-</span></div>
+                <div class="summary-row"><span>Treasury (70%)</span><span id="treasuryAmount" class="val">-</span></div>
+                <div class="summary-row"><span>Status</span><span id="deployStatus" class="val" style="color: var(--gold);">Ready</span></div>
+            </div>
+        </div>
+
+        <button id="deployBtn" class="btn btn-gold btn-large" style="width: 100%; margin-top: 20px;">Deploy Token</button>
+
     </main>
 
     <footer style="margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--border); text-align: center;">
@@ -193,5 +179,4 @@
     <script type="module" src="./js/launch.js"></script>
     <script type="module" src="./js/deploy.js"></script>
 </body>
-    </html>
-                                                                   
+</html>
