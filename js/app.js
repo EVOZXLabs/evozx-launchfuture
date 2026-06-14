@@ -7,21 +7,34 @@ const connectBtn = document.getElementById("connectBtn");
 const launchBtn = document.getElementById("launchBtn");
 const addNetworkBtn = document.getElementById("addNetworkBtn");
 
-// Helper untuk memperbarui teks tombol sesuai status koneksi
+// =====================================================
+// UI LOGIC
+// =====================================================
 function updateConnectUI() {
+    if (!connectBtn) return;
+    
     const address = getAccount();
-    if (connectBtn) {
-        if (address) {
-            // Menampilkan alamat singkat jika terhubung
-            connectBtn.textContent = `${address.slice(0, 6)}...${address.slice(-4)}`;
-        } else {
-            connectBtn.textContent = "Connect Wallet";
-        }
+    if (address) {
+        connectBtn.textContent = `${address.slice(0, 6)}...${address.slice(-4)}`;
+    } else {
+        connectBtn.textContent = "Connect Wallet";
     }
 }
 
+// Event Listeners untuk perubahan dari Wallet (MetaMask)
+if (window.ethereum) {
+    window.ethereum.on('accountsChanged', () => {
+        updateConnectUI();
+        window.location.reload(); // Refresh halaman agar data sinkron
+    });
+    
+    window.ethereum.on('chainChanged', () => {
+        window.location.reload();
+    });
+}
+
 // =====================================================
-// EVENTS
+// HANDLERS
 // =====================================================
 
 // Connect/Disconnect Logic
@@ -36,8 +49,12 @@ connectBtn?.addEventListener("click", async () => {
         return;
     }
 
-    await connectWallet();
-    updateConnectUI();
+    try {
+        await connectWallet();
+        updateConnectUI();
+    } catch (err) {
+        console.error("Connection failed:", err);
+    }
 });
 
 // Navigation Logic
@@ -56,7 +73,7 @@ addNetworkBtn?.addEventListener("click", async () => {
         await window.ethereum.request({
             method: "wallet_addEthereumChain",
             params: [{
-                chainId: "0x325", // Sesuaikan dengan Chain ID EVOZ
+                chainId: "0x325", // 805 decimal
                 chainName: "EVOZ Mainnet",
                 nativeCurrency: {
                     name: "EVOZ",
@@ -67,16 +84,16 @@ addNetworkBtn?.addEventListener("click", async () => {
                 blockExplorerUrls: ["https://evozscan.com"]
             }]
         });
-        alert("Network added/switched successfully!");
+        alert("Network added or switched successfully!");
     } catch (error) {
         console.error("Failed to add network:", error);
+        alert("Failed to add network. Please try again.");
     }
 });
 
 // =====================================================
 // INIT
 // =====================================================
-// Jalankan saat halaman dimuat untuk mengecek status wallet
 window.addEventListener("DOMContentLoaded", () => {
     updateConnectUI();
 });
