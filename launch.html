@@ -10,6 +10,21 @@
     <style>
         /* Styling logo untuk navbar */
         .nav-logo { height: 40px; width: auto; object-fit: contain; }
+
+        /* FIX: Memastikan Form selalu di atas Summary pada layar mobile */
+        @media (max-width: 900px) {
+            .launch-layout {
+                display: flex;
+                flex-direction: column;
+            }
+            .form-column {
+                order: 1;
+            }
+            .summary-column {
+                order: 2;
+                margin-top: 20px;
+            }
+        }
     </style>
 </head>
 <body>
