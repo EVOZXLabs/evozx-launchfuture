@@ -727,3 +727,207 @@ export async function approveFactory(config) {
 
 }
 
+// ======================================================
+// DEPLOY TOKEN
+// ======================================================
+
+export async function deployToken(formData) {
+
+    // ------------------------------------------
+    // Wallet
+    // ------------------------------------------
+
+    const account =
+        getAccount();
+
+    if (!account) {
+
+        throw new Error(
+            "Wallet not connected."
+        );
+
+    }
+
+    // ------------------------------------------
+    // Validation
+    // ------------------------------------------
+
+    validateInput(
+        formData
+    );
+
+    // ------------------------------------------
+    // Config
+    // ------------------------------------------
+
+    const config =
+        buildConfig(
+            formData
+        );
+
+    // ------------------------------------------
+    // Symbol
+    // ------------------------------------------
+
+    const exists =
+        await symbolExists(
+            config.symbol
+        );
+
+    if (exists) {
+
+        throw new Error(
+            "Symbol already exists."
+        );
+
+    }
+
+    // ------------------------------------------
+    // Fee
+    // ------------------------------------------
+
+    const fee =
+        await getDeploymentFee(
+            config
+        );
+
+    // ------------------------------------------
+    // Balance
+    // ------------------------------------------
+
+    const balance =
+        await getEVOZXBalance(
+            account
+        );
+
+    // ------------------------------------------
+    // Auto Buy
+    // ------------------------------------------
+
+    if (
+
+        balance < fee
+
+    ) {
+
+        await autoTopupEVOZX(
+            fee
+        );
+
+    }
+
+    // ------------------------------------------
+    // Approval
+    // ------------------------------------------
+
+    await approveFactory(
+        config
+    );
+
+    // ------------------------------------------
+    // Deploy
+    // ------------------------------------------
+
+    const result =
+        await createToken(
+            config
+        );
+
+    // ------------------------------------------
+    // Save Result
+    // ------------------------------------------
+
+    localStorage.setItem(
+
+        "launchfuture:lastDeployment",
+
+        JSON.stringify({
+
+            hash:
+                result.hash,
+
+            token:
+                result.token,
+
+            creator:
+                result.creator,
+
+            name:
+                result.name,
+
+            symbol:
+                result.symbol,
+
+            supply:
+                result.supply.toString(),
+
+            chainId:
+                result.chainId.toString(),
+
+            deployedAt:
+                Date.now()
+
+        })
+
+    );
+
+    // ------------------------------------------
+    // Dashboard History
+    // ------------------------------------------
+
+    const history =
+
+        JSON.parse(
+
+            localStorage.getItem(
+
+                "launchfuture:history"
+
+            ) ?? "[]"
+
+        );
+
+    history.unshift({
+
+        hash:
+            result.hash,
+
+        token:
+            result.token,
+
+        creator:
+            result.creator,
+
+        name:
+            result.name,
+
+        symbol:
+            result.symbol,
+
+        supply:
+            result.supply.toString(),
+
+        chainId:
+            result.chainId.toString(),
+
+        deployedAt:
+            Date.now()
+
+    });
+
+    localStorage.setItem(
+
+        "launchfuture:history",
+
+        JSON.stringify(history)
+
+    );
+
+    // ------------------------------------------
+    // Redirect
+    // ------------------------------------------
+
+    window.location.href =
+        `success.html?token=${result.token}`;
+
+}
