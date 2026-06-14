@@ -38,7 +38,7 @@ export const LINKS = {
 // ======================================================
 export const APP = {
   NAME: "EVOZX Launch Future",
-  PWERED by: "EVOZXLabs"
+  POWERED_BY: "EVOZXLabs" // Syntax error diperbaiki di sini
 };
 
 // ======================================================
