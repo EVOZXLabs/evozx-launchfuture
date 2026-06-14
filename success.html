@@ -6,14 +6,23 @@
     <title>Deployment Success | EVOZX Launch Future</title>
     <link rel="stylesheet" href="./css/app.css">
     <link rel="stylesheet" href="./css/launch.css">
+    <style>
+        .nav-logo { height: 40px; width: auto; object-fit: contain; }
+        
+        /* Layout Utama Terpusat */
+        .launch-container { max-width: 700px; margin: 0 auto; padding: 60px 20px; }
+        
+        /* Styling tambahan agar card terlihat premium */
+        .success-card { border: 1px solid var(--gold); background: rgba(255, 215, 0, 0.03); padding: 30px; border-radius: 8px; }
+    </style>
 </head>
 <body>
 
     <header>
         <nav class="container navbar">
             <div class="brand">
-                <div class="brand-dot"></div>
-                <span>EVOZX Launch Future</span>
+                <img src="./images/logo.png" alt="EVOZX Logo" class="nav-logo">
+                <span style="color: var(--gold); font-weight: bold; margin-left: 10px;">EVOZX Launch Future</span>
             </div>
             <div class="nav-links">
                 <a href="./index.html">Home</a>
@@ -23,12 +32,12 @@
         </nav>
     </header>
 
-    <main class="container" style="padding: 60px 20px;">
-        <section class="wizard-card" style="max-width: 700px; margin: auto;">
+    <main class="launch-container">
+        <section class="success-card">
             
             <div class="page-header" style="text-align: center; margin-bottom: 30px;">
-                <h1 style="font-size: 2rem;">🎉 Token Deployed Successfully</h1>
-                <p style="color: var(--muted);">Your token has been created and recorded on EVOZ Mainnet.</p>
+                <h1 style="font-size: 2rem; color: var(--gold);">🎉 Token Deployed</h1>
+                <p style="color: var(--muted);">Your token has been successfully created on EVOZ Mainnet.</p>
             </div>
 
             <div class="card">
@@ -52,7 +61,7 @@
             </div>
 
             <div style="margin-top: 40px; display: flex; gap: 15px; justify-content: center;">
-                <a href="./launch.html" class="btn btn-gold">Launch Another Token</a>
+                <a href="./launch.html" class="btn btn-gold">Launch Another</a>
                 <a href="./index.html" class="btn btn-dark">Back to Home</a>
             </div>
 
