@@ -3,11 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Launch Token | EVOZX Launch Future</title>
+    <title>Token Builder | EVOZX Launch Future</title>
     <link rel="stylesheet" href="./css/app.css">
     <link rel="stylesheet" href="./css/launch.css">
 </head>
 <body>
+    <div class="bg-blur blur-1"></div>
+    <div class="bg-blur blur-2"></div>
+
     <header>
         <nav class="container navbar">
             <div class="brand">
@@ -26,9 +29,9 @@
         <section class="launch-layout">
             
             <div class="form-column">
-                <div class="page-header">
+                <div class="page-header" style="margin-bottom: 30px;">
                     <h1>Token Builder</h1>
-                    <p>Configure your smart contract parameters below.</p>
+                    <p style="color: var(--muted);">Configure your smart contract parameters below to deploy on EVOZ Mainnet.</p>
                 </div>
 
                 <div class="card">
@@ -61,14 +64,20 @@
 
                 <div class="card">
                     <h3 class="card-title">Trading & Security</h3>
-                    <div class="checkbox-list">
-                        <label><input type="checkbox" id="tradingControlEnabled"> Enable Trading Control</label>
-                        <label><input type="checkbox" id="tradingEnabled"> Trading Enabled at Launch</label>
-                        <label><input type="checkbox" id="maxWalletEnabled"> Enable Max Wallet</label>
+                    <div class="checkbox-list" style="margin-bottom: 20px; display: grid; gap: 10px;">
+                        <label class="checkbox-item"><input type="checkbox" id="tradingControlEnabled"> Enable Trading Control</label>
+                        <label class="checkbox-item"><input type="checkbox" id="tradingEnabled"> Trading Enabled at Launch</label>
+                        <label class="checkbox-item"><input type="checkbox" id="maxWalletEnabled"> Enable Max Wallet</label>
                     </div>
-                    <div class="input-row">
-                        <input id="maxWalletPercent" type="number" placeholder="Max Wallet % (e.g. 5)">
-                        <input id="maxTxPercent" type="number" placeholder="Max Tx % (e.g. 2)">
+                    <div class="input-grid">
+                        <div class="form-group">
+                            <label>Max Wallet %</label>
+                            <input id="maxWalletPercent" type="number" placeholder="e.g. 5">
+                        </div>
+                        <div class="form-group">
+                            <label>Max Tx %</label>
+                            <input id="maxTxPercent" type="number" placeholder="e.g. 2">
+                        </div>
                     </div>
                 </div>
 
@@ -105,8 +114,14 @@
                         <input id="website" type="text" placeholder="https://">
                     </div>
                     <div class="input-grid">
-                        <input id="telegram" type="text" placeholder="Telegram URL">
-                        <input id="twitter" type="text" placeholder="Twitter/X URL">
+                        <div class="form-group">
+                            <label>Telegram</label>
+                            <input id="telegram" type="text" placeholder="URL">
+                        </div>
+                        <div class="form-group">
+                            <label>Twitter/X</label>
+                            <input id="twitter" type="text" placeholder="URL">
+                        </div>
                     </div>
                     <div class="form-group full-width">
                         <label>Logo URI</label>
@@ -123,15 +138,15 @@
                     <div class="summary-list">
                         <div class="summary-row"><span>Factory</span><span class="val">Ultimate</span></div>
                         <div class="summary-row"><span>Fee Token</span><span class="val">EVOZX</span></div>
-                        <hr>
+                        <hr style="border: 0; border-top: 1px solid var(--border); margin: 10px 0;">
                         <div class="summary-row"><span>Base Fee</span><span id="baseFee" class="val">0</span></div>
                         <div class="summary-row"><span>Feature Fee</span><span id="featureFee" class="val">0</span></div>
                         <div class="summary-row total"><span>Total Fee</span><span id="totalFee" class="val">0</span></div>
-                        <hr>
+                        <hr style="border: 0; border-top: 1px solid var(--border); margin: 10px 0;">
                         <div class="summary-row"><span>Burn (30%)</span><span id="burnAmount" class="val">-</span></div>
                         <div class="summary-row"><span>Treasury (70%)</span><span id="treasuryAmount" class="val">-</span></div>
-                        <hr>
-                        <div class="summary-row"><span>Status</span><span id="deployStatus" class="val highlight">Ready</span></div>
+                        <hr style="border: 0; border-top: 1px solid var(--border); margin: 10px 0;">
+                        <div class="summary-row"><span>Status</span><span id="deployStatus" class="val" style="color: var(--gold);">Ready</span></div>
                     </div>
                 </div>
             </div>
@@ -143,5 +158,5 @@
     <script type="module" src="./js/launch.js"></script>
     <script type="module" src="./js/deploy.js"></script>
 </body>
-                                                                                                                         </html>
-                                                                                                                         
+    </html>
+    
