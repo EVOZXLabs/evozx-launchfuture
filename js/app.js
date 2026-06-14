@@ -21,26 +21,18 @@ function updateConnectUI() {
     }
 }
 
-// Event Listeners untuk perubahan dari Wallet (MetaMask)
+// Auto-sync jika user ganti akun/chain
 if (window.ethereum) {
-    window.ethereum.on('accountsChanged', () => {
-        updateConnectUI();
-        window.location.reload(); // Refresh halaman agar data sinkron
-    });
-    
-    window.ethereum.on('chainChanged', () => {
-        window.location.reload();
-    });
+    window.ethereum.on('accountsChanged', () => window.location.reload());
+    window.ethereum.on('chainChanged', () => window.location.reload());
 }
 
 // =====================================================
 // HANDLERS
 // =====================================================
 
-// Connect/Disconnect Logic
 connectBtn?.addEventListener("click", async () => {
     const connected = getAccount();
-
     if (connected) {
         if (confirm("Disconnect wallet?")) {
             disconnectWallet();
@@ -48,52 +40,30 @@ connectBtn?.addEventListener("click", async () => {
         }
         return;
     }
-
-    try {
-        await connectWallet();
-        updateConnectUI();
-    } catch (err) {
-        console.error("Connection failed:", err);
-    }
+    await connectWallet();
+    updateConnectUI();
 });
 
-// Navigation Logic
 launchBtn?.addEventListener("click", () => {
     window.location.href = "./launch.html";
 });
 
-// Add Network Logic
 addNetworkBtn?.addEventListener("click", async () => {
-    if (!window.ethereum) {
-        alert("Wallet not detected. Please install MetaMask/TrustWallet.");
-        return;
-    }
-
+    if (!window.ethereum) return alert("Wallet not detected.");
     try {
         await window.ethereum.request({
             method: "wallet_addEthereumChain",
             params: [{
-                chainId: "0x325", // 805 decimal
+                chainId: "0x325",
                 chainName: "EVOZ Mainnet",
-                nativeCurrency: {
-                    name: "EVOZ",
-                    symbol: "EVOZ",
-                    decimals: 18
-                },
+                nativeCurrency: { name: "EVOZ", symbol: "EVOZ", decimals: 18 },
                 rpcUrls: ["https://rpc.evozscan.com"],
                 blockExplorerUrls: ["https://evozscan.com"]
             }]
         });
-        alert("Network added or switched successfully!");
     } catch (error) {
-        console.error("Failed to add network:", error);
-        alert("Failed to add network. Please try again.");
+        console.error(error);
     }
 });
 
-// =====================================================
-// INIT
-// =====================================================
-window.addEventListener("DOMContentLoaded", () => {
-    updateConnectUI();
-});
+window.addEventListener("DOMContentLoaded", updateConnectUI);
