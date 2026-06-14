@@ -1,4 +1,4 @@
-export const FACTORY_ABI = [
+[
     {
         "inputs": [],
         "stateMutability": "nonpayable",
