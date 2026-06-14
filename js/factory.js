@@ -236,9 +236,9 @@ function parseTokenCreated(receipt) {
         try {
 
             const parsed =
-                factoryWrite.interface.parseLog(
-                    log
-                );
+    factoryInterface.parseLog(
+        log
+    );
 
             if (
 
@@ -356,8 +356,8 @@ export async function symbolExists(symbol) {
         await getFactoryRead();
 
     return await factory.symbolExists(
-        symbol.trim().toUpperCase()
-    );
+    symbol.trim()
+);
 
 }
 
