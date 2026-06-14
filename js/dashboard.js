@@ -1,5 +1,9 @@
+// ==========================
+// ELEMENT
+// ==========================
+
 const tokenList =
-document.getElementById("tokenList");
+  document.getElementById("tokenList");
 
 // ==========================
 // LOAD TOKENS
@@ -7,12 +11,12 @@ document.getElementById("tokenList");
 
 function loadTokens() {
 
+  if (!tokenList) return;
+
   const data =
     JSON.parse(localStorage.getItem("myTokens") || "[]");
 
-  if (!tokenList) return;
-
-  if (data.length === 0) {
+  if (!Array.isArray(data) || data.length === 0) {
 
     tokenList.innerHTML =
       "<p>No tokens deployed yet.</p>";
@@ -22,26 +26,36 @@ function loadTokens() {
 
   tokenList.innerHTML = "";
 
-  data.reverse().forEach((token, index) => {
+  // gunakan slice() agar tidak mutate original
+  const list = data.slice().reverse();
 
-    const el =
-      document.createElement("div");
+  list.forEach((token, index) => {
+
+    const el = document.createElement("div");
 
     el.style.border = "1px solid #444";
     el.style.padding = "10px";
     el.style.marginBottom = "10px";
+    el.style.borderRadius = "8px";
+
+    const address =
+      token?.token || "";
 
     el.innerHTML = `
-      <b>${token.name} (${token.symbol})</b><br/>
-      Address: ${token.token || "N/A"}<br/>
-      TX: ${token.txHash}<br/><br/>
+      <b>${token?.name || "Unknown"} (${token?.symbol || "-"})</b><br/>
+      Address: ${address || "N/A"}<br/>
+      TX: ${token?.txHash || "-"}<br/><br/>
 
-      <button data-copy="${token.token}">
-        Copy Address
+      <button data-view="${address}">
+        View
       </button>
 
-      <button data-open="${token.token}">
-        Open Explorer
+      <button data-copy="${address}">
+        Copy
+      </button>
+
+      <button data-open="${address}">
+        Explorer
       </button>
 
       <button data-delete="${index}">
@@ -54,16 +68,39 @@ function loadTokens() {
 }
 
 // ==========================
-// COPY
+// COPY ADDRESS
 // ==========================
 
-function copyAddress(address) {
+async function copyAddress(address) {
 
   if (!address) return;
 
-  navigator.clipboard.writeText(address);
+  try {
 
-  alert("Copied!");
+    if (navigator.clipboard) {
+
+      await navigator.clipboard.writeText(address);
+
+    } else {
+
+      // fallback untuk device lama
+      const textarea =
+        document.createElement("textarea");
+
+      textarea.value = address;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      textarea.remove();
+    }
+
+    alert("Copied!");
+
+  } catch (err) {
+
+    console.error(err);
+    alert("Copy failed");
+  }
 }
 
 // ==========================
@@ -74,7 +111,6 @@ function openExplorer(address) {
 
   if (!address) return;
 
-  // GANTI dengan explorer EVOZ kamu
   const url =
     `https://evozscan.com/address/${address}`;
 
@@ -82,15 +118,24 @@ function openExplorer(address) {
 }
 
 // ==========================
-// DELETE
+// DELETE TOKEN
 // ==========================
 
-function deleteToken(index) {
+function deleteToken(viewIndex) {
 
   const data =
     JSON.parse(localStorage.getItem("myTokens") || "[]");
 
-  data.splice(data.length - 1 - index, 1);
+  if (!Array.isArray(data)) return;
+
+  // karena kita reverse di UI,
+  // index perlu dikonversi balik
+  const realIndex =
+    data.length - 1 - viewIndex;
+
+  if (realIndex < 0 || realIndex >= data.length) return;
+
+  data.splice(realIndex, 1);
 
   localStorage.setItem(
     "myTokens",
@@ -101,30 +146,58 @@ function deleteToken(index) {
 }
 
 // ==========================
-// EVENTS
+// VIEW TOKEN (STEP 9)
+// ==========================
+
+function viewToken(address) {
+
+  if (!address) return;
+
+  localStorage.setItem("viewToken", address);
+
+  window.location.href = "./token.html";
+}
+
+// ==========================
+// EVENTS (GLOBAL DELEGATION)
 // ==========================
 
 document.addEventListener("click", (e) => {
 
+  const target = e.target;
+
+  if (!(target instanceof HTMLElement)) return;
+
   const copy =
-    e.target.getAttribute("data-copy");
+    target.getAttribute("data-copy");
 
   const open =
-    e.target.getAttribute("data-open");
+    target.getAttribute("data-open");
 
   const del =
-    e.target.getAttribute("data-delete");
+    target.getAttribute("data-delete");
+
+  const view =
+    target.getAttribute("data-view");
 
   if (copy) {
     copyAddress(copy);
+    return;
   }
 
   if (open) {
     openExplorer(open);
+    return;
+  }
+
+  if (view) {
+    viewToken(view);
+    return;
   }
 
   if (del !== null) {
     deleteToken(Number(del));
+    return;
   }
 });
 
