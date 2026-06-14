@@ -1,189 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Deployment Success | EVOZX Launch Future</title>
-
-<link rel="stylesheet" href="./css/app.css">
-<link rel="stylesheet" href="./css/launch.css">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deployment Success | EVOZX Launch Future</title>
+    <link rel="stylesheet" href="./css/app.css">
+    <link rel="stylesheet" href="./css/launch.css">
 </head>
-
 <body>
 
-<div class="bg-blur blur-1"></div>
-<div class="bg-blur blur-2"></div>
+    <header>
+        <nav class="container navbar">
+            <div class="brand">
+                <div class="brand-dot"></div>
+                <span>EVOZX Launch Future</span>
+            </div>
+            <div class="nav-links">
+                <a href="./index.html">Home</a>
+                <a href="./launch.html">Launch</a>
+            </div>
+            <button id="connectBtn" class="btn btn-gold">Connect Wallet</button>
+        </nav>
+    </header>
 
-<header>
+    <main class="container" style="padding: 60px 20px;">
+        <section class="wizard-card" style="max-width: 700px; margin: auto;">
+            
+            <div class="page-header" style="text-align: center; margin-bottom: 30px;">
+                <h1 style="font-size: 2rem;">🎉 Token Deployed Successfully</h1>
+                <p style="color: var(--muted);">Your token has been created and recorded on EVOZ Mainnet.</p>
+            </div>
 
-<nav class="container navbar">
+            <div class="card">
+                <h3 class="card-title" style="margin-bottom: 20px;">Token Information</h3>
+                
+                <div class="summary-list">
+                    <div class="summary-row"><span>Name</span><span id="tokenName">-</span></div>
+                    <div class="summary-row"><span>Symbol</span><span id="tokenSymbol">-</span></div>
+                    <div class="summary-row"><span>Total Supply</span><span id="tokenSupply">-</span></div>
+                    <hr style="border: 0; border-top: 1px solid var(--border); margin: 15px 0;">
+                    <div class="summary-row"><span>Token Address</span><span id="tokenAddress" style="word-break: break-all; font-family: monospace; color: var(--gold);"> -</span></div>
+                    <div class="summary-row"><span>Creator</span><span id="creator">-</span></div>
+                    <div class="summary-row"><span>Transaction</span><span id="txHash">-</span></div>
+                </div>
+            </div>
 
-<div class="brand">
+            <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 30px; justify-content: center;">
+                <button id="copyAddressBtn" class="btn btn-gold">Copy Address</button>
+                <button id="copyTxBtn" class="btn btn-gold">Copy TX Hash</button>
+                <button id="explorerBtn" class="btn btn-dark">View Explorer</button>
+            </div>
 
-<div class="brand-dot"></div>
+            <div style="margin-top: 40px; display: flex; gap: 15px; justify-content: center;">
+                <a href="./launch.html" class="btn btn-gold">Launch Another Token</a>
+                <a href="./index.html" class="btn btn-dark">Back to Home</a>
+            </div>
 
-<span>EVOZX Launch Future</span>
+        </section>
+    </main>
 
-</div>
-
-<div class="nav-links">
-
-<a href="./index.html">Home</a>
-<a href="./launch.html">Launch</a>
-
-</div>
-
-<button
-id="connectBtn"
-class="btn btn-gold">
-
-Connect Wallet
-
-</button>
-
-</nav>
-
-</header>
-
-<main>
-
-<section class="launch-page container">
-
-<div
-class="wizard-card"
-style="max-width:900px;margin:auto;">
-
-<div class="wizard-header">
-
-<h1>🎉 Token Deployed Successfully</h1>
-
-<p>
-Your token has been created and recorded on EVOZ Network.
-</p>
-
-</div>
-
-<div class="summary-card">
-
-<h2>Token Information</h2>
-
-<div class="summary-row">
-<span>Name</span>
-<span id="tokenName">-</span>
-</div>
-
-<div class="summary-row">
-<span>Symbol</span>
-<span id="tokenSymbol">-</span>
-</div>
-
-<div class="summary-row">
-<span>Total Supply</span>
-<span id="tokenSupply">-</span>
-</div>
-
-<hr>
-
-<div class="summary-row">
-<span>Token Address</span>
-<span
-id="tokenAddress"
-style="word-break:break-all;">
--
-</span>
-</div>
-
-<div class="summary-row">
-<span>Creator</span>
-<span id="creator">-</span>
-</div>
-
-<div class="summary-row">
-<span>Transaction</span>
-<span id="txHash">-</span>
-</div>
-
-</div>
-
-<div
-style="
-display:flex;
-gap:12px;
-flex-wrap:wrap;
-margin-top:24px;
-">
-
-<button
-id="copyAddressBtn"
-class="btn btn-gold">
-
-Copy Token Address
-
-</button>
-
-<button
-id="copyTxBtn"
-class="btn btn-gold">
-
-Copy TX Hash
-
-</button>
-
-<button
-id="explorerBtn"
-class="btn btn-gold">
-
-View Explorer
-
-</button>
-
-</div>
-
-<div
-style="
-margin-top:32px;
-display:flex;
-gap:12px;
-flex-wrap:wrap;
-">
-
-<a
-href="./launch.html"
-class="btn btn-gold">
-
-Launch Another Token
-
-</a>
-
-<a
-href="./index.html"
-class="btn btn-outline">
-
-Back Home
-
-</a>
-
-</div>
-
-</div>
-
-</section>
-
-</main>
-
-<script
-type="module"
-src="./js/app.js">
-</script>
-
-<script
-type="module"
-src="./js/success.js">
-</script>
-
+    <script type="module" src="./js/app.js"></script>
+    <script type="module" src="./js/success.js"></script>
 </body>
-  </html>
+</html>
