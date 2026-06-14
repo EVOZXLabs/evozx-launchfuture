@@ -1,269 +1,289 @@
 import {
-  BrowserProvider,
-  Contract,
-  parseEther,
-  formatEther
+BrowserProvider,
+Contract,
+parseEther,
+formatEther
 } from "https://esm.sh/ethers@6";
 
 import {
-  CONTRACTS
+CONTRACTS
 } from "./config.js";
 
 import {
-  getSigner
+getSigner
 } from "./wallet.js";
+
+// =====================================================
+// ABI CACHE
+// =====================================================
 
 let EXCHANGE_ABI = null;
 
-// =====================================
+// =====================================================
 // ABI LOADER
-// =====================================
+// =====================================================
 
 async function loadExchangeAbi() {
 
-  if (EXCHANGE_ABI) {
-    return EXCHANGE_ABI;
-  }
-
-  try {
-
-    const response =
-      await fetch(
-        "./abi/exchange.json"
-      );
-
-    EXCHANGE_ABI =
-      await response.json();
-
-    return EXCHANGE_ABI;
-
-  } catch (error) {
-
-    console.error(
-      "Exchange ABI error:",
-      error
-    );
-
-    return null;
-  }
+if (EXCHANGE_ABI) {
+return EXCHANGE_ABI;
 }
 
-// =====================================
-// READ CONTRACT
-// =====================================
+try {
+
+const response =
+  await fetch(
+    "./abi/exchange.json"
+  );
+
+EXCHANGE_ABI =
+  await response.json();
+
+return EXCHANGE_ABI;
+
+} catch (error) {
+
+console.error(
+  "Exchange ABI error:",
+  error
+);
+
+throw error;
+
+}
+}
+
+// =====================================================
+// PROVIDER
+// =====================================================
+
+function getReadProvider() {
+
+if (!window.ethereum) {
+
+throw new Error(
+  "Wallet not found"
+);
+
+}
+
+return new BrowserProvider(
+window.ethereum
+);
+}
+
+// =====================================================
+// CONTRACTS
+// =====================================================
 
 async function getExchangeRead() {
 
-  if (!window.ethereum) {
-    throw new Error(
-      "Wallet not found"
-    );
-  }
+const provider =
+getReadProvider();
 
-  const provider =
-    new BrowserProvider(
-      window.ethereum
-    );
+const abi =
+await loadExchangeAbi();
 
-  const abi =
-    await loadExchangeAbi();
-
-  return new Contract(
-    CONTRACTS.EXCHANGE,
-    abi,
-    provider
-  );
+return new Contract(
+CONTRACTS.EXCHANGE,
+abi,
+provider
+);
 }
-
-// =====================================
-// WRITE CONTRACT
-// =====================================
 
 async function getExchangeWrite() {
 
-  const signer =
-    getSigner();
+const signer =
+getSigner();
 
-  if (!signer) {
-    throw new Error(
-      "Wallet not connected"
-    );
-  }
+if (!signer) {
 
-  const abi =
-    await loadExchangeAbi();
+throw new Error(
+  "Wallet not connected"
+);
 
-  return new Contract(
-    CONTRACTS.EXCHANGE,
-    abi,
-    signer
-  );
 }
 
-// =====================================
+const abi =
+await loadExchangeAbi();
+
+return new Contract(
+CONTRACTS.EXCHANGE,
+abi,
+signer
+);
+}
+
+// =====================================================
 // RATE
-// =====================================
+// =====================================================
 
 export async function getRate() {
 
-  try {
+try {
 
-    const exchange =
-      await getExchangeRead();
+const exchange =
+  await getExchangeRead();
 
-    const rate =
-      await exchange.rate();
+const rate =
+  await exchange.rate();
 
-    return Number(rate);
+return Number(rate);
 
-  } catch (error) {
+} catch (error) {
 
-    console.error(
-      "Rate error:",
-      error
-    );
+console.error(
+  "Rate error:",
+  error
+);
 
-    return 5;
-  }
+return 0;
+
+}
 }
 
-// =====================================
+// =====================================================
 // STOCK
-// =====================================
+// =====================================================
 
 export async function getStock() {
 
-  try {
+try {
 
-    const exchange =
-      await getExchangeRead();
+const exchange =
+  await getExchangeRead();
 
-    const stock =
-      await exchange.getAvailableStock();
+const stock =
+  await exchange.getAvailableStock();
 
-    return Number(
-      formatEther(stock)
-    );
+return Number(
+  formatEther(stock)
+);
 
-  } catch (error) {
+} catch (error) {
 
-    console.error(
-      "Stock error:",
-      error
-    );
+console.error(
+  "Stock error:",
+  error
+);
 
-    return 0;
-  }
+return 0;
+
+}
 }
 
-// =====================================
-// REQUIRED EVOZ
-// =====================================
+// =====================================================
+// EVOZ REQUIRED
+// =====================================================
 
 export async function calculateEVOZNeeded(
-  missingEVOZX
+missingEVOZX
 ) {
 
-  const rate =
-    await getRate();
+const rate =
+await getRate();
 
-  return (
-    Number(missingEVOZX) *
-    rate
-  );
+if (!rate) {
+
+throw new Error(
+  "Invalid exchange rate"
+);
+
 }
 
-// =====================================
+return (
+Number(missingEVOZX) / rate
+);
+}
+
+// =====================================================
 // BUY EVOZX
-// =====================================
+// =====================================================
 
 export async function buyEVOZX(
-  evozAmount
+evozAmount
 ) {
 
-  try {
+const exchange =
+await getExchangeWrite();
 
-    const exchange =
-      await getExchangeWrite();
+const tx =
+await exchange.buyEVOZX({
 
-    const tx =
-      await exchange.buyEVOZX({
+  value:
+    parseEther(
+      String(
+        evozAmount
+      )
+    )
 
-        value:
-          parseEther(
-            String(
-              evozAmount
-            )
-          )
+});
 
-      });
+await tx.wait();
 
-    await tx.wait();
-
-    return tx.hash;
-
-  } catch (error) {
-
-    console.error(
-      "Buy EVOZX error:",
-      error
-    );
-
-    throw error;
-  }
+return tx.hash;
 }
 
-// =====================================
+// =====================================================
 // AUTO TOPUP
-// =====================================
+// =====================================================
 
 export async function autoTopupEVOZX(
-  currentBalance,
-  requiredBalance
+missingEVOZX
 ) {
 
-  const current =
-    Number(currentBalance);
+const missing =
+Number(
+missingEVOZX
+);
 
-  const required =
-    Number(requiredBalance);
+if (
+missing <= 0
+) {
 
-  if (
-    current >= required
-  ) {
+return {
 
-    return {
-      success: true,
-      purchased: false,
-      needed: 0
-    };
-  }
+  success: true,
+  purchased: false
 
-  const missing =
-    required -
-    current;
+};
 
-  const evozNeeded =
-    await calculateEVOZNeeded(
-      missing
-    );
+}
 
-  const txHash =
-    await buyEVOZX(
-      evozNeeded
-    );
+const stock =
+await getStock();
 
-  return {
+if (
+stock < missing
+) {
 
-    success: true,
+throw new Error(
+  "Exchange stock insufficient"
+);
 
-    purchased: true,
+}
 
-    missing,
+const evozNeeded =
+await calculateEVOZNeeded(
+missing
+);
 
-    evozNeeded,
+const txHash =
+await buyEVOZX(
+evozNeeded
+);
 
-    txHash
+return {
 
-  };
-      }
+success: true,
+
+purchased: true,
+
+missing,
+
+evozNeeded,
+
+txHash
+
+};
+}
