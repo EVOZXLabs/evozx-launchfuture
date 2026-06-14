@@ -1,6 +1,5 @@
 import {
 Contract,
-parseEther,
 formatEther
 } from "https://esm.sh/ethers@6";
 
@@ -21,9 +20,9 @@ import {
 getSigner
 } from "./wallet.js";
 
-// =====================================
+// =====================================================
 // ELEMENTS
-// =====================================
+// =====================================================
 
 const continueBtn =
 document.getElementById(
@@ -63,15 +62,15 @@ document.getElementById(
 "ownership"
 );
 
-// =====================================
+// =====================================================
 // STATE
-// =====================================
+// =====================================================
 
 let isDeploying = false;
 
-// =====================================
+// =====================================================
 // EVOZX ABI
-// =====================================
+// =====================================================
 
 const EVOZX_ABI = [
 
@@ -83,9 +82,9 @@ const EVOZX_ABI = [
 
 ];
 
-// =====================================
+// =====================================================
 // VALIDATION
-// =====================================
+// =====================================================
 
 function validateInput() {
 
@@ -98,11 +97,13 @@ tokenSymbol?.value?.trim();
 const supply =
 tokenSupply?.value;
 
-if (!name)
+if (!name) {
 return "Token name required";
+}
 
-if (!symbol)
+if (!symbol) {
 return "Token symbol required";
+}
 
 if (
 !supply ||
@@ -115,9 +116,9 @@ return "Invalid supply";
 return null;
 }
 
-// =====================================
+// =====================================================
 // BUILD CONFIG
-// =====================================
+// =====================================================
 
 async function buildConfig() {
 
@@ -126,6 +127,9 @@ getSigner();
 
 const owner =
 await signer.getAddress();
+
+const network =
+await signer.provider.getNetwork();
 
 return {
 
@@ -142,9 +146,13 @@ supply:
 
 owner,
 
-chainId: 805,
+chainId:
+  BigInt(
+    network.chainId
+  ),
 
-launchKitVersion: 200,
+launchKitVersion:
+  200,
 
 burnable:
   burnable?.checked || false,
@@ -156,31 +164,23 @@ ownershipEnabled:
   ownership?.checked || false,
 
 website: "",
-
 telegram: "",
-
 twitter: "",
-
 logoURI: "",
 
 maxWalletEnabled: false,
-
 maxWalletPercent: 0,
 
 maxTxEnabled: false,
-
 maxTxPercent: 0,
 
 tradingControlEnabled: false,
-
 tradingEnabled: true,
 
 buyTaxEnabled: false,
-
 buyTax: 0,
 
 sellTaxEnabled: false,
-
 sellTax: 0,
 
 burnTaxShare: 0,
@@ -194,29 +194,33 @@ developmentWallet:
 };
 }
 
-// =====================================
-// DEPLOY FEE
-// =====================================
+// =====================================================
+// EVOZX BALANCE
+// =====================================================
 
-async function calculateDeployFee() {
+async function getBalance() {
 
-let fee = 10;
+const signer =
+getSigner();
 
-if (burnable?.checked)
-fee += 5;
+const owner =
+await signer.getAddress();
 
-if (mintable?.checked)
-fee += 20;
+const token =
+new Contract(
+CONTRACTS.EVOZX,
+EVOZX_ABI,
+signer
+);
 
-if (ownership?.checked)
-fee += 5;
-
-return fee;
+return await token.balanceOf(
+owner
+);
 }
 
-// =====================================
-// APPROVE EVOZX
-// =====================================
+// =====================================================
+// APPROVE FACTORY
+// =====================================================
 
 async function approveFactory(
 amount
@@ -225,18 +229,18 @@ amount
 const signer =
 getSigner();
 
-const evozx =
+const owner =
+await signer.getAddress();
+
+const token =
 new Contract(
 CONTRACTS.EVOZX,
 EVOZX_ABI,
 signer
 );
 
-const owner =
-await signer.getAddress();
-
 const allowance =
-await evozx.allowance(
+await token.allowance(
 owner,
 CONTRACTS.FACTORY
 );
@@ -248,7 +252,7 @@ return;
 }
 
 const tx =
-await evozx.approve(
+await token.approve(
 CONTRACTS.FACTORY,
 amount
 );
@@ -256,44 +260,15 @@ amount
 await tx.wait();
 }
 
-// =====================================
-// EVOZX BALANCE
-// =====================================
-
-async function getBalance() {
-
-const signer =
-getSigner();
-
-const evozx =
-new Contract(
-CONTRACTS.EVOZX,
-EVOZX_ABI,
-signer
-);
-
-const owner =
-await signer.getAddress();
-
-const balance =
-await evozx.balanceOf(
-owner
-);
-
-return Number(
-formatEther(balance)
-);
-}
-
-// =====================================
+// =====================================================
 // DEPLOY
-// =====================================
+// =====================================================
 
 async function deployToken() {
 
-if (
-isDeploying
-) return;
+if (isDeploying) {
+return;
+}
 
 try {
 
@@ -302,10 +277,7 @@ const validation =
 
 if (validation) {
 
-  alert(
-    validation
-  );
-
+  alert(validation);
   return;
 }
 
@@ -330,43 +302,6 @@ if (!factory) {
 }
 
 // =================================
-// DEPLOY FEE
-// =================================
-
-const deployFee =
-  await calculateDeployFee();
-
-const currentBalance =
-  await getBalance();
-
-continueBtn.textContent =
-  "Checking EVOZX...";
-
-// =================================
-// AUTO BUY EVOZX
-// =================================
-
-await autoTopupEVOZX(
-  currentBalance,
-  deployFee
-);
-
-// =================================
-// APPROVE FACTORY
-// =================================
-
-continueBtn.textContent =
-  "Approving EVOZX...";
-
-await approveFactory(
-  parseEther(
-    String(
-      deployFee
-    )
-  )
-);
-
-// =================================
 // BUILD CONFIG
 // =================================
 
@@ -374,7 +309,56 @@ const config =
   await buildConfig();
 
 // =================================
-// DEPLOY
+// GET REAL FEE FROM CONTRACT
+// =================================
+
+continueBtn.textContent =
+  "Calculating Fee...";
+
+const deployFee =
+  await getDeploymentFee(
+    config
+  );
+
+// =================================
+// CHECK BALANCE
+// =================================
+
+continueBtn.textContent =
+  "Checking EVOZX...";
+
+const balance =
+  await getBalance();
+
+if (
+  balance < deployFee
+) {
+
+  const missing =
+    Number(
+      formatEther(
+        deployFee - balance
+      )
+    );
+
+  await autoTopupEVOZX(
+    missing
+  );
+}
+
+// =================================
+// APPROVE
+// =================================
+
+continueBtn.textContent =
+  "Approving EVOZX...";
+
+await approveFactory(
+  deployFee
+);
+
+// =================================
+// DEPLOY TOKEN
 // =================================
 
 continueBtn.textContent =
@@ -445,23 +429,24 @@ const historyItem = {
 
   time:
     Date.now()
+
 };
 
-const oldHistory =
+const history =
   JSON.parse(
     localStorage.getItem(
       "myTokens"
     ) || "[]"
   );
 
-oldHistory.push(
+history.push(
   historyItem
 );
 
 localStorage.setItem(
   "myTokens",
   JSON.stringify(
-    oldHistory
+    history
   )
 );
 
@@ -490,21 +475,23 @@ alert(
 
 } finally {
 
-isDeploying =
-  false;
+isDeploying = false;
 
-continueBtn.disabled =
-  false;
+if (continueBtn) {
 
-continueBtn.textContent =
-  "Deploy Token";
+  continueBtn.disabled =
+    false;
+
+  continueBtn.textContent =
+    "Deploy Token";
+}
 
 }
 }
 
-// =====================================
+// =====================================================
 // INIT
-// =====================================
+// =====================================================
 
 continueBtn?.addEventListener(
 "click",
