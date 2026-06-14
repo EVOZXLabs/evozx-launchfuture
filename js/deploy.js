@@ -32,6 +32,25 @@ document.getElementById("ownership");
 let isDeploying = false;
 
 // ==========================
+// VALIDATION
+// ==========================
+
+function validateInput() {
+
+  const name = tokenName?.value?.trim();
+  const symbol = tokenSymbol?.value?.trim();
+  const supply = tokenSupply?.value;
+
+  if (!name) return "Token name required";
+  if (!symbol) return "Token symbol required";
+
+  if (!supply || isNaN(supply) || Number(supply) <= 0)
+    return "Invalid supply";
+
+  return null;
+}
+
+// ==========================
 // DEPLOY TOKEN
 // ==========================
 
@@ -43,6 +62,14 @@ async function deployToken() {
 
     if (!window.ethereum) {
       alert("Wallet not found");
+      return;
+    }
+
+    const errorMsg =
+      validateInput();
+
+    if (errorMsg) {
+      alert(errorMsg);
       return;
     }
 
@@ -61,8 +88,15 @@ async function deployToken() {
       continueBtn.textContent = "Deploying...";
     }
 
+    // ==========================
+    // GET USER DATA
+    // ==========================
+
+    const signer =
+      factory.runner; // ethers v6
+
     const owner =
-      await factory.signer.getAddress();
+      await signer.getAddress();
 
     const chainId =
       BigInt(window.ethereum.chainId || 0);
@@ -73,9 +107,9 @@ async function deployToken() {
 
     const config = {
 
-      name: tokenName?.value?.trim() || "",
-      symbol: tokenSymbol?.value?.trim() || "",
-      supply: BigInt(tokenSupply?.value || 0),
+      name: tokenName.value.trim(),
+      symbol: tokenSymbol.value.trim(),
+      supply: BigInt(tokenSupply.value),
 
       owner,
       chainId,
@@ -132,63 +166,68 @@ async function deployToken() {
 
     let tokenAddress = null;
 
-    try {
+    for (const log of receipt.logs) {
 
-      for (const log of receipt.logs) {
+      try {
 
-        try {
+        const parsed =
+          factory.interface.parseLog(log);
 
-          const parsed =
-            factory.interface.parseLog(log);
+        if (parsed?.name === "TokenCreated") {
 
-          if (parsed?.name === "TokenCreated") {
+          tokenAddress =
+            parsed.args.token;
 
-            tokenAddress =
-              parsed.args.token;
-
-            break;
-          }
-
-        } catch (e) {
-          continue;
+          break;
         }
-      }
 
-    } catch (e) {
-      console.error("Event parse error:", e);
+      } catch {
+        continue;
+      }
     }
 
-    console.log("TX CONFIRMED:", receipt);
+    // fallback kalau event gagal
+    if (!tokenAddress) {
+      console.warn("TokenCreated event not found");
+    }
+
+    console.log("TOKEN:", tokenAddress);
 
     // ==========================
     // SAVE HISTORY
     // ==========================
 
-    if (tokenAddress) {
+    const historyItem = {
+      token: tokenAddress,
+      name: config.name,
+      symbol: config.symbol,
+      supply: config.supply.toString(),
+      creator: owner,
+      txHash: tx.hash,
+      time: Date.now()
+    };
 
-      const data = {
-        token: tokenAddress,
-        name: config.name,
-        symbol: config.symbol,
-        supply: config.supply.toString(),
-        creator: owner,
-        txHash: tx.hash,
-        time: Date.now()
-      };
+    const old =
+      JSON.parse(localStorage.getItem("myTokens") || "[]");
 
-      const old =
-        JSON.parse(localStorage.getItem("myTokens") || "[]");
+    old.push(historyItem);
 
-      old.push(data);
-
-      localStorage.setItem(
-        "myTokens",
-        JSON.stringify(old)
-      );
-    }
+    localStorage.setItem(
+      "myTokens",
+      JSON.stringify(old)
+    );
 
     // ==========================
-    // SUCCESS REDIRECT
+    // SAVE LAST (SUCCESS PAGE)
+    // ==========================
+
+    localStorage.setItem(
+      "lastDeployedToken",
+      JSON.stringify(historyItem)
+    );
+
+    // ==========================
+    // REDIRECT
     // ==========================
 
     window.location.href =
