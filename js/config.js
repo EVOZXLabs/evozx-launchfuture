@@ -1,79 +1,155 @@
-// ======================================================
-// EVOZ NETWORK
-// ======================================================
+// ============================================================
+// EVOZX LaunchFuture
+// Global Configuration
+// ============================================================
+
+// ------------------------------------------------------------
+// Network
+// ------------------------------------------------------------
+
 export const NETWORK = {
-  chainId: 805,
-  chainHex: "0x325",
-  chainName: "EVOZ",
-  rpcUrls: ["https://rpc.evozscan.com"],
-  blockExplorerUrls: ["https://evozscan.com"],
-  nativeCurrency: {
-    name: "EVOZ",
+
+    chainId: 805,
+
+    chainIdHex: "0x325",
+
+    name: "EVOZ Mainnet",
+
     symbol: "EVOZ",
-    decimals: 18
-  }
+
+    decimals: 18,
+
+    rpcUrl:
+        "https://rpc.evozscan.com",
+
+    explorer:
+        "https://evozscan.com"
+
 };
 
-// ======================================================
-// CONTRACTS
-// ======================================================
+// ------------------------------------------------------------
+// Contracts
+// ------------------------------------------------------------
+
 export const CONTRACTS = {
-  FACTORY: "0xbA40773bCF0d30e83c4319796Ec45CA31d6e64bB",
-  EVOZX: "0x032a962F62Fc1cbc15B19767Aa138deA3B454B74",
-  EXCHANGE: "0x24cCb720F7F8b9247FB50A88F6A6a5A5DD7d9ab8",
-  TREASURY: "0x50Cd30Ff7f0fbBD9d0FDe1F60DE8c52D6F390c5C"
+
+    factory:
+        "0xbA40773bCF0d30e83c4319796Ec45CA31d6e64bB",
+
+    evozx:
+        "0x032a962F62Fc1cbc15B19767Aa138deA3B454B74",
+
+    exchange:
+        "0x24cCb720F7F8b9247FB50A88F6A6a5A5DD7d9ab8",
+
+    treasury:
+        "0x50Cd30Ff7f0fbBD9d0FDe1F60DE8c52D6F390c5C"
+
 };
 
-// ======================================================
-// LINKS
-// ======================================================
-export const LINKS = {
-  EXPLORER: "https://evozscan.com",
-  ADDRESS: "https://evozscan.com/address/",
-  TX: "https://evozscan.com/tx/"
+// ------------------------------------------------------------
+// Local Storage Keys
+// ------------------------------------------------------------
+
+export const STORAGE = {
+
+    wallet:
+        "launchfuture_wallet",
+
+    theme:
+        "launchfuture_theme",
+
+    lastToken:
+        "launchfuture_last_token",
+
+    deployHistory:
+        "launchfuture_deploy_history"
+
 };
 
-// ======================================================
-// APP INFO
-// ======================================================
-export const APP = {
-  NAME: "EVOZX Launch Future",
-  POWERED_BY: "EVOZXLabs" // Syntax error diperbaiki di sini
+// ------------------------------------------------------------
+// ABI Paths
+// ------------------------------------------------------------
+
+export const ABI = {
+
+    factory:
+        "./abi/factory.json",
+
+    exchange:
+        "./abi/exchange.json",
+
+    evozx:
+        "./abi/evozx.json"
+
 };
 
-// ======================================================
-// FACTORY FEES
-// ======================================================
-export const FEES = {
-  BASE: 10,
-  BURNABLE: 5,
-  MINTABLE: 20,
-  OWNERSHIP: 5,
-  MAX_WALLET: 5,
-  MAX_TX: 5,
-  TRADING_CONTROL: 10,
-  BUY_TAX: 20,
-  SELL_TAX: 20,
-  WEBSITE: 1,
-  TELEGRAM: 1,
-  TWITTER: 1,
-  LOGO: 2
+// ------------------------------------------------------------
+// Downloads
+// ------------------------------------------------------------
+
+export const DOWNLOADS = {
+
+    standardInput:
+        "./docs/standard-input.json"
+
 };
 
-// ======================================================
-// TOKEN SETTINGS
-// ======================================================
-export const TOKEN_LIMITS = {
-  MAX_SUPPLY: 1_000_000_000_000,
-  MAX_SYMBOL_LENGTH: 12,
-  MAX_BUY_TAX: 10,
-  MAX_SELL_TAX: 10
+// ------------------------------------------------------------
+// Assets
+// ------------------------------------------------------------
+
+export const ASSETS = {
+
+    logo:
+        "./images/logo.png"
+
 };
 
-// ======================================================
-// FACTORY CONSTANTS
-// ======================================================
-export const FACTORY_INFO = {
-  LAUNCHKIT_VERSION: 200,
-  EVOZX_DECIMALS: 18
+// ------------------------------------------------------------
+// Explorer Helpers
+// ------------------------------------------------------------
+
+export function explorerAddress(address) {
+
+    return `${NETWORK.explorer}/address/${address}`;
+
+}
+
+export function explorerToken(address) {
+
+    return `${NETWORK.explorer}/token/${address}`;
+
+}
+
+export function explorerTransaction(hash) {
+
+    return `${NETWORK.explorer}/tx/${hash}`;
+
+}
+
+// ------------------------------------------------------------
+// Exchange
+// ------------------------------------------------------------
+
+// 1 EVOZX = 5 EVOZ
+
+export const EXCHANGE = {
+
+    evozPerEVOZX: 5
+
+};
+
+// ------------------------------------------------------------
+// UI
+// ------------------------------------------------------------
+
+export const UI = {
+
+    addressLength: 6,
+
+    addressSuffix: 4,
+
+    animation: 250
+
 };
