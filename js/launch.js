@@ -2,60 +2,49 @@ import { createToken } from "./factory.js";
 import { FEES } from "./config.js";
 
 // =====================================================
-// HELPERS (Safety Checks)
+// UTILS - Menggunakan Optional Chaining (?.) untuk mencegah error null
 // =====================================================
-const getElementValue = (id) => {
-    const el = document.getElementById(id);
-    return el ? el.value : "";
-};
-const getElementChecked = (id) => {
-    const el = document.getElementById(id);
-    return el ? el.checked : false;
-};
-const getCurrentAddress = () => window.ethereum?.selectedAddress || "0x0000000000000000000000000000000000000000";
+const getVal = (id) => document.getElementById(id)?.value || "";
+const isChecked = (id) => document.getElementById(id)?.checked || false;
 
 // =====================================================
-// CONFIG BUILDER (REVISI: CHAINID & STRUCT SYNC)
+// CONFIG BUILDER
 // =====================================================
 export function buildTokenConfig() {
-    const supplyRaw = parseFloat(getElementValue("tokenSupply") || 0);
+    const supplyRaw = parseFloat(getVal("tokenSupply") || 0);
     
-    // Pastikan semua field ini urutannya sama dengan struct Solidity Anda
+    // Perbaikan: Menambahkan chainId dan memastikan akses data aman
     return {
-        name: getElementValue("tokenName"),
-        symbol: getElementValue("symbolInput"),
+        name: getVal("tokenName"),
+        symbol: getVal("symbolInput"),
         supply: BigInt(Math.floor(supplyRaw * 10**18)), 
-        owner: getCurrentAddress(),
-        chainId: BigInt(getElementValue("chainId") || 56), // FIX: Mengirim chainId
+        owner: window.ethereum?.selectedAddress || "0x0000000000000000000000000000000000000000",
+        chainId: BigInt(getVal("chainId") || 56), // Menambahkan Chain ID
         launchKitVersion: 200, 
         
-        // Ownership & Core
-        ownershipEnabled: getElementChecked("ownership"),
-        burnable: getElementChecked("burnable"),
-        mintable: getElementChecked("mintable"),
+        ownershipEnabled: isChecked("ownership"),
+        burnable: isChecked("burnable"),
+        mintable: isChecked("mintable"),
         
-        // Metadata
-        website: getElementValue("website"),
-        telegram: getElementValue("telegram"),
-        twitter: getElementValue("twitter"),
-        logoURI: getElementValue("logoURI"),
+        website: getVal("website"),
+        telegram: getVal("telegram"),
+        twitter: getVal("twitter"),
+        logoURI: getVal("logoURI"),
         
-        // Security
-        maxWalletEnabled: getElementChecked("maxWalletEnabled"),
-        maxWalletPercent: parseInt(getElementValue("maxWalletPercent") || 0),
-        maxTxEnabled: getElementChecked("maxTxEnabled"),
-        maxTxPercent: parseInt(getElementValue("maxTxPercent") || 0),
-        tradingControlEnabled: getElementChecked("tradingControlEnabled"),
+        maxWalletEnabled: isChecked("maxWalletEnabled"),
+        maxWalletPercent: parseInt(getVal("maxWalletPercent") || 0),
+        maxTxEnabled: isChecked("maxTxEnabled"),
+        maxTxPercent: parseInt(getVal("maxTxPercent") || 0),
+        tradingControlEnabled: isChecked("tradingControlEnabled"),
         tradingEnabled: true,
         
-        // Tokenomics & Tax
-        buyTaxEnabled: parseInt(getElementValue("buyTax") || 0) > 0,
-        buyTax: parseInt(getElementValue("buyTax") || 0),
-        sellTaxEnabled: parseInt(getElementValue("sellTax") || 0) > 0,
-        sellTax: parseInt(getElementValue("sellTax") || 0),
-        burnTaxShare: parseInt(getElementValue("burnTaxShare") || 0),
-        marketingWallet: getElementValue("marketingWallet") || "0x0000000000000000000000000000000000000000",
-        developmentWallet: getElementValue("developmentWallet") || "0x0000000000000000000000000000000000000000"
+        buyTaxEnabled: parseInt(getVal("buyTax") || 0) > 0,
+        buyTax: parseInt(getVal("buyTax") || 0),
+        sellTaxEnabled: parseInt(getVal("sellTax") || 0) > 0,
+        sellTax: parseInt(getVal("sellTax") || 0),
+        burnTaxShare: parseInt(getVal("burnTaxShare") || 0),
+        marketingWallet: getVal("marketingWallet") || "0x0000000000000000000000000000000000000000",
+        developmentWallet: getVal("developmentWallet") || "0x0000000000000000000000000000000000000000"
     };
 }
 
@@ -69,20 +58,17 @@ document.getElementById("deployBtn")?.addEventListener("click", async () => {
         btn.textContent = "Deploying...";
         
         const config = buildTokenConfig();
-        console.log("Mengirim Config ke Contract:", config);
+        console.log("Mengirim Config:", config);
         
         const tx = await createToken(config);
         
-        alert("Transaction submitted! Please wait for confirmation.");
+        alert("Transaction submitted! Waiting for confirmation...");
         await tx.wait();
         alert("Success! Token deployed.");
-        
-        btn.textContent = "Deploy Token";
-        btn.disabled = false;
     } catch (e) {
         console.error("Deploy Error:", e);
-        const msg = e.reason || e.data?.message || e.message || "Unknown error";
-        alert("Deploy failed: " + msg);
+        alert("Deploy failed: " + (e.reason || e.message || "Unknown error"));
+    } finally {
         btn.disabled = false;
         btn.textContent = "Deploy Token";
     }
@@ -92,25 +78,15 @@ document.getElementById("deployBtn")?.addEventListener("click", async () => {
 // FEE ENGINE
 // =====================================================
 function calculate() {
-    const burnable = getElementChecked("burnable");
-    const mintable = getElementChecked("mintable");
-    const ownership = getElementChecked("ownership");
-    const maxWallet = getElementChecked("maxWalletEnabled");
-    const maxTx = getElementChecked("maxTxEnabled");
-    const tradingControl = getElementChecked("tradingControlEnabled");
-    
-    const buyTax = parseInt(getElementValue("buyTax") || 0);
-    const sellTax = parseInt(getElementValue("sellTax") || 0);
-
     let feature = 0;
-    if (burnable) feature += FEES.BURNABLE;
-    if (mintable) feature += FEES.MINTABLE;
-    if (ownership) feature += FEES.OWNERSHIP;
-    if (maxWallet) feature += FEES.MAX_WALLET;
-    if (maxTx) feature += FEES.MAX_TX;
-    if (tradingControl) feature += FEES.TRADING_CONTROL;
+    if (isChecked("burnable")) feature += FEES.BURNABLE;
+    if (isChecked("mintable")) feature += FEES.MINTABLE;
+    if (isChecked("ownership")) feature += FEES.OWNERSHIP;
+    if (isChecked("maxWalletEnabled")) feature += FEES.MAX_WALLET;
+    if (isChecked("maxTxEnabled")) feature += FEES.MAX_TX;
+    if (isChecked("tradingControlEnabled")) feature += FEES.TRADING_CONTROL;
     
-    if (buyTax > 0 || sellTax > 0) feature += FEES.TAX;
+    if (parseInt(getVal("buyTax") || 0) > 0 || parseInt(getVal("sellTax") || 0) > 0) feature += FEES.TAX;
     
     const total = FEES.BASE + feature;
     
@@ -126,13 +102,8 @@ function calculate() {
 const inputs = ["tokenName", "symbolInput", "tokenSupply", "chainId", "buyTax", "sellTax", "burnTaxShare", "website", "telegram", "twitter", "logoURI", "marketingWallet", "developmentWallet", "maxWalletPercent", "maxTxPercent"];
 const checks = ["burnable", "mintable", "ownership", "maxWalletEnabled", "maxTxEnabled", "tradingControlEnabled"];
 
-inputs.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener("input", calculate);
-});
-checks.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener("change", calculate);
-});
+inputs.forEach(id => document.getElementById(id)?.addEventListener("input", calculate));
+checks.forEach(id => document.getElementById(id)?.addEventListener("change", calculate));
 
 window.addEventListener("DOMContentLoaded", calculate);
+    
