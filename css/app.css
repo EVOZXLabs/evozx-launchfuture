@@ -1,10 +1,7 @@
 :root {
   --bg: #050505;
-  --bg2: #0b0b0b;
-  --card: rgba(20, 20, 20, 0.6); /* Modern glassmorphism background */
   --gold: #d4af37;
   --gold-light: #f7d774;
-  --blue: #3b82f6;
   --text: #ffffff;
   --muted: #94a3b8;
   --border: rgba(255, 255, 255, 0.1);
@@ -16,45 +13,30 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-  background: var(--bg);
+  /* Background Hitam + Efek RGB Gradient */
+  background-color: var(--bg);
+  background-image: 
+      radial-gradient(circle at 15% 50%, rgba(212, 175, 55, 0.12), transparent 40%),
+      radial-gradient(circle at 85% 30%, rgba(59, 130, 246, 0.12), transparent 40%),
+      radial-gradient(circle at 50% 80%, rgba(236, 72, 153, 0.12), transparent 40%);
+  background-attachment: fixed;
   color: var(--text);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, sans-serif;
   min-height: 100vh;
   line-height: 1.6;
   overflow-x: hidden;
+  animation: move-bg 20s ease infinite alternate;
+}
+
+@keyframes move-bg {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
 }
 
 a { text-decoration: none; color: inherit; transition: var(--transition); }
 button { cursor: pointer; border: none; font-family: inherit; }
 
 .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-
-/* Background Blur Effects */
-.bg-blur { position: fixed; border-radius: 50%; filter: blur(120px); z-index: -1; opacity: 0.6; pointer-events: none; }
-.blur-1 { width: 400px; height: 400px; background: rgba(212, 175, 55, 0.1); top: -100px; left: -100px; }
-.blur-2 { width: 500px; height: 500px; background: rgba(59, 130, 246, 0.08); bottom: -100px; right: -100px; }
-
-/* RGB Animated Background */
-.rgb-bg {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -2; /* Di belakang semua elemen */
-    background: radial-gradient(circle at 15% 50%, rgba(212, 175, 55, 0.1), transparent 25%),
-                radial-gradient(circle at 85% 30%, rgba(59, 130, 246, 0.1), transparent 25%),
-                radial-gradient(circle at 50% 80%, rgba(236, 72, 153, 0.1), transparent 25%);
-    filter: blur(100px);
-    pointer-events: none;
-    animation: move-bg 20s ease infinite alternate;
-}
-
-@keyframes move-bg {
-    0% { transform: scale(1) translate(0, 0); }
-    50% { transform: scale(1.2) translate(-50px, -50px); }
-    100% { transform: scale(1) translate(0, 0); }
-}
 
 /* Navbar */
 .navbar { height: 80px; display: flex; justify-content: space-between; align-items: center; }
@@ -76,7 +58,7 @@ button { cursor: pointer; border: none; font-family: inherit; }
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Modern Buttons (Neon/Glow) */
+/* Modern Buttons */
 .btn { padding: 12px 24px; border-radius: 12px; font-weight: 600; font-size: 0.95rem; transition: var(--transition); position: relative; }
 .btn:hover { transform: translateY(-3px); }
 
@@ -91,9 +73,9 @@ button { cursor: pointer; border: none; font-family: inherit; }
 .btn-dark { background: rgba(255, 255, 255, 0.05); color: white; border: 1px solid var(--border); }
 .btn-dark:hover { background: rgba(255, 255, 255, 0.1); }
 
-/* Components (Glassmorphism & Entry Animation) */
+/* Components (Glassmorphism) */
 .card, .info-card { 
-    background: var(--card); 
+    background: rgba(20, 20, 20, 0.6); 
     backdrop-filter: blur(12px);
     border: 1px solid var(--border); 
     border-radius: var(--radius); 
@@ -118,39 +100,14 @@ button { cursor: pointer; border: none; font-family: inherit; }
 .info-card h3 { color: var(--muted); font-size: 0.85rem; margin-bottom: 8px; text-transform: uppercase; }
 .info-card p { font-size: 1.5rem; font-weight: 700; }
 
-/* Footer Styling (Clean & Modern) */
-footer {
-    padding: 60px 20px 40px 20px;
-    border-top: 1px solid var(--border);
-    margin-top: 80px;
-}
+/* Footer */
+footer { padding: 60px 20px 40px 20px; border-top: 1px solid var(--border); margin-top: 80px; }
+.footer-content { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
+.footer-brand { font-size: 1.6rem; font-weight: 800; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; }
+.footer-copyright { font-size: 0.75rem; color: var(--muted); opacity: 0.8; }
 
-.footer-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-}
-
-.footer-brand {
-    font-size: 1.6rem;
-    font-weight: 800;
-    color: var(--gold);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.footer-copyright {
-    font-size: 0.75rem;
-    color: var(--muted);
-    opacity: 0.8;
-}
-
-/* Responsive Adjustments */
+/* Responsive */
 @media (max-width: 768px) {
   .navbar { flex-direction: column; height: auto; gap: 20px; padding: 20px 0; }
   .hero h1 { font-size: 2.5rem; }
-  .footer { padding: 40px 20px; }
   }
-       
