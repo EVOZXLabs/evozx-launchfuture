@@ -7,10 +7,13 @@
     <meta name="description" content="Launch custom tokens on EVOZ without writing smart contract code.">
     <link rel="stylesheet" href="./css/app.css">
     <style>
-        /* Tambahan khusus untuk logo dan layout index */
+        /* Styling tambahan untuk logo dan layout */
         .nav-logo { height: 40px; width: auto; object-fit: contain; }
         .hero-actions { display: flex; gap: 15px; margin-top: 20px; justify-content: center; }
-        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 20px; }
+        
+        /* Memastikan style accordion konsisten */
+        details { padding: 10px; }
+        summary { cursor: pointer; font-weight: 600; font-size: 1.2rem; margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -32,7 +35,6 @@
 
     <main>
         <section class="hero container">
-            
             <h1>Launch Your Token of the Future</h1>
             <p>Create custom tokens directly on EVOZ without writing Solidity code. Simple. Fast. On-chain.</p>
             <div class="hero-actions">
@@ -41,22 +43,24 @@
             </div>
         </section>
 
-        <section id="network" class="container" style="padding-top: 40px; margin-bottom: 80px;">
-            <h2 style="text-align: center; margin-bottom: 30px;">Network Information</h2>
-            <div class="grid">
-                <div class="info-card"><h3>Network</h3><p>EVOZ Mainnet</p></div>
-                <div class="info-card"><h3>Chain ID</h3><p>805</p></div>
-                <div class="info-card"><h3>Currency</h3><p>EVOZ</p></div>
-                <div class="info-card"><h3>Decimals</h3><p>18</p></div>
+        <section id="network" class="container" style="padding-top: 40px; margin-bottom: 40px;">
+            <div class="card">
+                <details>
+                    <summary>Network Information</summary>
+                    <div class="grid" style="margin-top: 20px;">
+                        <div class="info-card"><h3>Network</h3><p>EVOZ Mainnet</p></div>
+                        <div class="info-card"><h3>Chain ID</h3><p>805</p></div>
+                        <div class="info-card"><h3>Currency</h3><p>EVOZ</p></div>
+                        <div class="info-card"><h3>Decimals</h3><p>18</p></div>
+                    </div>
+                </details>
             </div>
         </section>
 
-        <section id="contracts" class="container" style="padding: 40px 0;">
+        <section id="contracts" class="container" style="padding-bottom: 40px;">
             <div class="card">
                 <details>
-                    <summary style="cursor: pointer; font-weight: 600; font-size: 1.2rem; margin-bottom: 10px;">
-                        View Core Contracts
-                    </summary>
+                    <summary>View Core Contracts</summary>
                     <div style="margin-top: 20px; display: grid; gap: 15px;">
                         <div class="card" style="background: rgba(255,255,255,0.03);">
                             <h3>Factory Contract</h3>
@@ -78,7 +82,7 @@
             </div>
         </section>
 
-        <section class="container" style="padding: 80px 0; text-align: center;">
+        <section class="container" style="padding: 40px 0; text-align: center;">
             <h2>Ready To Launch?</h2>
             <p style="color: var(--muted); margin-bottom: 25px;">Deploy directly on EVOZ using EVOZX Launch Future.</p>
             <a href="./launch.html" class="btn btn-gold">Open Launch Builder</a>
