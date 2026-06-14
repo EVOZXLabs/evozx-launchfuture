@@ -1,15 +1,15 @@
 :root {
   --bg: #050505;
   --bg2: #0b0b0b;
-  --card: #0f1115;
+  --card: rgba(20, 20, 20, 0.6); /* Semi-transparent for glass effect */
   --gold: #d4af37;
   --gold-light: #f7d774;
   --blue: #3b82f6;
   --text: #ffffff;
   --muted: #94a3b8;
-  --border: rgba(255, 255, 255, 0.08);
+  --border: rgba(255, 255, 255, 0.1);
   --radius: 20px;
-  --transition: all 0.3s ease;
+  --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
 /* Reset & Base */
@@ -30,7 +30,7 @@ button { cursor: pointer; border: none; font-family: inherit; }
 .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
 
 /* Background Blur Effects */
-.bg-blur { position: fixed; border-radius: 50%; filter: blur(120px); z-index: -1; opacity: 0.6; }
+.bg-blur { position: fixed; border-radius: 50%; filter: blur(120px); z-index: -1; opacity: 0.6; pointer-events: none; }
 .blur-1 { width: 400px; height: 400px; background: rgba(212, 175, 55, 0.1); top: -100px; left: -100px; }
 .blur-2 { width: 500px; height: 500px; background: rgba(59, 130, 246, 0.08); bottom: -100px; right: -100px; }
 
@@ -42,14 +42,35 @@ button { cursor: pointer; border: none; font-family: inherit; }
 .nav-links a { color: var(--muted); font-size: 0.95rem; }
 .nav-links a:hover, .nav-links a.active { color: white; }
 
-/* Buttons */
-.btn { padding: 12px 24px; border-radius: 12px; font-weight: 600; font-size: 0.95rem; transition: var(--transition); }
-.btn:hover { transform: translateY(-2px); }
-.btn-gold { background: linear-gradient(135deg, var(--gold), var(--gold-light)); color: black; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2); }
-.btn-dark { background: rgba(255, 255, 255, 0.05); color: white; border: 1px solid var(--border); }
+/* Modern Buttons (Neon/Glow) */
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(212, 175, 55, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+}
 
-/* Components */
-.card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
+.btn { padding: 12px 24px; border-radius: 12px; font-weight: 600; font-size: 0.95rem; transition: var(--transition); }
+.btn:hover { transform: translateY(-3px); }
+
+.btn-gold { 
+    background: linear-gradient(45deg, var(--gold), var(--gold-light)); 
+    color: black; 
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+    animation: pulse 2s infinite;
+}
+.btn-gold:hover { box-shadow: 0 0 25px rgba(212, 175, 55, 0.6); }
+
+.btn-dark { background: rgba(255, 255, 255, 0.05); color: white; border: 1px solid var(--border); }
+.btn-dark:hover { background: rgba(255, 255, 255, 0.1); }
+
+/* Components (Glassmorphism) */
+.card, .info-card { 
+    background: var(--card); 
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border); 
+    border-radius: var(--radius); 
+    padding: 24px; 
+}
 
 /* Hero */
 .hero { min-height: 60vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 60px 0; }
@@ -59,15 +80,14 @@ button { cursor: pointer; border: none; font-family: inherit; }
 
 /* Grids */
 .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 40px 0; }
-.info-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
 .info-card h3 { color: var(--muted); font-size: 0.85rem; margin-bottom: 8px; text-transform: uppercase; }
 .info-card p { font-size: 1.5rem; font-weight: 700; }
 
-/* Footer Styling */
+/* Footer Styling (Clean & Modern) */
 footer {
     padding: 60px 20px 40px 20px;
     border-top: 1px solid var(--border);
-    margin-top: 40px;
+    margin-top: 80px;
 }
 
 .footer-content {
@@ -90,10 +110,11 @@ footer {
     font-size: 0.75rem;
     color: var(--muted);
     opacity: 0.8;
-                                                     }
+}
+
 /* Responsive Adjustments */
 @media (max-width: 768px) {
   .navbar { flex-direction: column; height: auto; gap: 20px; padding: 20px 0; }
   .hero h1 { font-size: 2.5rem; }
-  .footer { flex-direction: column; height: auto; gap: 10px; padding: 20px 0; text-align: center; }
+  .footer { padding: 40px 20px; }
 }
