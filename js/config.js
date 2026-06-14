@@ -37,8 +37,8 @@ export const LINKS = {
 // APP INFO
 // ======================================================
 export const APP = {
-  NAME: "EVOZX LaunchFuture",
-  VERSION: "2.0.0"
+  NAME: "EVOZX Launch Future",
+  PWERED by: "EVOZXLabs"
 };
 
 // ======================================================
