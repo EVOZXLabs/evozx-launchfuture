@@ -1,183 +1,469 @@
 import {
-  symbolExists,
-  getDeploymentFee
+symbolExists
 } from "./factory.js";
 
-// ==========================
+import {
+FEES
+} from "./config.js";
+
+// =====================================================
 // ELEMENTS
-// ==========================
+// =====================================================
 
-const burnable = document.getElementById("burnable");
-const mintable = document.getElementById("mintable");
-const ownership = document.getElementById("ownership");
+const tokenName =
+document.getElementById("tokenName");
 
-const featureFee = document.getElementById("featureFee");
-const totalFee = document.getElementById("totalFee");
-const burnAmount = document.getElementById("burnAmount");
-const treasuryAmount = document.getElementById("treasuryAmount");
+const tokenSupply =
+document.getElementById("tokenSupply");
 
 const tokenSymbol =
-  document.getElementById("tokenSymbol") ||
-  document.getElementById("symbolInput");
+document.getElementById("tokenSymbol") ||
+document.getElementById("symbolInput");
 
-const symbolStatus = document.getElementById("symbolStatus");
-const baseFeeEl = document.getElementById("baseFee");
-const continueBtn = document.getElementById("continueBtn");
+const burnable =
+document.getElementById("burnable");
 
-// ==========================
+const mintable =
+document.getElementById("mintable");
+
+const ownership =
+document.getElementById("ownership");
+
+const maxWallet =
+document.getElementById("maxWalletEnabled");
+
+const maxTx =
+document.getElementById("maxTxEnabled");
+
+const tradingControl =
+document.getElementById("tradingControlEnabled");
+
+const buyTax =
+document.getElementById("buyTaxEnabled");
+
+const sellTax =
+document.getElementById("sellTaxEnabled");
+
+const website =
+document.getElementById("website");
+
+const telegram =
+document.getElementById("telegram");
+
+const twitter =
+document.getElementById("twitter");
+
+const logoURI =
+document.getElementById("logoURI");
+
+const featureFee =
+document.getElementById("featureFee");
+
+const totalFee =
+document.getElementById("totalFee");
+
+const burnAmount =
+document.getElementById("burnAmount");
+
+const treasuryAmount =
+document.getElementById("treasuryAmount");
+
+const baseFeeEl =
+document.getElementById("baseFee");
+
+const symbolStatus =
+document.getElementById("symbolStatus");
+
+const continueBtn =
+document.getElementById("continueBtn");
+
+// =====================================================
 // STATE
-// ==========================
+// =====================================================
 
-let baseFeeValue = 10; // default aman
-let isSymbolValid = false;
-let isCheckingSymbol = false;
+let baseFeeValue =
+FEES.BASE;
 
-// ==========================
-// SAFE TEXT SETTER
-// ==========================
+let isSymbolValid =
+false;
 
-function setText(el, text) {
-  if (el) el.textContent = text;
+let isCheckingSymbol =
+false;
+
+// =====================================================
+// HELPERS
+// =====================================================
+
+function setText(
+element,
+value
+) {
+if (element) {
+element.textContent =
+value;
+}
 }
 
-// ==========================
-// FEE CALCULATOR
-// ==========================
+function isChecked(
+element
+) {
+return !!element?.checked;
+}
+
+// =====================================================
+// FEE ENGINE
+// =====================================================
 
 function calculate() {
-  if (!featureFee || !totalFee) return;
 
-  let feature = 0;
+let feature = 0;
 
-  if (burnable?.checked) feature += 5;
-  if (mintable?.checked) feature += 10;
-  if (ownership?.checked) feature += 5;
-
-  const total = baseFeeValue + feature;
-
-  setText(featureFee, `${feature} EVOZX`);
-  setText(totalFee, `${total} EVOZX`);
-  setText(burnAmount, `${(total * 0.3).toFixed(2)} EVOZX`);
-  setText(treasuryAmount, `${(total * 0.7).toFixed(2)} EVOZX`);
-
-  updateContinueState();
+if (
+isChecked(
+burnable
+)
+) {
+feature +=
+FEES.BURNABLE;
 }
 
-// ==========================
-// LOAD BASE FEE (SAFE)
-// ==========================
-
-async function loadBaseFee() {
-  try {
-    setText(baseFeeEl, "Loading...");
-
-    const feeData = await getDeploymentFee();
-
-    if (!feeData || feeData.total == null) {
-      throw new Error("Invalid feeData");
-    }
-
-    baseFeeValue = Number(feeData.total);
-
-    if (isNaN(baseFeeValue)) {
-      baseFeeValue = 10;
-    }
-
-    setText(baseFeeEl, `${baseFeeValue} EVOZX`);
-  } catch (err) {
-    console.error("BASE FEE ERROR:", err);
-
-    baseFeeValue = 10;
-    setText(baseFeeEl, "10 EVOZX (fallback)");
-  }
-
-  calculate();
+if (
+isChecked(
+mintable
+)
+) {
+feature +=
+FEES.MINTABLE;
 }
 
-// ==========================
-// CONTINUE BUTTON STATE
-// ==========================
+if (
+isChecked(
+ownership
+)
+) {
+feature +=
+FEES.OWNERSHIP;
+}
+
+if (
+isChecked(
+maxWallet
+)
+) {
+feature +=
+FEES.MAX_WALLET;
+}
+
+if (
+isChecked(
+maxTx
+)
+) {
+feature +=
+FEES.MAX_TX;
+}
+
+if (
+isChecked(
+tradingControl
+)
+) {
+feature +=
+FEES.TRADING_CONTROL;
+}
+
+if (
+isChecked(
+buyTax
+)
+) {
+feature +=
+FEES.BUY_TAX;
+}
+
+if (
+isChecked(
+sellTax
+)
+) {
+feature +=
+FEES.SELL_TAX;
+}
+
+if (
+website?.value?.trim()
+) {
+feature +=
+FEES.WEBSITE;
+}
+
+if (
+telegram?.value?.trim()
+) {
+feature +=
+FEES.TELEGRAM;
+}
+
+if (
+twitter?.value?.trim()
+) {
+feature +=
+FEES.TWITTER;
+}
+
+if (
+logoURI?.value?.trim()
+) {
+feature +=
+FEES.LOGO;
+}
+
+const total =
+baseFeeValue +
+feature;
+
+setText(
+baseFeeEl,
+"${baseFeeValue} EVOZX"
+);
+
+setText(
+featureFee,
+"${feature} EVOZX"
+);
+
+setText(
+totalFee,
+"${total} EVOZX"
+);
+
+setText(
+burnAmount,
+"${( total * 0.30 ).toFixed(2)} EVOZX"
+);
+
+setText(
+treasuryAmount,
+"${( total * 0.70 ).toFixed(2)} EVOZX"
+);
+
+updateContinueState();
+}
+
+// =====================================================
+// CONTINUE BUTTON
+// =====================================================
 
 function updateContinueState() {
-  if (!continueBtn) return;
 
-  const symbol = tokenSymbol?.value?.trim();
-
-  const valid =
-    symbol &&
-    isSymbolValid &&
-    !isCheckingSymbol;
-
-  continueBtn.disabled = !valid;
-  continueBtn.style.opacity = valid ? "1" : "0.5";
-  continueBtn.style.cursor = valid ? "pointer" : "not-allowed";
+if (
+!continueBtn
+) {
+return;
 }
 
-// ==========================
-// SYMBOL CHECKER (STABLE)
-// ==========================
+const nameValid =
+tokenName?.value
+?.trim()
+?.length >= 2;
+
+const symbolValid =
+tokenSymbol?.value
+?.trim()
+?.length >= 2 &&
+isSymbolValid;
+
+const supplyValid =
+Number(
+tokenSupply?.value
+) > 0;
+
+const valid =
+nameValid &&
+symbolValid &&
+supplyValid &&
+!isCheckingSymbol;
+
+continueBtn.disabled =
+!valid;
+
+continueBtn.style.opacity =
+valid
+? "1"
+: "0.5";
+
+continueBtn.style.cursor =
+valid
+? "pointer"
+: "not-allowed";
+}
+
+// =====================================================
+// SYMBOL CHECK
+// =====================================================
 
 let symbolTimeout;
 
-tokenSymbol?.addEventListener("input", () => {
-  clearTimeout(symbolTimeout);
+tokenSymbol?.addEventListener(
+"input",
+() => {
 
-  const symbol = tokenSymbol.value.trim();
+clearTimeout(
+  symbolTimeout
+);
 
-  isSymbolValid = false;
+const symbol =
+  tokenSymbol.value.trim();
 
-  if (!symbol) {
-    setText(symbolStatus, "");
-    updateContinueState();
-    return;
-  }
+isSymbolValid =
+  false;
 
-  setText(symbolStatus, "Checking...");
-  symbolStatus.style.color = "black";
+if (!symbol) {
 
-  isCheckingSymbol = true;
+  setText(
+    symbolStatus,
+    ""
+  );
+
   updateContinueState();
 
-  symbolTimeout = setTimeout(async () => {
-    try {
-      const exists = await symbolExists(symbol);
+  return;
+}
 
-      if (exists) {
-        isSymbolValid = false;
-        setText(symbolStatus, "❌ Symbol already exists");
-        symbolStatus.style.color = "red";
-      } else {
-        isSymbolValid = true;
-        setText(symbolStatus, "✅ Symbol available");
-        symbolStatus.style.color = "green";
+setText(
+  symbolStatus,
+  "Checking..."
+);
+
+symbolStatus.style.color =
+  "#999";
+
+isCheckingSymbol =
+  true;
+
+updateContinueState();
+
+symbolTimeout =
+  setTimeout(
+    async () => {
+
+      try {
+
+        const exists =
+          await symbolExists(
+            symbol
+          );
+
+        if (
+          exists
+        ) {
+
+          isSymbolValid =
+            false;
+
+          setText(
+            symbolStatus,
+            "❌ Symbol already exists"
+          );
+
+          symbolStatus.style.color =
+            "#ff4d4f";
+
+        } else {
+
+          isSymbolValid =
+            true;
+
+          setText(
+            symbolStatus,
+            "✅ Symbol available"
+          );
+
+          symbolStatus.style.color =
+            "#52c41a";
+        }
+
+      } catch (
+        error
+      ) {
+
+        console.error(
+          error
+        );
+
+        isSymbolValid =
+          false;
+
+        setText(
+          symbolStatus,
+          "⚠️ Unable to check symbol"
+        );
+
+        symbolStatus.style.color =
+          "#faad14";
       }
-    } catch (err) {
-      console.error("SYMBOL ERROR:", err);
 
-      isSymbolValid = false;
-      setText(symbolStatus, "⚠️ Error checking");
-      symbolStatus.style.color = "orange";
-    }
+      isCheckingSymbol =
+        false;
 
-    isCheckingSymbol = false;
-    updateContinueState();
-  }, 600);
-});
+      updateContinueState();
 
-// ==========================
+    },
+    600
+  );
+
+}
+);
+
+// =====================================================
 // EVENTS
-// ==========================
+// =====================================================
 
-burnable?.addEventListener("change", calculate);
-mintable?.addEventListener("change", calculate);
-ownership?.addEventListener("change", calculate);
+[
+burnable,
+mintable,
+ownership,
+maxWallet,
+maxTx,
+tradingControl,
+buyTax,
+sellTax
+].forEach(
+element => {
+element?.addEventListener(
+"change",
+calculate
+);
+}
+);
 
-// ==========================
+[
+tokenName,
+tokenSupply,
+website,
+telegram,
+twitter,
+logoURI
+].forEach(
+element => {
+element?.addEventListener(
+"input",
+calculate
+);
+}
+);
+
+// =====================================================
 // INIT
-// ==========================
+// =====================================================
 
-window.addEventListener("DOMContentLoaded", async () => {
-  calculate();
-  await loadBaseFee();
-  updateContinueState();
-});
+window.addEventListener(
+"DOMContentLoaded",
+() => {
+
+calculate();
+
+updateContinueState();
+
+}
+);
