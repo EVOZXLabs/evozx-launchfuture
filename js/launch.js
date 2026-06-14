@@ -9,7 +9,6 @@ const tokenSymbol = document.getElementById("symbolInput");
 const tokenSupply = document.getElementById("tokenSupply");
 const deployBtn = document.getElementById("deployBtn");
 
-// Checkboxes & Inputs
 const burnable = document.getElementById("burnable");
 const mintable = document.getElementById("mintable");
 const ownership = document.getElementById("ownership");
@@ -25,33 +24,45 @@ const twitter = document.getElementById("twitter");
 const logoURI = document.getElementById("logoURI");
 
 // =====================================================
-// CONFIG BUILDER (Penyebab Eror "Missing Value" diperbaiki di sini)
+// CONFIG BUILDER (REVISI BIGINT & STRUKTUR)
 // =====================================================
 export function buildTokenConfig() {
+    // Fungsi pembantu untuk konversi ke BigInt
+    // Asumsi 18 desimal standar ERC20
+    const toBigInt = (val) => {
+        try {
+            return BigInt(Math.floor(parseFloat(val || 0) * 10**18));
+        } catch { return 0n; }
+    };
+
     return {
-        name: tokenName.value,
-        symbol: tokenSymbol.value,
-        supply: tokenSupply.value,
+        name: tokenName.value || "Untitled",
+        symbol: tokenSymbol.value || "TOKEN",
+        supply: toBigInt(tokenSupply.value), // Konversi ke Wei
         
-        // Flags (Harus dikirim semua agar tidak "missing value")
-        burnable: burnable.checked,
-        mintable: mintable.checked,
-        ownership: ownership.checked,
-        maxWalletEnabled: maxWallet.checked,
-        maxTxEnabled: maxTx.checked,
-        tradingControlEnabled: tradingControl.checked,
+        // Flags
+        burnable: burnable?.checked || false,
+        mintable: mintable?.checked || false,
+        ownershipEnabled: ownership?.checked || false,
+        maxWalletEnabled: maxWallet?.checked || false,
+        maxTxEnabled: maxTx?.checked || false,
+        tradingControlEnabled: tradingControl?.checked || false,
         
-        // Values
-        maxWallet: maxWallet.checked ? (document.getElementById("maxWalletInput")?.value || 0) : 0,
-        maxTx: maxTx.checked ? (document.getElementById("maxTxInput")?.value || 0) : 0,
-        buyTax: buyTax.value || 0,
-        sellTax: sellTax.value || 0,
+        // Values (Convert ke Number agar tidak string)
+        maxWalletPercent: maxWallet?.checked ? parseInt(document.getElementById("maxWalletInput")?.value || 0) : 0,
+        maxTxPercent: maxTx?.checked ? parseInt(document.getElementById("maxTxInput")?.value || 0) : 0,
+        buyTax: parseInt(buyTax?.value || 0),
+        sellTax: parseInt(sellTax?.value || 0),
         
         // Socials
-        website: website.value || "",
-        telegram: telegram.value || "",
-        twitter: twitter.value || "",
-        logoURI: logoURI.value || ""
+        website: website?.value || "",
+        telegram: telegram?.value || "",
+        twitter: twitter?.value || "",
+        logoURI: logoURI?.value || "",
+
+        // Tambahan Default (Sering dibutuhkan Factory Contract)
+        marketingWallet: "0x0000000000000000000000000000000000000000",
+        developmentWallet: "0x0000000000000000000000000000000000000000"
     };
 }
 
@@ -64,6 +75,10 @@ deployBtn?.addEventListener("click", async () => {
         deployBtn.textContent = "Deploying...";
         
         const config = buildTokenConfig();
+        
+        // Debugging: Cek data di console sebelum kirim
+        console.log("Data Config yang dikirim:", config);
+        
         const tx = await createToken(config);
         
         alert("Transaction submitted! Please wait for confirmation.");
@@ -74,14 +89,16 @@ deployBtn?.addEventListener("click", async () => {
         deployBtn.disabled = false;
     } catch (e) {
         console.error("Deploy Error:", e);
-        alert("Deploy failed: " + (e.reason || e.message || "Unknown error"));
+        // Menampilkan pesan error yang lebih jelas dari MetaMask/Contract
+        const msg = e.reason || e.data?.message || e.message || "Unknown error";
+        alert("Deploy failed: " + msg);
         deployBtn.disabled = false;
         deployBtn.textContent = "Deploy Token";
     }
 });
 
 // =====================================================
-// FEE ENGINE & UI
+// FEE ENGINE
 // =====================================================
 function calculate() {
     let feature = 0;
@@ -94,7 +111,7 @@ function calculate() {
     
     if ((parseFloat(buyTax?.value) || 0) > 0 || (parseFloat(sellTax?.value) || 0) > 0) feature += FEES.TAX;
     
-    // Update Stats (DOM check)
+    // Update Stats
     const total = FEES.BASE + feature;
     const setText = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
     
@@ -105,8 +122,9 @@ function calculate() {
     setText("treasuryAmount", `${(total * 0.70).toFixed(2)} EVOZX`);
 }
 
-// Event listeners tetap sama
+// Listeners
 [burnable, mintable, ownership, maxWallet, maxTx, tradingControl].forEach(el => el?.addEventListener("change", calculate));
 [tokenName, tokenSymbol, tokenSupply, buyTax, sellTax, website, telegram, twitter, logoURI].forEach(el => el?.addEventListener("input", calculate));
 
 window.addEventListener("DOMContentLoaded", calculate);
+        
