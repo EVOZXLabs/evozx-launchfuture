@@ -1,147 +1,450 @@
 import { BrowserProvider } from "https://esm.sh/ethers@6";
-import { NETWORK } from "./config.js";
+
+import {
+
+    NETWORK,
+    STORAGE
+
+} from "./config.js";
+
+// ============================================================
+// STATE
+// ============================================================
 
 let provider = null;
-let signer = null;
-let currentAccount = null;
 
-// ======================================
-// NETWORK LOGIC
-// ======================================
+let signer = null;
+
+let account = null;
+
+// ============================================================
+// PROVIDER
+// ============================================================
+
+async function initProvider() {
+
+    if (!window.ethereum) {
+
+        throw new Error(
+            "Wallet not detected."
+        );
+
+    }
+
+    if (!provider) {
+
+        provider =
+            new BrowserProvider(
+                window.ethereum
+            );
+
+    }
+
+    return provider;
+
+}
+
+// ============================================================
+// NETWORK
+// ============================================================
 
 export async function checkNetwork() {
-    if (!window.ethereum) return false;
-    try {
-        const chainId = await window.ethereum.request({ method: "eth_chainId" });
-        return chainId.toLowerCase() === NETWORK.chainHex.toLowerCase();
-    } catch (error) {
-        console.error("Network check error:", error);
+
+    if (!window.ethereum) {
+
         return false;
+
     }
+
+    const chainId =
+        await window.ethereum.request({
+
+            method:
+                "eth_chainId"
+
+        });
+
+    return (
+        chainId.toLowerCase() ===
+        NETWORK.chainIdHex.toLowerCase()
+    );
+
 }
 
 export async function switchToEVOZ() {
-    if (!window.ethereum) throw new Error("Wallet not detected");
-    try {
-        await window.ethereum.request({
-            method: "wallet_switchEthereumChain",
-            params: [{ chainId: NETWORK.chainHex }]
-        });
-    } catch (error) {
-        if (error.code === 4902) {
-            await window.ethereum.request({
-                method: "wallet_addEthereumChain",
-                params: [{
-                    chainId: NETWORK.chainHex,
-                    chainName: NETWORK.chainName,
-                    rpcUrls: NETWORK.rpcUrls,
-                    blockExplorerUrls: NETWORK.blockExplorerUrls,
-                    nativeCurrency: NETWORK.nativeCurrency
-                }]
-            });
-        } else {
-            throw error;
-        }
+
+    if (!window.ethereum) {
+
+        throw new Error(
+            "Wallet not detected."
+        );
+
     }
+
+    try {
+
+        await window.ethereum.request({
+
+            method:
+                "wallet_switchEthereumChain",
+
+            params: [
+
+                {
+
+                    chainId:
+                        NETWORK.chainIdHex
+
+                }
+
+            ]
+
+        });
+
+    }
+
+    catch {
+
+        await window.ethereum.request({
+
+            method:
+                "wallet_addEthereumChain",
+
+            params: [
+
+                {
+
+                    chainId:
+                        NETWORK.chainIdHex,
+
+                    chainName:
+                        NETWORK.name,
+
+                    nativeCurrency: {
+
+                        name:
+                            NETWORK.symbol,
+
+                        symbol:
+                            NETWORK.symbol,
+
+                        decimals:
+                            NETWORK.decimals
+
+                    },
+
+                    rpcUrls: [
+
+                        NETWORK.rpcUrl
+
+                    ],
+
+                    blockExplorerUrls: [
+
+                        NETWORK.explorer
+
+                    ]
+
+                }
+
+            ]
+
+        });
+
+    }
+
 }
 
-// ======================================
-// CONNECTION LOGIC
-// ======================================
+// ============================================================
+// CONNECT
+// ============================================================
 
 export async function connectWallet() {
-    if (!window.ethereum) {
-        alert("Web3 wallet not detected.");
-        return null;
-    }
-    try {
-        if (!(await checkNetwork())) await switchToEVOZ();
 
-        await window.ethereum.request({ method: "eth_requestAccounts" });
-        
-        provider = new BrowserProvider(window.ethereum);
-        signer = await provider.getSigner();
-        currentAccount = await signer.getAddress();
+    await initProvider();
 
-        localStorage.setItem("walletConnected", "true");
-        updateWalletButtons();
-        return currentAccount;
-    } catch (error) {
-        console.error("Connect error:", error);
-        return null;
+    const correctNetwork =
+        await checkNetwork();
+
+    if (!correctNetwork) {
+
+        await switchToEVOZ();
+
     }
+
+    await window.ethereum.request({
+
+        method:
+            "eth_requestAccounts"
+
+    });
+
+    signer =
+        await provider.getSigner();
+
+    account =
+        await signer.getAddress();
+
+    localStorage.setItem(
+
+        STORAGE.wallet,
+
+        "true"
+
+    );
+
+    updateWalletButtons();
+
+    return account;
+
 }
+
+// ============================================================
+// RESTORE
+// ============================================================
 
 export async function restoreConnection() {
-    if (localStorage.getItem("walletConnected") !== "true" || !window.ethereum) return;
 
-    try {
-        const accounts = await window.ethereum.request({ method: "eth_accounts" });
-        if (!accounts.length) {
-            disconnectWallet();
-            return;
-        }
-        provider = new BrowserProvider(window.ethereum);
-        signer = await provider.getSigner();
-        currentAccount = accounts[0];
-        updateWalletButtons();
-    } catch (error) {
-        console.error("Restore error:", error);
-        disconnectWallet();
+    if (
+
+        localStorage.getItem(
+
+            STORAGE.wallet
+
+        ) !== "true"
+
+    ) {
+
+        return null;
+
     }
+
+    if (!window.ethereum) {
+
+        return null;
+
+    }
+
+    await initProvider();
+
+    const accounts =
+        await window.ethereum.request({
+
+            method:
+                "eth_accounts"
+
+        });
+
+    if (!accounts.length) {
+
+        disconnectWallet();
+
+        return null;
+
+    }
+
+    signer =
+        await provider.getSigner();
+
+    account =
+        accounts[0];
+
+    updateWalletButtons();
+
+    return account;
+
 }
+
+// ============================================================
+// DISCONNECT
+// ============================================================
 
 export function disconnectWallet() {
-    localStorage.removeItem("walletConnected");
+
+    localStorage.removeItem(
+
+        STORAGE.wallet
+
+    );
+
     provider = null;
+
     signer = null;
-    currentAccount = null;
+
+    account = null;
+
     updateWalletButtons();
+
 }
 
-// ======================================
-// GETTERS & HELPERS
-// ======================================
+// ============================================================
+// GETTERS
+// ============================================================
 
-export const getProvider = () => provider;
-export const getSigner = () => signer;
-export const getAccount = () => currentAccount;
-export const isConnected = () => !!currentAccount;
+export function getProvider() {
+
+    return provider;
+
+}
+
+export function getSigner() {
+
+    return signer;
+
+}
+
+export function getAccount() {
+
+    return account;
+
+}
+
+export function isConnected() {
+
+    return account !== null;
+
+}
+
+// ============================================================
+// UI
+// ============================================================
 
 export function shortAddress(address) {
-    if (!address) return "";
-    return `${address.slice(0, 6)}...${address.slice(-4)}`;
+
+    if (!address) {
+
+        return "";
+
+    }
+
+    return (
+
+        address.slice(0, 6)
+
+        +
+
+        "..."
+
+        +
+
+        address.slice(-4)
+
+    );
+
 }
 
 export function updateWalletButtons() {
-    document.querySelectorAll("#connectBtn").forEach((btn) => {
-        if (!btn) return;
-        if (currentAccount) {
-            btn.textContent = shortAddress(currentAccount);
-            btn.dataset.connected = "true";
-            btn.title = "Click to disconnect";
-        } else {
-            btn.textContent = "Connect Wallet";
-            btn.dataset.connected = "false";
-            btn.title = "";
+
+    const buttons =
+
+        document.querySelectorAll(
+
+            "#connectBtn"
+
+        );
+
+    buttons.forEach((button) => {
+
+        if (!button) {
+
+            return;
+
         }
+
+        if (account) {
+
+            button.textContent =
+                shortAddress(account);
+
+            button.dataset.connected =
+                "true";
+
+        }
+
+        else {
+
+            button.textContent =
+                "Connect Wallet";
+
+            button.dataset.connected =
+                "false";
+
+        }
+
     });
+
 }
 
-// ======================================
+// ============================================================
 // EVENTS
-// ======================================
-
-window.addEventListener("DOMContentLoaded", restoreConnection);
+// ============================================================
 
 if (window.ethereum) {
-    window.ethereum.on("accountsChanged", (accounts) => {
-        if (!accounts.length) disconnectWallet();
-        else {
-            currentAccount = accounts[0];
-            updateWalletButtons();
-        }
-    });
 
-    window.ethereum.on("chainChanged", () => window.location.reload());
-  }
+    window.ethereum.on(
+
+        "accountsChanged",
+
+        async (accounts) => {
+
+            if (!accounts.length) {
+
+                disconnectWallet();
+
+                return;
+
+            }
+
+            await initProvider();
+
+            signer =
+                await provider.getSigner();
+
+            account =
+                accounts[0];
+
+            updateWalletButtons();
+
+        }
+
+    );
+
+    window.ethereum.on(
+
+        "chainChanged",
+
+        () => {
+
+            window.location.reload();
+
+        }
+
+    );
+
+}
+
+// ============================================================
+// AUTO RESTORE
+// ============================================================
+
+window.addEventListener(
+
+    "DOMContentLoaded",
+
+    async () => {
+
+        try {
+
+            await restoreConnection();
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+        }
+
+    }
+
+);
