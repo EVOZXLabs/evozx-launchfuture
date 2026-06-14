@@ -1,89 +1,42 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta
+name="viewport"
+content="width=device-width, initial-scale=1.0">
 
-<head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Launch Token | EVOZX Launch Future</title>
-
-<link rel="stylesheet" href="./css/app.css">
-<link rel="stylesheet" href="./css/launch.css">
-
-</head>
-
-<body>
-
-<div class="bg-blur blur-1"></div>
-<div class="bg-blur blur-2"></div>
-
-<header>
-
-<nav class="container navbar">
-
-<div class="brand">
-
-<div class="brand-dot"></div>
-
-<span>EVOZX Launch Future</span>
-
-</div>
-
-<div class="nav-links">
-
-<a href="./index.html">Home</a>
-<a href="#">Launch</a>
-
-</div>
-
-<button
+<title>
+Launch Token | EVOZX Launch Future
+</title><link
+rel="stylesheet"
+href="./css/app.css"><link
+rel="stylesheet"
+href="./css/launch.css"></head><body><div class="bg-blur blur-1"></div>
+<div class="bg-blur blur-2"></div><header><nav class="container navbar"><div class="brand"><div class="brand-dot"></div><span>
+EVOZX Launch Future
+</span></div><div class="nav-links"><a href="./index.html">
+Home
+</a><a href="#">
+Launch
+</a></div><button
 id="connectBtn"
 class="btn btn-gold">
 
 Connect Wallet
 
-</button>
-
-</nav>
-
-</header>
-
-<main>
-
-<section class="launch-page container">
-
-<div class="launch-left">
-
-<div class="wizard-card">
-
-<div class="wizard-header">
-
-<h1>Token Builder</h1>
-
-<p>Create a token on EVOZ without coding.</p>
-
-</div>
-
-<!-- TOKEN NAME -->
-<div class="form-group">
-
-<label>Token Name</label>
-
-<input
+</button></nav></header><main><section class="launch-page container"><!-- LEFT --><div class="launch-left"><div class="wizard-card"><div class="wizard-header"><h1>
+Token Builder
+</h1><p>
+Create a token on EVOZ without coding.
+</p></div><!-- BASIC --><h3 class="form-section">
+Basic Information
+</h3><div class="form-group"><label>
+Token Name
+</label><input
 id="tokenName"
 type="text"
 placeholder="Example Token">
 
-</div>
-
-<!-- TOKEN SYMBOL -->
-<div class="form-group">
-
-<label>Token Symbol</label>
-
-<input
+</div><div class="form-group"><label>
+Token Symbol
+</label><input
 id="symbolInput"
 type="text"
 placeholder="EXT">
@@ -91,102 +44,218 @@ placeholder="EXT">
 <div
 id="symbolStatus"
 class="symbol-status">
-</div>
-
-</div>
-
-<!-- TOTAL SUPPLY -->
-<div class="form-group">
-
-<label>Total Supply</label>
-
-<input
+</div></div><div class="form-group"><label>
+Total Supply
+</label><input
 id="tokenSupply"
 type="number"
+max="1000000000000"
 placeholder="1000000">
 
-</div>
+</div><!-- FEATURES --><h3 class="form-section">
+Core Features
+</h3><div class="feature-box"><label><input
+type="checkbox"
+id="burnable">
 
-<!-- FEATURES -->
-<div class="feature-box">
-
-<h3>Features</h3>
-
-<label>
-<input type="checkbox" id="burnable">
 Burnable
-</label>
 
-<label>
-<input type="checkbox" id="mintable">
+</label><label><input
+type="checkbox"
+id="mintable">
+
 Mintable
-</label>
+(One-Time Mint)
 
-<label>
-<input type="checkbox" id="ownership">
+</label><label><input
+type="checkbox"
+id="ownership">
+
 Ownership
-</label>
 
-</div>
+</label></div><!-- TRADING --><h3 class="form-section">
+Trading Control
+</h3><div class="feature-box"><label><input
+type="checkbox"
+id="tradingControlEnabled">
 
-<button
-id="continueBtn"
+Enable Trading Control
+
+</label><label><input
+type="checkbox"
+id="tradingEnabled">
+
+Trading Enabled At Launch
+
+</label></div><!-- LIMITS --><h3 class="form-section">
+Security Limits
+</h3><div class="feature-box"><label><input
+type="checkbox"
+id="maxWalletEnabled">
+
+Enable Max Wallet
+
+</label></div><div class="form-group"><label>
+Max Wallet %
+</label><input
+id="maxWalletPercent"
+type="number"
+min="1"
+max="100"
+placeholder="5">
+
+</div><div class="feature-box"><label><input
+type="checkbox"
+id="maxTxEnabled">
+
+Enable Max Transaction
+
+</label></div><div class="form-group"><label>
+Max Transaction %
+</label><input
+id="maxTxPercent"
+type="number"
+min="1"
+max="100"
+placeholder="2">
+
+</div><!-- TAX --><h3 class="form-section">
+Token Tax
+</h3><div class="feature-box"><label><input
+type="checkbox"
+id="buyTaxEnabled">
+
+Enable Buy Tax
+
+</label></div><div class="form-group"><label>
+Buy Tax %
+</label><input
+id="buyTax"
+type="number"
+min="0"
+max="10"
+placeholder="5">
+
+</div><div class="feature-box"><label><input
+type="checkbox"
+id="sellTaxEnabled">
+
+Enable Sell Tax
+
+</label></div><div class="form-group"><label>
+Sell Tax %
+</label><input
+id="sellTax"
+type="number"
+min="0"
+max="10"
+placeholder="5">
+
+</div><div class="form-group"><label>
+Burn Tax Share %
+</label><input
+id="burnTaxShare"
+type="number"
+min="0"
+max="100"
+placeholder="50">
+
+</div><div class="form-group"><label>
+Marketing Wallet
+</label><input
+id="marketingWallet"
+type="text"
+placeholder="0x...">
+
+</div><div class="form-group"><label>
+Development Wallet
+</label><input
+id="developmentWallet"
+type="text"
+placeholder="0x...">
+
+</div><!-- METADATA --><h3 class="form-section">
+Project Metadata
+</h3><div class="form-group"><label>
+Website
+</label><input
+id="website"
+type="text"
+placeholder="https://">
+
+</div><div class="form-group"><label>
+Telegram
+</label><input
+id="telegram"
+type="text"
+placeholder="https://t.me/...">
+
+</div><div class="form-group"><label>
+Twitter / X
+</label><input
+id="twitter"
+type="text"
+placeholder="https://x.com/...">
+
+</div><div class="form-group"><label>
+Logo URI
+</label><input
+id="logoURI"
+type="text"
+placeholder="https://image.png">
+
+</div><!-- DEPLOY --><button
+id="deployBtn"
 class="btn btn-gold launch-btn">
 
-Continue
+Deploy Token
 
-</button>
+</button></div></div><!-- RIGHT --><div class="launch-right"><div class="summary-card"><h2>
+Deployment Summary
+</h2><div class="summary-row"><span>
+Factory
+</span><span>
+Ultimate
+</span></div><div class="summary-row"><span>
+Fee Token
+</span><span>
+EVOZX
+</span></div><div class="summary-row"><span>
+Base Fee
+</span><span id="baseFee">Loading...
 
-</div>
+</span></div><div class="summary-row"><span>
+Feature Fee
+</span><span id="featureFee">Loading...
 
-</div>
+</span></div><div class="summary-row"><span>
+Total Fee
+</span><span id="totalFee">Loading...
 
-<!-- SUMMARY -->
-<div class="launch-right">
+</span></div><hr><div class="summary-row"><span>
+Burn (30%)
+</span><span id="burnAmount">- 
 
-<div class="summary-card">
+</span></div><div class="summary-row"><span>
+Treasury (70%)
+</span><span id="treasuryAmount">- 
 
-<h2>Deployment Summary</h2>
+</span></div><hr><div class="summary-row"><span>
+EVOZX Balance
+</span><span id="evozxBalance">- 
 
-<div class="summary-row">
-<span>Base Fee</span>
-<span id="baseFee">Loading...</span>
-</div>
+</span></div><div class="summary-row"><span>
+Deployment Status
+</span><span id="deployStatus">Ready
 
-<div class="summary-row">
-<span>Features Fee</span>
-<span id="featureFee">0 EVOZ</span>
-</div>
-
-<div class="summary-row">
-<span>Total Fee</span>
-<span id="totalFee">Loading...</span>
-</div>
-
-<hr>
-
-<div class="summary-row">
-<span>Burn (30%)</span>
-<span id="burnAmount">-</span>
-</div>
-
-<div class="summary-row">
-<span>Treasury (70%)</span>
-<span id="treasuryAmount">-</span>
-</div>
-
-</div>
-
-</div>
-
-</section>
-
-</main>
-
-<!-- APP SCRIPT -->
-<script type="module" src="./js/app.js"></script>
-<script type="module" src="./js/launch.js"></script>
-<script type="module" src="./js/deploy.js"></script>
-  
-</body>
+</span></div></div></div></section></main><script
+type="module"
+src="./js/app.js">
+</script><script
+type="module"
+src="./js/launch.js">
+</script><script
+type="module"
+src="./js/deploy.js">
+</script></body>
 </html>
