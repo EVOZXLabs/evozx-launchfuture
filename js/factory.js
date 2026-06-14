@@ -5,6 +5,10 @@ import {
 } from "https://esm.sh/ethers@6";
 
 import {
+    Interface
+} from "https://esm.sh/ethers@6";
+
+import {
     CONTRACTS,
     NETWORK
 } from "./config.js";
@@ -15,6 +19,8 @@ import {
 
 let factoryAbi = null;
 let evozxAbi = null;
+
+let factoryInterface = null;
 
 let readProvider = null;
 
@@ -50,11 +56,16 @@ export async function loadFactoryAbi() {
     }
 
     factoryAbi =
-        await loadAbi(
-            "./abi/factory.json"
-        );
+    await loadAbi(
+        "./abi/factory.json"
+    );
 
-    return factoryAbi;
+factoryInterface =
+    new Interface(
+        factoryAbi
+    );
+
+return factoryAbi;
 
 }
 
@@ -372,9 +383,9 @@ export async function getDeploymentFee(config) {
 export async function getEVOZXBalance(address) {
 
     if (!address) {
-
-        return 0n;
-
+    throw new Error(
+        "Wallet address is required."
+    );
     }
 
     const token =
