@@ -11,28 +11,27 @@ import {
   getSigner
 } from "./wallet.js";
 
-// =====================================
+// ======================================================
 // ABI CACHE
-// =====================================
+// ======================================================
 
 let FACTORY_ABI = null;
 let EVOZX_ABI = null;
 
-// =====================================
+// ======================================================
 // ABI LOADER
-// =====================================
+// ======================================================
 
 async function loadFactoryAbi() {
 
-  if (FACTORY_ABI)
+  if (FACTORY_ABI) {
     return FACTORY_ABI;
+  }
 
   try {
 
     const response =
-      await fetch(
-        "./abi/factory.json"
-      );
+      await fetch("./abi/factory.json");
 
     FACTORY_ABI =
       await response.json();
@@ -46,21 +45,20 @@ async function loadFactoryAbi() {
       error
     );
 
-    return null;
+    throw error;
   }
 }
 
-async function loadEvozxAbi() {
+async function loadEVOZXAbi() {
 
-  if (EVOZX_ABI)
+  if (EVOZX_ABI) {
     return EVOZX_ABI;
+  }
 
   try {
 
     const response =
-      await fetch(
-        "./abi/evozx.json"
-      );
+      await fetch("./abi/evozx.json");
 
     EVOZX_ABI =
       await response.json();
@@ -74,20 +72,20 @@ async function loadEvozxAbi() {
       error
     );
 
-    return null;
+    throw error;
   }
 }
 
-// =====================================
+// ======================================================
 // PROVIDER
-// =====================================
+// ======================================================
 
 function getReadProvider() {
 
   if (!window.ethereum) {
 
     throw new Error(
-      "No wallet detected"
+      "Wallet not detected"
     );
   }
 
@@ -96,9 +94,9 @@ function getReadProvider() {
   );
 }
 
-// =====================================
-// FACTORY READ
-// =====================================
+// ======================================================
+// FACTORY CONTRACTS
+// ======================================================
 
 async function getFactoryRead() {
 
@@ -108,23 +106,12 @@ async function getFactoryRead() {
   const abi =
     await loadFactoryAbi();
 
-  if (!abi) {
-
-    throw new Error(
-      "Factory ABI missing"
-    );
-  }
-
   return new Contract(
     CONTRACTS.FACTORY,
     abi,
     provider
   );
 }
-
-// =====================================
-// FACTORY WRITE
-// =====================================
 
 async function getFactoryWrite() {
 
@@ -141,13 +128,6 @@ async function getFactoryWrite() {
   const abi =
     await loadFactoryAbi();
 
-  if (!abi) {
-
-    throw new Error(
-      "Factory ABI missing"
-    );
-  }
-
   return new Contract(
     CONTRACTS.FACTORY,
     abi,
@@ -155,9 +135,9 @@ async function getFactoryWrite() {
   );
 }
 
-// =====================================
-// EVOZX CONTRACT
-// =====================================
+// ======================================================
+// EVOZX CONTRACTS
+// ======================================================
 
 async function getEVOZXRead() {
 
@@ -165,14 +145,7 @@ async function getEVOZXRead() {
     getReadProvider();
 
   const abi =
-    await loadEvozxAbi();
-
-  if (!abi) {
-
-    throw new Error(
-      "EVOZX ABI missing"
-    );
-  }
+    await loadEVOZXAbi();
 
   return new Contract(
     CONTRACTS.EVOZX,
@@ -186,15 +159,15 @@ async function getEVOZXWrite() {
   const signer =
     getSigner();
 
-  const abi =
-    await loadEvozxAbi();
-
-  if (!abi) {
+  if (!signer) {
 
     throw new Error(
-      "EVOZX ABI missing"
+      "Wallet not connected"
     );
   }
+
+  const abi =
+    await loadEVOZXAbi();
 
   return new Contract(
     CONTRACTS.EVOZX,
@@ -203,9 +176,9 @@ async function getEVOZXWrite() {
   );
 }
 
-// =====================================
+// ======================================================
 // FACTORY INFO
-// =====================================
+// ======================================================
 
 export async function getFactoryName() {
 
@@ -220,7 +193,9 @@ export async function getVersion() {
   const factory =
     await getFactoryRead();
 
-  return await factory.LAUNCHKIT_VERSION();
+  return Number(
+    await factory.LAUNCHKIT_VERSION()
+  );
 }
 
 export async function getTreasury() {
@@ -236,7 +211,9 @@ export async function getTotalTokens() {
   const factory =
     await getFactoryRead();
 
-  return await factory.totalTokens();
+  return Number(
+    await factory.totalTokens()
+  );
 }
 
 export async function getAllTokens() {
@@ -247,9 +224,9 @@ export async function getAllTokens() {
   return await factory.getAllTokens();
 }
 
-// =====================================
-// SYMBOL CHECK
-// =====================================
+// ======================================================
+// TOKEN CHECK
+// ======================================================
 
 export async function symbolExists(
   symbol
@@ -275,9 +252,9 @@ export async function symbolExists(
   }
 }
 
-// =====================================
+// ======================================================
 // DEPLOYMENT FEE
-// =====================================
+// ======================================================
 
 export async function getDeploymentFee(
   config
@@ -298,7 +275,7 @@ export async function getDeploymentFee(
   } catch (error) {
 
     console.error(
-      "getDeploymentFee error:",
+      "Deployment fee error:",
       error
     );
 
@@ -306,9 +283,9 @@ export async function getDeploymentFee(
   }
 }
 
-// =====================================
-// DEPLOY TOKEN
-// =====================================
+// ======================================================
+// TOKEN DEPLOY
+// ======================================================
 
 export async function createToken(
   config
@@ -317,37 +294,14 @@ export async function createToken(
   const factory =
     await getFactoryWrite();
 
-  const tx =
-    await factory.createToken(
-      config
-    );
-
-  return tx;
+  return await factory.createToken(
+    config
+  );
 }
 
-// =====================================
-// EVOZX APPROVAL
-// =====================================
-
-export async function approveEVOZX(
-  amount
-) {
-
-  const token =
-    await getEVOZXWrite();
-
-  const tx =
-    await token.approve(
-      CONTRACTS.FACTORY,
-      amount
-    );
-
-  return tx;
-}
-
-// =====================================
+// ======================================================
 // EVOZX BALANCE
-// =====================================
+// ======================================================
 
 export async function getEVOZXBalance(
   wallet
@@ -365,7 +319,7 @@ export async function getEVOZXBalance(
   } catch (error) {
 
     console.error(
-      "balance error:",
+      "Balance error:",
       error
     );
 
@@ -373,9 +327,55 @@ export async function getEVOZXBalance(
   }
 }
 
-// =====================================
-// FACTORY WRITE ACCESS
-// =====================================
+// ======================================================
+// EVOZX ALLOWANCE
+// ======================================================
+
+export async function getEVOZXAllowance(
+  owner
+) {
+
+  try {
+
+    const token =
+      await getEVOZXRead();
+
+    return await token.allowance(
+      owner,
+      CONTRACTS.FACTORY
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Allowance error:",
+      error
+    );
+
+    return 0n;
+  }
+}
+
+// ======================================================
+// EVOZX APPROVE
+// ======================================================
+
+export async function approveEVOZX(
+  amount
+) {
+
+  const token =
+    await getEVOZXWrite();
+
+  return await token.approve(
+    CONTRACTS.FACTORY,
+    amount
+  );
+}
+
+// ======================================================
+// WRITE ACCESS
+// ======================================================
 
 export async function getFactoryForWrite() {
 
