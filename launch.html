@@ -8,22 +8,19 @@
     <link rel="stylesheet" href="./css/app.css">
     <link rel="stylesheet" href="./css/launch.css">
     <style>
-        /* Styling logo untuk navbar */
         .nav-logo { height: 40px; width: auto; object-fit: contain; }
+        
+        /* Styling Accordion */
+        details { background: rgba(0,0,0,0.2); border-radius: 8px; margin-bottom: 10px; transition: 0.3s; }
+        summary { padding: 15px; cursor: pointer; font-weight: 600; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+        summary::after { content: '▼'; font-size: 0.8rem; opacity: 0.6; }
+        details[open] summary::after { content: '▲'; }
+        .accordion-content { padding: 0 15px 15px 15px; }
 
-        /* FIX: Memastikan Form selalu di atas Summary pada layar mobile */
         @media (max-width: 900px) {
-            .launch-layout {
-                display: flex;
-                flex-direction: column;
-            }
-            .form-column {
-                order: 1;
-            }
-            .summary-column {
-                order: 2;
-                margin-top: 20px;
-            }
+            .launch-layout { display: flex; flex-direction: column; }
+            .form-column { order: 1; }
+            .summary-column { order: 2; margin-top: 20px; }
         }
     </style>
 </head>
@@ -71,83 +68,99 @@
                     </div>
                 </div>
 
-                <div class="card">
-                    <h3 class="card-title">Core Features</h3>
-                    <div class="checkbox-grid">
-                        <label class="checkbox-item"><input type="checkbox" id="burnable"> Burnable</label>
-                        <label class="checkbox-item"><input type="checkbox" id="mintable"> Mintable</label>
-                        <label class="checkbox-item"><input type="checkbox" id="ownership"> Ownership</label>
-                    </div>
+                <div class="card" style="padding: 0;">
+                    <details open>
+                        <summary class="card-title">Core Features</summary>
+                        <div class="accordion-content">
+                            <div class="checkbox-grid">
+                                <label class="checkbox-item"><input type="checkbox" id="burnable"> Burnable</label>
+                                <label class="checkbox-item"><input type="checkbox" id="mintable"> Mintable</label>
+                                <label class="checkbox-item"><input type="checkbox" id="ownership"> Ownership</label>
+                            </div>
+                        </div>
+                    </details>
                 </div>
 
-                <div class="card">
-                    <h3 class="card-title">Trading & Security</h3>
-                    <div class="checkbox-grid" style="margin-bottom: 20px;">
-                        <label class="checkbox-item"><input type="checkbox" id="tradingControlEnabled"> Trading Control</label>
-                        <label class="checkbox-item"><input type="checkbox" id="tradingEnabled"> Enable Trading</label>
-                        <label class="checkbox-item"><input type="checkbox" id="maxWalletEnabled"> Max Wallet</label>
-                    </div>
-                    <div class="input-grid">
-                        <div class="form-group">
-                            <label>Max Wallet %</label>
-                            <input id="maxWalletPercent" type="number" placeholder="5">
+                <div class="card" style="padding: 0;">
+                    <details>
+                        <summary class="card-title">Trading & Security</summary>
+                        <div class="accordion-content">
+                            <div class="checkbox-grid" style="margin-bottom: 20px;">
+                                <label class="checkbox-item"><input type="checkbox" id="tradingControlEnabled"> Trading Control</label>
+                                <label class="checkbox-item"><input type="checkbox" id="tradingEnabled"> Enable Trading</label>
+                                <label class="checkbox-item"><input type="checkbox" id="maxWalletEnabled"> Max Wallet</label>
+                            </div>
+                            <div class="input-grid">
+                                <div class="form-group">
+                                    <label>Max Wallet %</label>
+                                    <input id="maxWalletPercent" type="number" placeholder="5">
+                                </div>
+                                <div class="form-group">
+                                    <label>Max Tx %</label>
+                                    <input id="maxTxPercent" type="number" placeholder="2">
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label>Max Tx %</label>
-                            <input id="maxTxPercent" type="number" placeholder="2">
-                        </div>
-                    </div>
+                    </details>
                 </div>
 
-                <div class="card">
-                    <h3 class="card-title">Tokenomics & Tax</h3>
-                    <div class="input-grid">
-                        <div class="form-group">
-                            <label>Buy Tax %</label>
-                            <input id="buyTax" type="number" placeholder="0">
+                <div class="card" style="padding: 0;">
+                    <details>
+                        <summary class="card-title">Tokenomics & Tax</summary>
+                        <div class="accordion-content">
+                            <div class="input-grid">
+                                <div class="form-group">
+                                    <label>Buy Tax %</label>
+                                    <input id="buyTax" type="number" placeholder="0">
+                                </div>
+                                <div class="form-group">
+                                    <label>Sell Tax %</label>
+                                    <input id="sellTax" type="number" placeholder="0">
+                                </div>
+                                <div class="form-group full-width">
+                                    <label>Burn Tax Share %</label>
+                                    <input id="burnTaxShare" type="number" placeholder="50">
+                                </div>
+                                <div class="form-group full-width">
+                                    <label>Marketing Wallet</label>
+                                    <input id="marketingWallet" type="text" placeholder="0x...">
+                                </div>
+                                <div class="form-group full-width">
+                                    <label>Dev Wallet</label>
+                                    <input id="developmentWallet" type="text" placeholder="0x...">
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label>Sell Tax %</label>
-                            <input id="sellTax" type="number" placeholder="0">
-                        </div>
-                        <div class="form-group full-width">
-                            <label>Burn Tax Share %</label>
-                            <input id="burnTaxShare" type="number" placeholder="50">
-                        </div>
-                        <div class="form-group full-width">
-                            <label>Marketing Wallet</label>
-                            <input id="marketingWallet" type="text" placeholder="0x...">
-                        </div>
-                        <div class="form-group full-width">
-                            <label>Dev Wallet</label>
-                            <input id="developmentWallet" type="text" placeholder="0x...">
-                        </div>
-                    </div>
+                    </details>
                 </div>
 
-                <div class="card">
-                    <h3 class="card-title">Project Metadata</h3>
-                    <div class="form-group full-width">
-                        <label>Website</label>
-                        <input id="website" type="text" placeholder="https://...">
-                    </div>
-                    <div class="input-grid">
-                        <div class="form-group">
-                            <label>Telegram</label>
-                            <input id="telegram" type="text" placeholder="URL">
+                <div class="card" style="padding: 0;">
+                    <details>
+                        <summary class="card-title">Project Metadata</summary>
+                        <div class="accordion-content">
+                            <div class="form-group full-width">
+                                <label>Website</label>
+                                <input id="website" type="text" placeholder="https://...">
+                            </div>
+                            <div class="input-grid">
+                                <div class="form-group">
+                                    <label>Telegram</label>
+                                    <input id="telegram" type="text" placeholder="URL">
+                                </div>
+                                <div class="form-group">
+                                    <label>Twitter/X</label>
+                                    <input id="twitter" type="text" placeholder="URL">
+                                </div>
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Logo URI</label>
+                                <input id="logoURI" type="text" placeholder="https://...">
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label>Twitter/X</label>
-                            <input id="twitter" type="text" placeholder="URL">
-                        </div>
-                    </div>
-                    <div class="form-group full-width">
-                        <label>Logo URI</label>
-                        <input id="logoURI" type="text" placeholder="https://...">
-                    </div>
+                    </details>
                 </div>
 
-                <button id="deployBtn" class="btn btn-gold btn-large">Deploy Token</button>
+                <button id="deployBtn" class="btn btn-gold btn-large" style="margin-top: 20px;">Deploy Token</button>
             </div>
 
             <div class="summary-column">
@@ -180,4 +193,5 @@
     <script type="module" src="./js/launch.js"></script>
     <script type="module" src="./js/deploy.js"></script>
 </body>
-</html>
+    </html>
+                                                                   
