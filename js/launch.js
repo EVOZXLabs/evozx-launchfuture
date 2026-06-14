@@ -2,7 +2,15 @@ import { createToken } from "./factory.js";
 import { FEES } from "./config.js";
 
 // =====================================================
-// UTILS - Menggunakan Optional Chaining (?.) untuk mencegah error null
+// NETWORK CONFIGURATION (EVOZ)
+// =====================================================
+const EVOZ_NETWORK = {
+    chainId: 805n, // Chain ID EVOZ
+    rpc: "https://rpc.evozscan.com"
+};
+
+// =====================================================
+// UTILS
 // =====================================================
 const getVal = (id) => document.getElementById(id)?.value || "";
 const isChecked = (id) => document.getElementById(id)?.checked || false;
@@ -13,13 +21,12 @@ const isChecked = (id) => document.getElementById(id)?.checked || false;
 export function buildTokenConfig() {
     const supplyRaw = parseFloat(getVal("tokenSupply") || 0);
     
-    // Perbaikan: Menambahkan chainId dan memastikan akses data aman
     return {
         name: getVal("tokenName"),
         symbol: getVal("symbolInput"),
         supply: BigInt(Math.floor(supplyRaw * 10**18)), 
         owner: window.ethereum?.selectedAddress || "0x0000000000000000000000000000000000000000",
-        chainId: BigInt(getVal("chainId") || 56), // Menambahkan Chain ID
+        chainId: EVOZ_NETWORK.chainId, // Hardcoded ke EVOZ 805
         launchKitVersion: 200, 
         
         ownershipEnabled: isChecked("ownership"),
@@ -49,22 +56,31 @@ export function buildTokenConfig() {
 }
 
 // =====================================================
-// DEPLOY HANDLER
+// DEPLOY HANDLER (WITH NETWORK CHECK)
 // =====================================================
 document.getElementById("deployBtn")?.addEventListener("click", async () => {
     const btn = document.getElementById("deployBtn");
     try {
+        // Cek apakah wallet terhubung
+        if (!window.ethereum) throw new Error("MetaMask tidak ditemukan!");
+        
+        // Cek Chain ID
+        const currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
+        if (parseInt(currentChainId, 16) !== Number(EVOZ_NETWORK.chainId)) {
+            throw new Error("Jaringan salah! Silakan pindah ke EVOZ Mainnet (Chain ID: 805) di wallet Anda.");
+        }
+
         btn.disabled = true;
         btn.textContent = "Deploying...";
         
         const config = buildTokenConfig();
-        console.log("Mengirim Config:", config);
+        console.log("Mengirim Config ke Jaringan EVOZ (805):", config);
         
         const tx = await createToken(config);
         
         alert("Transaction submitted! Waiting for confirmation...");
         await tx.wait();
-        alert("Success! Token deployed.");
+        alert("Success! Token deployed on EVOZ Network.");
     } catch (e) {
         console.error("Deploy Error:", e);
         alert("Deploy failed: " + (e.reason || e.message || "Unknown error"));
@@ -91,19 +107,18 @@ function calculate() {
     const total = FEES.BASE + feature;
     
     const setText = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
-    setText("baseFee", `${FEES.BASE} EVOZX`);
-    setText("featureFee", `${feature} EVOZX`);
-    setText("totalFee", `${total} EVOZX`);
-    setText("burnAmount", `${(total * 0.30).toFixed(2)} EVOZX`);
-    setText("treasuryAmount", `${(total * 0.70).toFixed(2)} EVOZX`);
+    setText("baseFee", `${FEES.BASE} EVOZ`);
+    setText("featureFee", `${feature} EVOZ`);
+    setText("totalFee", `${total} EVOZ`);
+    setText("burnAmount", `${(total * 0.30).toFixed(2)} EVOZ`);
+    setText("treasuryAmount", `${(total * 0.70).toFixed(2)} EVOZ`);
 }
 
-// Event Listeners (Safe Registration)
-const inputs = ["tokenName", "symbolInput", "tokenSupply", "chainId", "buyTax", "sellTax", "burnTaxShare", "website", "telegram", "twitter", "logoURI", "marketingWallet", "developmentWallet", "maxWalletPercent", "maxTxPercent"];
+// Event Listeners
+const inputs = ["tokenName", "symbolInput", "tokenSupply", "buyTax", "sellTax", "burnTaxShare", "website", "telegram", "twitter", "logoURI", "marketingWallet", "developmentWallet", "maxWalletPercent", "maxTxPercent"];
 const checks = ["burnable", "mintable", "ownership", "maxWalletEnabled", "maxTxEnabled", "tradingControlEnabled"];
 
 inputs.forEach(id => document.getElementById(id)?.addEventListener("input", calculate));
 checks.forEach(id => document.getElementById(id)?.addEventListener("change", calculate));
 
 window.addEventListener("DOMContentLoaded", calculate);
-    
