@@ -2,24 +2,31 @@ import { createToken } from "./factory.js";
 import { FEES } from "./config.js";
 
 // =====================================================
-// HELPERS
+// HELPERS (Safety Checks)
 // =====================================================
-const getElementValue = (id) => document.getElementById(id)?.value || "";
-const getElementChecked = (id) => document.getElementById(id)?.checked || false;
+const getElementValue = (id) => {
+    const el = document.getElementById(id);
+    return el ? el.value : "";
+};
+const getElementChecked = (id) => {
+    const el = document.getElementById(id);
+    return el ? el.checked : false;
+};
 const getCurrentAddress = () => window.ethereum?.selectedAddress || "0x0000000000000000000000000000000000000000";
 
 // =====================================================
-// CONFIG BUILDER (WAJIB SESUAI STRUCT SOLIDITY)
+// CONFIG BUILDER (REVISI: CHAINID & STRUCT SYNC)
 // =====================================================
 export function buildTokenConfig() {
-    const supplyRaw = parseFloat(document.getElementById("tokenSupply")?.value || 0);
+    const supplyRaw = parseFloat(getElementValue("tokenSupply") || 0);
     
-    // Perhatikan urutan dan field ini harus sama dengan struct TokenConfig di Solidity
+    // Pastikan semua field ini urutannya sama dengan struct Solidity Anda
     return {
         name: getElementValue("tokenName"),
         symbol: getElementValue("symbolInput"),
         supply: BigInt(Math.floor(supplyRaw * 10**18)), 
         owner: getCurrentAddress(),
+        chainId: BigInt(getElementValue("chainId") || 56), // FIX: Mengirim chainId
         launchKitVersion: 200, 
         
         // Ownership & Core
@@ -39,7 +46,7 @@ export function buildTokenConfig() {
         maxTxEnabled: getElementChecked("maxTxEnabled"),
         maxTxPercent: parseInt(getElementValue("maxTxPercent") || 0),
         tradingControlEnabled: getElementChecked("tradingControlEnabled"),
-        tradingEnabled: true, // Default enabled
+        tradingEnabled: true,
         
         // Tokenomics & Tax
         buyTaxEnabled: parseInt(getElementValue("buyTax") || 0) > 0,
@@ -115,11 +122,17 @@ function calculate() {
     setText("treasuryAmount", `${(total * 0.70).toFixed(2)} EVOZX`);
 }
 
-// Event Listeners
-const inputs = ["tokenName", "symbolInput", "tokenSupply", "buyTax", "sellTax", "burnTaxShare", "website", "telegram", "twitter", "logoURI", "marketingWallet", "developmentWallet", "maxWalletPercent", "maxTxPercent"];
+// Event Listeners (Safe Registration)
+const inputs = ["tokenName", "symbolInput", "tokenSupply", "chainId", "buyTax", "sellTax", "burnTaxShare", "website", "telegram", "twitter", "logoURI", "marketingWallet", "developmentWallet", "maxWalletPercent", "maxTxPercent"];
 const checks = ["burnable", "mintable", "ownership", "maxWalletEnabled", "maxTxEnabled", "tradingControlEnabled"];
 
-inputs.forEach(id => document.getElementById(id)?.addEventListener("input", calculate));
-checks.forEach(id => document.getElementById(id)?.addEventListener("change", calculate));
+inputs.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener("input", calculate);
+});
+checks.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener("change", calculate);
+});
 
 window.addEventListener("DOMContentLoaded", calculate);
