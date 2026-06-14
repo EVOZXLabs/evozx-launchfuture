@@ -1,15 +1,55 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Token Detail</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Token Details | EVOZX Launch Future</title>
+    <link rel="stylesheet" href="./css/app.css">
 </head>
-<body style="background:black;color:white;font-family:sans-serif">
+<body>
 
-  <h1>Token Detail</h1>
+    <header>
+        <nav class="container navbar">
+            <div class="brand">
+                <div class="brand-dot"></div>
+                <span>EVOZX Launch Future</span>
+            </div>
+            <div class="nav-links">
+                <a href="./index.html">Home</a>
+                <a href="./launch.html">Launch</a>
+            </div>
+            <button id="connectBtn" class="btn btn-gold">Connect Wallet</button>
+        </nav>
+    </header>
 
-  <div id="tokenDetail">Loading...</div>
+    <main class="container" style="padding: 40px 20px;">
+        
+        <div class="page-header" style="text-align: center; margin-bottom: 40px;">
+            <h1>Token Details</h1>
+            <p style="color: var(--muted);">View real-time information for the selected token.</p>
+        </div>
 
-  <script type="module" src="./js/token.js"></script>
+        <section class="card" style="max-width: 800px; margin: 0 auto;">
+            <div id="tokenDetail">
+                <div style="text-align: center; padding: 40px;">
+                    <p style="color: var(--muted);">Loading token data...</p>
+                </div>
+            </div>
+        </section>
 
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="./index.html" class="btn btn-dark">Back to Home</a>
+        </div>
+
+    </main>
+
+    <footer>
+        <div class="container footer-content">
+            <span class="footer-brand">EVOZX Launch Future</span>
+            <span class="footer-copyright">© 2026 EVOZXLabs. All rights reserved.</span>
+        </div>
+    </footer>
+
+    <script type="module" src="./js/token.js"></script>
 </body>
 </html>
