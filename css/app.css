@@ -63,9 +63,32 @@ button { cursor: pointer; border: none; font-family: inherit; }
 .info-card h3 { color: var(--muted); font-size: 0.85rem; margin-bottom: 8px; text-transform: uppercase; }
 .info-card p { font-size: 1.5rem; font-weight: 700; }
 
-/* Footer */
-footer { border-top: 1px solid var(--border); margin-top: 40px; }
-.footer { height: 60px; display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-size: 0.9rem; }
+/* Footer Adjustments */
+footer {
+    margin-top: 80px; /* Memberi jarak ke konten di atasnya */
+    border-top: 1px solid var(--border);
+    padding: 40px 20px;
+}
+
+.footer {
+    display: flex;
+    flex-direction: column; /* Membuat elemen tertumpuk vertikal */
+    align-items: center;    /* Memastikan selalu di tengah */
+    gap: 10px;              /* Jarak antara teks brand dan copyright */
+}
+
+.footer-brand {
+    font-size: 1.4rem;      /* Ukuran lebih besar */
+    color: var(--gold);     /* Warna Gold */
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.footer-copyright {
+    font-size: 0.7rem;      /* Ukuran sangat kecil */
+    color: var(--muted);
+    opacity: 0.7;
+}
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
