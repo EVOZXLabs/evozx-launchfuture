@@ -51,7 +51,6 @@
                 <div class="form-group">
                     <label>Token Symbol</label>
                     <input id="symbolInput" type="text" placeholder="e.g. MYTK">
-                    <div id="symbolStatus" class="symbol-status"></div>
                 </div>
                 <div class="form-group full-width">
                     <label>Total Supply</label>
@@ -82,18 +81,18 @@
                 <div class="input-grid">
                     <div class="form-group">
                         <label>Max Wallet %</label>
-                        <input id="maxWalletInput" type="number" placeholder="5">
+                        <input id="maxWalletPercent" type="number" placeholder="5">
                     </div>
                     <div class="form-group">
                         <label>Max Tx %</label>
-                        <input id="maxTxInput" type="number" placeholder="2">
+                        <input id="maxTxPercent" type="number" placeholder="2">
                     </div>
                 </div>
             </div>
         </details>
 
         <details>
-            <summary class="card-title">Tokenomics & Tax</summary>
+            <summary class="card-title">Tokenomics & Tax Distribution</summary>
             <div class="accordion-content">
                 <div class="input-grid">
                     <div class="form-group">
@@ -103,6 +102,18 @@
                     <div class="form-group">
                         <label>Sell Tax %</label>
                         <input id="sellTax" type="number" placeholder="0">
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Burn Tax Share %</label>
+                        <input id="burnTaxShare" type="number" placeholder="0 (e.g. 50)">
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Marketing Wallet</label>
+                        <input id="marketingWallet" type="text" placeholder="0x...">
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Development Wallet</label>
+                        <input id="developmentWallet" type="text" placeholder="0x...">
                     </div>
                 </div>
             </div>
