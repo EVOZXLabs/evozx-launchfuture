@@ -36,7 +36,6 @@ async function getContract(address, abiName, write = false) {
 // ======================================================
 export const getFactoryRead = () => getContract(CONTRACTS.FACTORY, "factory");
 export const getFactoryWrite = () => getContract(CONTRACTS.FACTORY, "factory", true);
-export const getFactoryForWrite = getFactoryWrite; // Alias
 
 export const getFactoryName = async () => (await getFactoryRead()).FACTORY_NAME();
 export const getVersion = async () => Number(await (await getFactoryRead()).LAUNCHKIT_VERSION());
@@ -46,16 +45,20 @@ export const getAllTokens = async () => (await getFactoryRead()).getAllTokens();
 
 export async function symbolExists(symbol) {
     try { return await (await getFactoryRead()).symbolExists(symbol); }
-    catch (e) { console.error(e); return false; }
+    catch (e) { return false; }
 }
 
 export async function getDeploymentFee(config) {
     try { return await (await getFactoryRead()).getDeploymentFee(config); }
-    catch (e) { console.error(e); return 0n; }
+    catch (e) { return 0n; }
 }
 
+// FUNGSI INI ADALAH KUNCI: pastikan config yang dikirim sudah lengkap via buildTokenConfig()
 export async function createToken(config) {
-    return await (await getFactoryWrite()).createToken(config);
+    const factory = await getFactoryWrite();
+    // Tambahkan log untuk debug di console
+    console.log("Sending Config to Contract:", config);
+    return await factory.createToken(config);
 }
 
 // ======================================================
@@ -66,12 +69,12 @@ export const getEVOZXWrite = () => getContract(CONTRACTS.EVOZX, "evozx", true);
 
 export async function getEVOZXBalance(wallet) {
     try { return await (await getEVOZXRead()).balanceOf(wallet); }
-    catch (e) { console.error(e); return 0n; }
+    catch (e) { return 0n; }
 }
 
 export async function getEVOZXAllowance(owner) {
     try { return await (await getEVOZXRead()).allowance(owner, CONTRACTS.FACTORY); }
-    catch (e) { console.error(e); return 0n; }
+    catch (e) { return 0n; }
 }
 
 export async function approveEVOZX(amount) {
