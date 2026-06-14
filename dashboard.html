@@ -1,15 +1,50 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>My Tokens</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Tokens | EVOZX Launch Future</title>
+    <link rel="stylesheet" href="./css/app.css">
 </head>
-<body style="background:black;color:white;font-family:sans-serif">
+<body>
 
-  <h1>My Tokens</h1>
+    <header>
+        <nav class="container navbar">
+            <div class="brand">
+                <div class="brand-dot"></div>
+                <span>EVOZX Launch Future</span>
+            </div>
+            <div class="nav-links">
+                <a href="./index.html">Home</a>
+                <a href="./launch.html">Launch</a>
+                <a href="#" class="active">Dashboard</a>
+            </div>
+            <button id="connectBtn" class="btn btn-gold">Connect Wallet</button>
+        </nav>
+    </header>
 
-  <div id="tokenList"></div>
+    <main class="container" style="padding: 40px 20px;">
+        
+        <div class="page-header" style="text-align: center; margin-bottom: 40px;">
+            <h1>My Tokens</h1>
+            <p style="color: var(--muted);">Manage and view the details of your deployed smart contracts.</p>
+        </div>
 
-  <script type="module" src="./js/dashboard.js"></script>
+        <div id="tokenList" class="grid" style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));">
+            <div class="card" style="grid-column: 1 / -1; text-align: center; padding: 60px;">
+                <p style="color: var(--muted);">Connect your wallet to view your deployed tokens.</p>
+            </div>
+        </div>
 
+    </main>
+
+    <footer>
+        <div class="container footer-content">
+            <span class="footer-brand">EVOZX Launch Future</span>
+            <span class="footer-copyright">© 2026 EVOZXLabs. All rights reserved.</span>
+        </div>
+    </footer>
+
+    <script type="module" src="./js/dashboard.js"></script>
 </body>
 </html>
