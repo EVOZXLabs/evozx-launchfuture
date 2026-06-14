@@ -5,14 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Token Details | EVOZX Launch Future</title>
     <link rel="stylesheet" href="./css/app.css">
+    <style>
+        .nav-logo { height: 40px; width: auto; object-fit: contain; }
+        
+        /* Layout Utama Terpusat */
+        .page-container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+        
+        /* Styling tambahan agar card terlihat premium */
+        .token-detail-card { border: 1px solid var(--border); padding: 30px; border-radius: 8px; }
+    </style>
 </head>
 <body>
 
     <header>
         <nav class="container navbar">
             <div class="brand">
-                <div class="brand-dot"></div>
-                <span>EVOZX Launch Future</span>
+                <img src="./images/logo.png" alt="EVOZX Logo" class="nav-logo">
+                <span style="color: var(--gold); font-weight: bold; margin-left: 10px;">EVOZX Launch Future</span>
             </div>
             <div class="nav-links">
                 <a href="./index.html">Home</a>
@@ -22,14 +31,14 @@
         </nav>
     </header>
 
-    <main class="container" style="padding: 40px 20px;">
+    <main class="page-container">
         
         <div class="page-header" style="text-align: center; margin-bottom: 40px;">
             <h1>Token Details</h1>
             <p style="color: var(--muted);">View real-time information for the selected token.</p>
         </div>
 
-        <section class="card" style="max-width: 800px; margin: 0 auto;">
+        <section class="card token-detail-card">
             <div id="tokenDetail">
                 <div style="text-align: center; padding: 40px;">
                     <p style="color: var(--muted);">Loading token data...</p>
@@ -43,9 +52,9 @@
 
     </main>
 
-    <footer>
+    <footer style="margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--border); text-align: center;">
         <div class="container footer-content">
-            <span class="footer-brand">EVOZX Launch Future</span>
+            <div class="footer-brand">EVOZX Launch Future</div>
             <span class="footer-copyright">© 2026 EVOZXLabs. All rights reserved.</span>
         </div>
     </footer>
