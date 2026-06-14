@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Token Builder | EVOZX Launch Future</title>
+    <meta name="description" content="Configure and deploy your custom token on EVOZ.">
     <link rel="stylesheet" href="./css/app.css">
     <link rel="stylesheet" href="./css/launch.css">
 </head>
@@ -62,19 +63,19 @@
 
                 <div class="card">
                     <h3 class="card-title">Trading & Security</h3>
-                    <div class="checkbox-list" style="margin-bottom: 20px; display: grid; gap: 10px;">
-                        <label class="checkbox-item"><input type="checkbox" id="tradingControlEnabled"> Enable Trading Control</label>
-                        <label class="checkbox-item"><input type="checkbox" id="tradingEnabled"> Trading Enabled at Launch</label>
-                        <label class="checkbox-item"><input type="checkbox" id="maxWalletEnabled"> Enable Max Wallet</label>
+                    <div class="checkbox-grid" style="margin-bottom: 20px;">
+                        <label class="checkbox-item"><input type="checkbox" id="tradingControlEnabled"> Trading Control</label>
+                        <label class="checkbox-item"><input type="checkbox" id="tradingEnabled"> Enable Trading</label>
+                        <label class="checkbox-item"><input type="checkbox" id="maxWalletEnabled"> Max Wallet</label>
                     </div>
                     <div class="input-grid">
                         <div class="form-group">
                             <label>Max Wallet %</label>
-                            <input id="maxWalletPercent" type="number" placeholder="e.g. 5">
+                            <input id="maxWalletPercent" type="number" placeholder="5">
                         </div>
                         <div class="form-group">
                             <label>Max Tx %</label>
-                            <input id="maxTxPercent" type="number" placeholder="e.g. 2">
+                            <input id="maxTxPercent" type="number" placeholder="2">
                         </div>
                     </div>
                 </div>
@@ -109,7 +110,7 @@
                     <h3 class="card-title">Project Metadata</h3>
                     <div class="form-group full-width">
                         <label>Website</label>
-                        <input id="website" type="text" placeholder="https://">
+                        <input id="website" type="text" placeholder="https://...">
                     </div>
                     <div class="input-grid">
                         <div class="form-group">
@@ -123,7 +124,7 @@
                     </div>
                     <div class="form-group full-width">
                         <label>Logo URI</label>
-                        <input id="logoURI" type="text" placeholder="https://">
+                        <input id="logoURI" type="text" placeholder="https://...">
                     </div>
                 </div>
 
@@ -131,19 +132,16 @@
             </div>
 
             <div class="summary-column">
-                <div class="card summary-card sticky">
+                <div class="card summary-card">
                     <h2 class="card-title">Deployment Summary</h2>
                     <div class="summary-list">
                         <div class="summary-row"><span>Factory</span><span class="val">Ultimate</span></div>
                         <div class="summary-row"><span>Fee Token</span><span class="val">EVOZX</span></div>
-                        <hr style="border: 0; border-top: 1px solid var(--border); margin: 10px 0;">
                         <div class="summary-row"><span>Base Fee</span><span id="baseFee" class="val">0</span></div>
                         <div class="summary-row"><span>Feature Fee</span><span id="featureFee" class="val">0</span></div>
                         <div class="summary-row total"><span>Total Fee</span><span id="totalFee" class="val">0</span></div>
-                        <hr style="border: 0; border-top: 1px solid var(--border); margin: 10px 0;">
                         <div class="summary-row"><span>Burn (30%)</span><span id="burnAmount" class="val">-</span></div>
                         <div class="summary-row"><span>Treasury (70%)</span><span id="treasuryAmount" class="val">-</span></div>
-                        <hr style="border: 0; border-top: 1px solid var(--border); margin: 10px 0;">
                         <div class="summary-row"><span>Status</span><span id="deployStatus" class="val" style="color: var(--gold);">Ready</span></div>
                     </div>
                 </div>
