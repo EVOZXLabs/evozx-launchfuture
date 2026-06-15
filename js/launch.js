@@ -613,6 +613,160 @@ function validateCurrentConfig() {
 }
 
 // =====================================================
+// FEATURE UI
+// =====================================================
+
+function updateFeatureState() {
+
+// =====================================================
+// SYMBOL INDICATOR
+// =====================================================
+
+async function refreshSymbolIndicator() {
+
+    const result =
+        await checkSymbol(
+
+            value(
+                "symbol"
+            )
+
+        );
+
+    const badge =
+        $("symbolStatus");
+
+    if (!badge) {
+
+        return;
+
+    }
+
+    if (!value("symbol")) {
+
+        badge.textContent = "";
+
+        badge.className = "";
+
+        return;
+
+    }
+
+    if (result.exists) {
+
+        badge.textContent =
+            "Already Used";
+
+        badge.className =
+            "badge badge-red";
+
+        return;
+
+    }
+
+    badge.textContent =
+        "Available";
+
+    badge.className =
+        "badge badge-green";
+
+}
+    
+    // ------------------------------------------
+    // MAX WALLET
+    // ------------------------------------------
+
+    enable(
+
+        "maxWalletPercent",
+
+        checked(
+            "maxWalletEnabled"
+        )
+
+    );
+
+    // ------------------------------------------
+    // MAX TX
+    // ------------------------------------------
+
+    enable(
+
+        "maxTxPercent",
+
+        checked(
+            "maxTxEnabled"
+        )
+
+    );
+
+    // ------------------------------------------
+    // TRADING
+    // ------------------------------------------
+
+    enable(
+
+        "tradingEnabled",
+
+        checked(
+            "tradingControlEnabled"
+        )
+
+    );
+
+    // ------------------------------------------
+    // BUY TAX
+    // ------------------------------------------
+
+    const buy =
+        checked(
+            "buyTaxEnabled"
+        );
+
+    enable(
+        "buyTax",
+        buy
+    );
+
+    // ------------------------------------------
+    // SELL TAX
+    // ------------------------------------------
+
+    const sell =
+        checked(
+            "sellTaxEnabled"
+        );
+
+    enable(
+        "sellTax",
+        sell
+    );
+
+    // ------------------------------------------
+    // TAX RECEIVER
+    // ------------------------------------------
+
+    const taxEnabled =
+        buy || sell;
+
+    enable(
+        "burnTaxShare",
+        taxEnabled
+    );
+
+    enable(
+        "marketingWallet",
+        taxEnabled
+    );
+
+    enable(
+        "developmentWallet",
+        taxEnabled
+    );
+
+}
+
+// =====================================================
 // CURRENT CONFIG
 // =====================================================
 
