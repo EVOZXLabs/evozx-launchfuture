@@ -230,3 +230,169 @@ function buildCard(token) {
 
 }
 
+//
+// =====================================================
+// EMPTY STATE
+// =====================================================
+//
+
+function renderEmpty() {
+
+    const container =
+        document.querySelector(
+            "#tokenList"
+        );
+
+    if (!container) {
+
+        return;
+
+    }
+
+    container.innerHTML = `
+
+<div class="empty-state">
+
+    <h3>
+
+        No Tokens Found
+
+    </h3>
+
+    <p>
+
+        This wallet has not created any token yet.
+
+    </p>
+
+</div>
+
+`;
+
+}
+
+//
+// =====================================================
+// TOKEN RENDER
+// =====================================================
+//
+
+function renderTokens() {
+
+    const container =
+        document.querySelector(
+            "#tokenList"
+        );
+
+    if (!container) {
+
+        return;
+
+    }
+
+    if (tokens.length === 0) {
+
+        renderEmpty();
+
+        return;
+
+    }
+
+    container.innerHTML =
+        tokens
+            .map(buildCard)
+            .join("");
+
+}
+
+//
+// =====================================================
+// LOAD TOKENS
+// =====================================================
+//
+
+export async function loadTokens() {
+
+    account =
+        getAccount();
+
+    if (!account) {
+
+        renderEmpty();
+
+        return;
+
+    }
+
+    const addresses =
+        await getTokensByCreator(
+            account
+        );
+
+    tokens = [];
+
+    if (addresses.length === 0) {
+
+        renderEmpty();
+
+        return;
+
+    }
+
+    const total =
+        addresses.length;
+
+    for (
+
+        let i = 0;
+
+        i < total;
+
+        i++
+
+    ) {
+
+        try {
+
+            const token =
+                await getToken(i);
+
+            if (
+
+                token.creator
+                    .toLowerCase()
+
+                !==
+
+                account
+                    .toLowerCase()
+
+            ) {
+
+                continue;
+
+            }
+
+            tokens.push(token);
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+        }
+
+    }
+
+    renderTokens();
+
+    setText(
+
+        "#tokenCount",
+
+        String(tokens.length)
+
+    );
+
+        }
