@@ -529,3 +529,74 @@ function bindButtons() {
         );
 
 }
+
+//
+// =====================================================
+// REFRESH
+// =====================================================
+//
+
+async function refreshDashboard() {
+
+    account =
+        getAccount();
+
+    if (!account) {
+
+        renderEmpty();
+
+        setText(
+
+            "#tokenCount",
+
+            "0"
+
+        );
+
+        return;
+
+    }
+
+    await loadTokens();
+
+}
+
+//
+// =====================================================
+// INITIALIZE
+// =====================================================
+//
+
+document.addEventListener(
+
+    "DOMContentLoaded",
+
+    async () => {
+
+        try {
+
+            await refreshDashboard();
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+        }
+
+    }
+
+);
+
+        //
+// =====================================================
+// EXPORTS
+// =====================================================
+//
+
+export {
+
+    refreshDashboard
+
+};
