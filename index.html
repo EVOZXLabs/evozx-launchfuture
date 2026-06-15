@@ -1,541 +1,202 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0">
+<title>LaunchFuture</title>
 
-<title>
-LaunchFuture
-</title>
+<meta name="description" content="LaunchFuture is a decentralized EVOZ20 token generator powered by EVOZX. Deploy verified tokens directly on the EVOZ Network without a backend.">
+<meta name="theme-color" content="#050816">
 
-<meta
-    name="description"
-    content="LaunchFuture is a decentralized EVOZ20 token generator powered by EVOZX. Deploy verified tokens directly on the EVOZ Network without a backend.">
+<link rel="icon" href="./images/logo.png">
+<link rel="apple-touch-icon" href="./images/logo.png">
 
-<meta
-    name="theme-color"
-    content="#050816">
+<link rel="preconnect" href="https://rpc.evozscan.com">
+<link rel="preconnect" href="https://esm.sh">
 
-<link
-    rel="icon"
-    href="./images/logo.png">
-
-<link
-    rel="apple-touch-icon"
-    href="./images/logo.png">
-
-<link
-    rel="preconnect"
-    href="https://rpc.evozscan.com">
-
-<link
-    rel="preconnect"
-    href="https://esm.sh">
-
-<link
-    rel="stylesheet"
-    href="./css/app.css">
-
+<link rel="stylesheet" href="./css/app.css">
 </head>
 
-    <body>
+<body>
 
 <header class="topbar">
-
 <div class="container">
 
-<a
-    class="brand"
-    href="./index.html">
-
-<img
-    src="./images/logo.png"
-    alt="LaunchFuture Logo">
-
+<a class="brand" href="./index.html">
+<img src="./images/logo.png" alt="LaunchFuture Logo">
 <div>
-
-<h1>
-
-LaunchFuture
-
-</h1>
-
-<p>
-
-EVOZ20 Launch Platform
-
-</p>
-
+<h1>LaunchFuture</h1>
+<p>EVOZ20 Launch Platform</p>
 </div>
-
 </a>
 
 <nav>
+<span class="network-badge">EVOZ Mainnet</span>
 
-<span
-    class="network-badge">
-
-EVOZ Mainnet
-
-</span>
-
-<div
-    id="walletContainer">
-
-<button
-    id="connectWallet"
-    class="primary-button">
-
-Connect Wallet
-
-</button>
-
+<div id="walletContainer">
+<button id="connectWallet" class="primary-button">Connect Wallet</button>
 </div>
-
 </nav>
 
 </div>
-
 </header>
 
-        <section class="hero">
-
+<section class="hero">
 <div class="container hero-grid">
 
 <div class="hero-content">
+<span class="hero-tag">Powered by EVOZX</span>
 
-<span class="hero-tag">
-
-Powered by EVOZX
-
-</span>
-
-<h2>
-
-Deploy Verified
-EVOZ20 Tokens
-
-</h2>
+<h2>Deploy Verified EVOZ20 Tokens</h2>
 
 <p>
-
-Create professional tokens directly on the EVOZ Network using the official LaunchKit Factory. No backend, no server, and fully decentralized.
-
+Create professional tokens directly on the EVOZ Network using the official LaunchKit Factory.
+No backend, no server, and fully decentralized.
 </p>
 
 <div class="hero-buttons">
-
-<a
-
-href="./launch.html"
-
-class="primary-button">
-
-Create Token
-
-</a>
-
-<a
-
-href="./dashboard.html"
-
-class="secondary-button">
-
-Dashboard
-
-</a>
-
+<a href="./launch.html" class="primary-button">Create Token</a>
+<a href="./dashboard.html" class="secondary-button">Dashboard</a>
 </div>
-
 </div>
 
 <div class="hero-card">
-
-<img
-
-src="./images/logo.png"
-
-alt="LaunchFuture">
-
+<img src="./images/logo.png" alt="LaunchFuture">
 </div>
 
 </div>
+</section>
 
-        </section>
-
-        <section class="statistics">
-
+<section class="statistics">
 <div class="container">
 
-<h2>
-
-Network Statistics
-
-</h2>
+<h2>Network Statistics</h2>
 
 <div class="stats-grid">
 
 <div class="stat-card">
-
-<span>
-
-Factory
-
-</span>
-
-<strong
-    id="factoryName">
-
-Loading...
-
-</strong>
-
+<span>Factory</span>
+<strong id="factoryName">Loading...</strong>
 </div>
 
 <div class="stat-card">
-
-<span>
-
-LaunchKit
-
-</span>
-
-<strong
-    id="factoryVersion">
-
-Loading...
-
-</strong>
-
+<span>LaunchKit</span>
+<strong id="factoryVersion">Loading...</strong>
 </div>
 
 <div class="stat-card">
-
-<span>
-
-Total Tokens
-
-</span>
-
-<strong
-    id="totalTokens">
-
-0
-
-</strong>
-
+<span>Total Tokens</span>
+<strong id="totalTokens">0</strong>
 </div>
 
 <div class="stat-card">
-
-<span>
-
-Exchange Rate
-
-</span>
-
-<strong>
-
-1 EVOZX = 5 EVOZ
-
-</strong>
-
+<span>Exchange Rate</span>
+<strong>1 EVOZX = 5 EVOZ</strong>
 </div>
 
 </div>
 
 </div>
+</section>
 
-        </section>
-
-        <section class="features">
-
+<section class="features">
 <div class="container">
 
-<h2>
-
-Why LaunchFuture?
-
-</h2>
+<h2>Why LaunchFuture?</h2>
 
 <div class="feature-grid">
 
 <article class="feature-card">
-
-<h3>
-
-Fully Decentralized
-
-</h3>
-
-<p>
-
-Runs entirely on-chain using the official EVOZX Ultimate Factory.
-
-</p>
-
+<h3>Fully Decentralized</h3>
+<p>Runs entirely on-chain using the official EVOZX Ultimate Factory.</p>
 </article>
 
 <article class="feature-card">
-
-<h3>
-
-GitHub Pages Ready
-
-</h3>
-
-<p>
-
-No backend, database, or server required.
-
-</p>
-
+<h3>GitHub Pages Ready</h3>
+<p>No backend, database, or server required.</p>
 </article>
 
 <article class="feature-card">
-
-<h3>
-
-Automatic EVOZX Top-up
-
-</h3>
-
-<p>
-
-Users only need EVOZ. Required EVOZX is purchased automatically before deployment.
-
-</p>
-
+<h3>Automatic EVOZX Top-up</h3>
+<p>Users only need EVOZ. Required EVOZX is purchased automatically before deployment.</p>
 </article>
 
 <article class="feature-card">
-
-<h3>
-
-Verified LaunchKit
-
-</h3>
-
-<p>
-
-Every token is created from the same audited LaunchKit implementation.
-
-</p>
-
+<h3>Verified LaunchKit</h3>
+<p>Every token is created from the same audited LaunchKit implementation.</p>
 </article>
 
 </div>
 
 </div>
+</section>
 
-        </section>
-
-        <section class="workflow">
-
+<section class="workflow">
 <div class="container">
 
-<h2>
-
-How It Works
-
-</h2>
+<h2>How It Works</h2>
 
 <div class="workflow-grid">
 
 <div class="step">
-
-<div class="step-number">
-
-1
-
-</div>
-
-<h3>
-
-Connect Wallet
-
-</h3>
-
-<p>
-
-Connect your EVOZ-compatible wallet.
-
-</p>
-
+<div class="step-number">1</div>
+<h3>Connect Wallet</h3>
+<p>Connect your EVOZ-compatible wallet.</p>
 </div>
 
 <div class="step">
-
-<div class="step-number">
-
-2
-
-</div>
-
-<h3>
-
-Configure Token
-
-</h3>
-
-<p>
-
-Fill in your LaunchKit configuration.
-
-</p>
-
+<div class="step-number">2</div>
+<h3>Configure Token</h3>
+<p>Fill in your LaunchKit configuration.</p>
 </div>
 
 <div class="step">
-
-<div class="step-number">
-
-3
-
-</div>
-
-<h3>
-
-Pay Deployment Fee
-
-</h3>
-
-<p>
-
-If EVOZX is insufficient, EVOZ will automatically be converted.
-
-</p>
-
+<div class="step-number">3</div>
+<h3>Pay Deployment Fee</h3>
+<p>If EVOZX is insufficient, EVOZ will automatically be converted.</p>
 </div>
 
 <div class="step">
-
-<div class="step-number">
-
-4
-
-</div>
-
-<h3>
-
-Deploy
-
-</h3>
-
-<p>
-
-Your token is deployed instantly on EVOZ Network.
-
-</p>
-
+<div class="step-number">4</div>
+<h3>Deploy</h3>
+<p>Your token is deployed instantly on EVOZ Network.</p>
 </div>
 
 </div>
 
 </div>
+</section>
 
-        </section>
-
-        <footer>
-
+<footer>
 <div class="container footer-grid">
 
 <div>
-
-<img
-
-src="./images/logo.png"
-
-alt="LaunchFuture"
-
-class="footer-logo">
-
-<p>
-
-LaunchFuture is an official EVOZX token launch platform for EVOZ Network.
-
-</p>
-
+<img src="./images/logo.png" alt="LaunchFuture Logo" class="footer-logo">
+<p>LaunchFuture is an official EVOZX token launch platform for EVOZ Network.</p>
 </div>
 
 <div>
-
-<h4>
-
-Resources
-
-</h4>
-
-<a
-href="./launch.html">
-
-Create Token
-
-</a>
-
-<a
-href="./dashboard.html">
-
-Dashboard
-
-</a>
-
-<a
-
-href="https://explorer.evozscan.com"
-
-target="_blank">
-
-Explorer
-
-</a>
-
+<h4>Resources</h4>
+<a href="./launch.html">Create Token</a>
+<a href="./dashboard.html">Dashboard</a>
+<a href="https://explorer.evozscan.com" target="_blank">Explorer</a>
 </div>
 
 <div>
-
-<h4>
-
-Network
-
-</h4>
-
-<p>
-
-EVOZ Mainnet
-
-</p>
-
-<p>
-
-RPC:
-https://rpc.evozscan.com
-
-</p>
-
+<h4>Network</h4>
+<p>EVOZ Mainnet</p>
+<p>RPC: https://rpc.evozscan.com</p>
 </div>
 
 </div>
 
 <div class="footer-bottom">
-
 © 2026 LaunchFuture
-
 </div>
-
 </footer>
 
-<script
-    type="module"
-    src="./js/index.js">
-</script>
+<script type="module" src="./js/index.js"></script>
 
 </body>
-
 </html>
