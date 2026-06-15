@@ -1,65 +1,311 @@
-import { LINKS } from "./config.js";
+import {
 
-// =====================================
-// ELEMENTS
-// =====================================
-const tokenAddressEl = document.getElementById("tokenAddress");
-const tokenNameEl = document.getElementById("tokenName");
-const tokenSymbolEl = document.getElementById("tokenSymbol");
-const tokenSupplyEl = document.getElementById("tokenSupply");
-const creatorEl = document.getElementById("creator");
-const txHashEl = document.getElementById("txHash");
+    formatUnits
 
-const explorerBtn = document.getElementById("explorerBtn");
-const copyAddressBtn = document.getElementById("copyAddressBtn");
-const copyTxBtn = document.getElementById("copyTxBtn");
+} from "https://esm.sh/ethers@6";
 
-// =====================================
-// HELPERS
-// =====================================
-const setText = (el, val) => el && (el.textContent = val ?? "-");
+function setText(
 
-const shortAddress = (addr) => addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : "-";
+    selector,
 
-async function copyText(text) {
-    if (!text) return;
-    try {
-        await navigator.clipboard.writeText(text);
-        alert("Copied to clipboard!");
-    } catch (e) {
-        console.error("Copy error:", e);
+    value
+
+) {
+
+    const element =
+        document.querySelector(
+            selector
+        );
+
+    if (element) {
+
+        element.textContent =
+            value;
+
     }
+
 }
 
-// =====================================
-// RENDER LOGIC
-// =====================================
-function renderSuccess() {
-    const raw = localStorage.getItem("lastDeployedToken");
-    const token = raw ? JSON.parse(raw) : null;
+export function shortAddress(address) {
+
+    if (!address) {
+
+        return "";
+
+    }
+
+    return (
+
+        address.slice(0, 6)
+
+        +
+
+        "..."
+
+        +
+
+        address.slice(-4)
+
+    );
+
+}
+
+export async function copyText(text) {
+
+    try {
+
+        await navigator.clipboard.writeText(
+            text
+        );
+
+        alert(
+            "Copied successfully."
+        );
+
+    }
+
+    catch {
+
+        alert(
+            "Unable to copy."
+        );
+
+    }
+
+}
+
+export function getLastToken() {
+
+    const raw =
+        sessionStorage.getItem(
+
+            "launchfuture_last_token"
+
+        );
+
+    if (!raw) {
+
+        return null;
+
+    }
+
+    try {
+
+        return JSON.parse(raw);
+
+    }
+
+    catch {
+
+        return null;
+
+    }
+
+}
+
+function explorerUrl(address) {
+
+    return (
+
+        "https://evozscan.com/address/"
+
+        +
+
+        address
+
+    );
+
+}
+
+function downloadStandardInput() {
+
+    window.open(
+
+        "./docs/standard-input.json",
+
+        "_blank"
+
+    );
+
+}
+
+//
+// =====================================================
+// RENDER SUCCESS
+// =====================================================
+//
+
+export function renderSuccess() {
+
+    const token =
+        getLastToken();
 
     if (!token) {
-        setText(tokenAddressEl, "No deployment data found");
+
+        window.location.href =
+            "./launch.html";
+
         return;
+
     }
 
-    setText(tokenNameEl, token.name);
-    setText(tokenSymbolEl, token.symbol);
-    setText(tokenSupplyEl, token.supply);
-    setText(creatorEl, shortAddress(token.creator));
-    setText(tokenAddressEl, token.token || "Pending");
-    setText(txHashEl, shortAddress(token.txHash));
+    setText(
 
-    // Event Listeners
-    explorerBtn?.addEventListener("click", () => {
-        if (token.txHash) window.open(`${LINKS.TX}${token.txHash}`, "_blank");
-    });
+        "#tokenName",
 
-    copyAddressBtn?.addEventListener("click", () => copyText(token.token));
-    copyTxBtn?.addEventListener("click", () => copyText(token.txHash));
+        token.name
+
+    );
+
+    setText(
+
+        "#tokenSymbol",
+
+        token.symbol
+
+    );
+
+    setText(
+
+        "#tokenSupply",
+
+        formatUnits(
+
+            token.supply,
+
+            0
+
+        )
+
+    );
+
+    setText(
+
+        "#tokenAddress",
+
+        shortAddress(
+            token.token
+        )
+
+    );
+
+    setText(
+
+        "#chainId",
+
+        String(
+            token.chainId
+        )
+
+    );
+
+    const explorer =
+        document.querySelector(
+            "#explorerLink"
+        );
+
+    if (explorer) {
+
+        explorer.href =
+            explorerUrl(
+                token.token
+            );
+
+        explorer.target =
+            "_blank";
+
+    }
+
+    const copyButton =
+        document.querySelector(
+            "#copyAddress"
+        );
+
+    if (copyButton) {
+
+        copyButton.onclick =
+            () =>
+
+                copyText(
+                    token.token
+                );
+
+    }
+
+    const downloadButton =
+        document.querySelector(
+            "#downloadStandardInput"
+        );
+
+    if (downloadButton) {
+
+        downloadButton.onclick =
+            downloadStandardInput;
+
+    }
+
 }
 
-// =====================================
-// INIT
-// =====================================
-window.addEventListener("DOMContentLoaded", renderSuccess);
+//
+// =====================================================
+// NAVIGATION
+// =====================================================
+//
+
+function bindNavigation() {
+
+    const dashboard =
+        document.querySelector(
+            "#goDashboard"
+        );
+
+    if (dashboard) {
+
+        dashboard.onclick =
+            () => {
+
+                window.location.href =
+                    "./dashboard.html";
+
+            };
+
+    }
+
+    const deployAgain =
+        document.querySelector(
+            "#deployAnother"
+        );
+
+    if (deployAgain) {
+
+        deployAgain.onclick =
+            () => {
+
+                window.location.href =
+                    "./launch.html";
+
+            };
+
+    }
+
+}
+
+//
+// =====================================================
+// INITIALIZE
+// =====================================================
+//
+
+document.addEventListener(
+
+    "DOMContentLoaded",
+
+    () => {
+
+        renderSuccess();
+
+        bindNavigation();
+
+    }
+
+);
