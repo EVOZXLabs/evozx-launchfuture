@@ -299,9 +299,11 @@ function renderTokens() {
     }
 
     container.innerHTML =
-        tokens
-            .map(buildCard)
-            .join("");
+    tokens
+        .map(buildCard)
+        .join("");
+
+bindButtons();
 
 }
 
@@ -396,3 +398,134 @@ export async function loadTokens() {
     );
 
         }
+
+//
+// =====================================================
+// VIEW TOKEN
+// =====================================================
+//
+
+export function viewToken(address) {
+
+    if (!address) {
+
+        return;
+
+    }
+
+    sessionStorage.setItem(
+
+        "launchfuture_selected_token",
+
+        address
+
+    );
+
+    window.location.href =
+        "./token.html";
+
+}
+
+//
+// =====================================================
+// DELETE TOKEN
+// =====================================================
+//
+// Tidak menghapus token di blockchain.
+// Hanya placeholder apabila suatu saat
+// ingin menyembunyikan card dari dashboard.
+//
+
+export function deleteToken(address) {
+
+    console.warn(
+
+        "deleteToken() is not implemented.",
+
+        address
+
+    );
+
+}
+
+//
+// =====================================================
+// BUTTON EVENTS
+// =====================================================
+//
+
+function bindButtons() {
+
+    document
+
+        .querySelectorAll(
+
+            "[data-copy]"
+
+        )
+
+        .forEach(
+
+            button => {
+
+                button.onclick = () =>
+
+                    copyAddress(
+
+                        button.dataset.copy
+
+                    );
+
+            }
+
+        );
+
+    document
+
+        .querySelectorAll(
+
+            "[data-open]"
+
+        )
+
+        .forEach(
+
+            button => {
+
+                button.onclick = () =>
+
+                    openExplorer(
+
+                        button.dataset.open
+
+                    );
+
+            }
+
+        );
+
+    document
+
+        .querySelectorAll(
+
+            "[data-view]"
+
+        )
+
+        .forEach(
+
+            button => {
+
+                button.onclick = () =>
+
+                    viewToken(
+
+                        button.dataset.view
+
+                    );
+
+            }
+
+        );
+
+}
