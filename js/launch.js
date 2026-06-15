@@ -1,18 +1,23 @@
 import {
+
+    formatEther,
     formatUnits
+
 } from "https://esm.sh/ethers@6";
 
 import {
 
     getDeploymentFee,
-
-    getDeploymentPreview
+    getDeploymentPreview,
+    getEVOZXBalance
 
 } from "./factory.js";
 
 import {
+
     validateConfig,
     checkSymbol
+
 } from "./validation.js";
 
 import {
@@ -29,7 +34,8 @@ import {
 
 import {
 
-    getAccount
+    getAccount,
+    restoreConnection
 
 } from "./wallet.js";
 
@@ -325,6 +331,8 @@ async function scheduleSymbolCheck() {
 
                 clearStatus();
 
+                await refreshSymbolIndicator();
+
             },
 
             400
@@ -406,30 +414,6 @@ function bindBasicEvents() {
         );
 
 }
-    
-const fields =
-
-    document.querySelectorAll(
-
-        "input,select,textarea"
-
-    );
-
-fields.forEach(
-
-    field =>
-
-        field.addEventListener(
-
-            "input",
-
-            calculate
-
-        )
-
-);
-    
-}
 
 // =====================================================
 // INITIALIZATION
@@ -441,7 +425,11 @@ export function initializeLaunchPage() {
 
     bindBasicEvents();
 
+    updateFeatureState();
+
     calculate();
+
+    refreshSymbolIndicator();
 
 }
 
@@ -471,7 +459,6 @@ function buildConfig() {
         )
 
     ),
-
         owner:
             "0x0000000000000000000000000000000000000000",
 
@@ -618,60 +605,6 @@ function validateCurrentConfig() {
 
 function updateFeatureState() {
 
-// =====================================================
-// SYMBOL INDICATOR
-// =====================================================
-
-async function refreshSymbolIndicator() {
-
-    const result =
-        await checkSymbol(
-
-            value(
-                "symbol"
-            )
-
-        );
-
-    const badge =
-        $("symbolStatus");
-
-    if (!badge) {
-
-        return;
-
-    }
-
-    if (!value("symbol")) {
-
-        badge.textContent = "";
-
-        badge.className = "";
-
-        return;
-
-    }
-
-    if (result.exists) {
-
-        badge.textContent =
-            "Already Used";
-
-        badge.className =
-            "badge badge-red";
-
-        return;
-
-    }
-
-    badge.textContent =
-        "Available";
-
-    badge.className =
-        "badge badge-green";
-
-}
-    
     // ------------------------------------------
     // MAX WALLET
     // ------------------------------------------
@@ -767,6 +700,60 @@ async function refreshSymbolIndicator() {
 }
 
 // =====================================================
+// SYMBOL INDICATOR
+// =====================================================
+
+async function refreshSymbolIndicator() {
+
+    const result =
+        await checkSymbol(
+
+            value(
+                "symbol"
+            )
+
+        );
+
+    const badge =
+        $("symbolStatus");
+
+    if (!badge) {
+
+        return;
+
+    }
+
+    if (!value("symbol")) {
+
+        badge.textContent = "";
+
+        badge.className = "";
+
+        return;
+
+    }
+
+    if (result.exists) {
+
+        badge.textContent =
+            "Already Used";
+
+        badge.className =
+            "badge badge-red";
+
+        return;
+
+    }
+
+    badge.textContent =
+        "Available";
+
+    badge.className =
+        "badge badge-green";
+
+}
+
+// =====================================================
 // CURRENT CONFIG
 // =====================================================
 
@@ -774,7 +761,7 @@ export function getCurrentConfig() {
 
     return buildConfig();
 
-}
+        }
 
 // =====================================================
 // LIVE DEPLOYMENT FEE
@@ -941,5 +928,373 @@ async function calculate() {
 
     }
 
+}
+
+// =====================================================
+// DEPLOYMENT SUMMARY
+// =====================================================
+
+export async function updateDeploymentSummary() {
+
+    try {
+
+        if (!connectedAccount) {
+
+            return;
+
+        }
+
+        const config =
+            buildConfig();
+
+        const fee =
+            await getDeploymentFee(
+                config
+            );
+
+        currentFee =
+            fee;
+
+        setText(
+
+            "#deployFee",
+
+            formatUnits(
+                fee,
+                18
+            ) + " EVOZX"
+
+        );
+
+        const balance =
+            await getEVOZXBalance(
+                connectedAccount
+            );
+
+        setText(
+
+            "#walletBalance",
+
+            formatUnits(
+                balance,
+                18
+            ) + " EVOZX"
+
+        );
+
+        if (balance >= fee) {
+
+            setText(
+
+                "#needToBuy",
+
+                "0 EVOZ"
+
+            );
+
+            setText(
+
+                "#deploymentStatus",
+
+                "Ready to deploy"
+
+            );
+
+            document
+                .querySelector(
+                    "#deploymentStatus"
+                )
+                ?.classList
+                .remove("warning");
+
+        }
+
+        else {
+
+            const missing =
+                fee - balance;
+
+            const needed =
+                await calculateEVOZNeeded(
+                    missing
+                );
+
+            setText(
+
+                "#needToBuy",
+
+                formatEther(
+                    needed
+                ) + " EVOZ"
+
+            );
+
+            setText(
+
+                "#deploymentStatus",
+
+                "Additional EVOZX required"
+
+            );
+
+            document
+                .querySelector(
+                    "#deploymentStatus"
+                )
+                ?.classList
+                .add("warning");
+
+        }
+
+        updateContinueState();
+
     }
 
+    catch (error) {
+
+        console.error(error);
+
+    }
+
+}
+
+//
+// =====================================================
+// AUTO UPDATE
+// =====================================================
+//
+
+export async function refreshLaunchUI() {
+
+    await calculate();
+
+    await updateDeploymentSummary();
+
+}
+
+//
+// =====================================================
+// EVENT BINDING
+// =====================================================
+//
+
+export function bindFormEvents() {
+
+    const inputs =
+        document.querySelectorAll(
+
+            "input, textarea, select"
+
+        );
+
+    for (const input of inputs) {
+
+        input.addEventListener(
+
+            "input",
+
+            refreshLaunchUI
+
+        );
+
+        input.addEventListener(
+
+            "change",
+
+            refreshLaunchUI
+
+        );
+
+    }
+
+}
+
+//
+// =====================================================
+// INITIALIZE
+// =====================================================
+//
+
+export async function initializeLaunch() {
+
+    connectedAccount =
+        getAccount();
+
+    bindFormEvents();
+
+    await refreshLaunchUI();
+
+                    }
+
+//
+// =====================================================
+// DEPLOY BUTTON
+// =====================================================
+//
+
+let deploying = false;
+
+async function onDeployClick() {
+
+    if (deploying) {
+
+        return;
+
+    }
+
+    deploying = true;
+
+    try {
+
+        const button =
+            document.querySelector(
+                "#deployButton"
+            );
+
+        if (button) {
+
+            button.disabled = true;
+
+            button.classList.add(
+                "loading"
+            );
+
+            button.textContent =
+                "Deploying...";
+
+        }
+
+        const result =
+            await deployToken();
+
+        sessionStorage.setItem(
+
+            "launchfuture_last_token",
+
+            JSON.stringify(result)
+
+        );
+
+        window.location.href =
+            "./success.html";
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        alert(
+            error.message ??
+            "Deployment failed."
+        );
+
+    }
+
+    finally {
+
+        deploying = false;
+
+        const button =
+            document.querySelector(
+                "#deployButton"
+            );
+
+        if (button) {
+
+            button.disabled = false;
+
+            button.classList.remove(
+                "loading"
+            );
+
+            button.textContent =
+                "Deploy Token";
+
+        }
+
+    }
+
+}
+
+//
+// =====================================================
+// WALLET STATE
+// =====================================================
+//
+
+async function refreshWalletState() {
+
+    connectedAccount =
+        getAccount();
+
+    if (!connectedAccount) {
+
+        updateContinueState();
+
+        return;
+
+    }
+
+    await refreshLaunchUI();
+
+}
+
+//
+// =====================================================
+// PAGE INITIALIZATION
+// =====================================================
+//
+
+document.addEventListener(
+
+    "DOMContentLoaded",
+
+    async () => {
+
+        try {
+
+            await restoreConnection();
+
+        }
+
+        catch {
+
+        }
+
+        await refreshWalletState();
+
+        const deployButton =
+            document.querySelector(
+                "#deployButton"
+            );
+
+        if (deployButton) {
+
+            deployButton.addEventListener(
+
+                "click",
+
+                onDeployClick
+
+            );
+
+        }
+
+    }
+
+);
+
+//
+// =====================================================
+// EXPORTS
+// =====================================================
+//
+
+export {
+
+    onDeployClick,
+
+    refreshWalletState
+
+};
