@@ -1,119 +1,541 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EVOZX Launch Future | Token Generator</title>
-    <meta name="description" content="Launch custom tokens on EVOZ without writing smart contract code.">
-    <link rel="stylesheet" href="./css/app.css">
-    <style>
-        .nav-logo { height: 40px; width: auto; object-fit: contain; }
-        
-        /* Gradient Gold Styling */
-        .gradient-text {
-            background: linear-gradient(180deg, #FFD700 0%, #B8860B 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            color: transparent;
-            font-weight: 800;
-            line-height: 1.2;
-        }
 
-        /* Styling Accordion */
-        details { background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 15px; transition: 0.3s; }
-        summary { padding: 15px; cursor: pointer; font-weight: 600; list-style: none; display: flex; justify-content: space-between; align-items: center; }
-        summary::after { content: '▼'; font-size: 0.8rem; opacity: 0.6; }
-        details[open] summary::after { content: '▲'; }
-        
-        .hero-actions { display: flex; gap: 15px; margin-top: 20px; justify-content: center; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; padding: 0 15px 15px 15px; }
-        .info-card { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; text-align: center; }
-    </style>
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<title>
+LaunchFuture
+</title>
+
+<meta
+    name="description"
+    content="LaunchFuture is a decentralized EVOZ20 token generator powered by EVOZX. Deploy verified tokens directly on the EVOZ Network without a backend.">
+
+<meta
+    name="theme-color"
+    content="#050816">
+
+<link
+    rel="icon"
+    href="./images/logo.png">
+
+<link
+    rel="apple-touch-icon"
+    href="./images/logo.png">
+
+<link
+    rel="preconnect"
+    href="https://rpc.evozscan.com">
+
+<link
+    rel="preconnect"
+    href="https://esm.sh">
+
+<link
+    rel="stylesheet"
+    href="./css/app.css">
+
 </head>
-<body>
 
-    <header>
-        <nav class="container navbar">
-            <div class="brand">
-                <img src="./images/logo.png" alt="EVOZX Logo" class="nav-logo">
-                <span style="color: var(--gold); font-weight: bold; margin-left: 10px;">EVOZX Launch Future</span>
-            </div>
-            <div class="nav-links">
-                <a href="#network">Network</a>
-                <a href="#contracts">Contracts</a>
-                <a href="./launch.html">Launch</a>
-            </div>
-            <button id="connectBtn" class="btn btn-gold">Connect Wallet</button>
-        </nav>
-    </header>
+    <body>
 
-    <main>
-        <section class="hero container" style="text-align: center; padding: 80px 0;">
-            <h1 class="gradient-text" style="font-size: 3rem;">
-                Launch Your<br>
-                Token of the Future
-            </h1>
-            <p>Create custom tokens directly on EVOZ without writing Solidity code. Simple. Fast. On-chain.</p>
-            <div class="hero-actions">
-                <a href="./launch.html" class="btn btn-gold">Launch Token</a>
-                <button id="addNetworkBtn" class="btn btn-dark">Add EVOZ Network</button>
-            </div>
+<header class="topbar">
+
+<div class="container">
+
+<a
+    class="brand"
+    href="./index.html">
+
+<img
+    src="./images/logo.png"
+    alt="LaunchFuture Logo">
+
+<div>
+
+<h1>
+
+LaunchFuture
+
+</h1>
+
+<p>
+
+EVOZ20 Launch Platform
+
+</p>
+
+</div>
+
+</a>
+
+<nav>
+
+<span
+    class="network-badge">
+
+EVOZ Mainnet
+
+</span>
+
+<div
+    id="walletContainer">
+
+<button
+    id="connectWallet"
+    class="primary-button">
+
+Connect Wallet
+
+</button>
+
+</div>
+
+</nav>
+
+</div>
+
+</header>
+
+        <section class="hero">
+
+<div class="container hero-grid">
+
+<div class="hero-content">
+
+<span class="hero-tag">
+
+Powered by EVOZX
+
+</span>
+
+<h2>
+
+Deploy Verified
+EVOZ20 Tokens
+
+</h2>
+
+<p>
+
+Create professional tokens directly on the EVOZ Network using the official LaunchKit Factory. No backend, no server, and fully decentralized.
+
+</p>
+
+<div class="hero-buttons">
+
+<a
+
+href="./launch.html"
+
+class="primary-button">
+
+Create Token
+
+</a>
+
+<a
+
+href="./dashboard.html"
+
+class="secondary-button">
+
+Dashboard
+
+</a>
+
+</div>
+
+</div>
+
+<div class="hero-card">
+
+<img
+
+src="./images/logo.png"
+
+alt="LaunchFuture">
+
+</div>
+
+</div>
+
         </section>
 
-        <section id="network" class="container" style="padding-bottom: 20px;">
-            <div class="card" style="padding: 0;">
-                <details>
-                    <summary style="padding: 20px;">Network Information</summary>
-                    <div class="grid">
-                        <div class="info-card"><h3>Network</h3><p>EVOZ Mainnet</p></div>
-                        <div class="info-card"><h3>Chain ID</h3><p>805</p></div>
-                        <div class="info-card"><h3>Currency</h3><p>EVOZ</p></div>
-                        <div class="info-card"><h3>Decimals</h3><p>18</p></div>
-                    </div>
-                </details>
-            </div>
+        <section class="statistics">
+
+<div class="container">
+
+<h2>
+
+Network Statistics
+
+</h2>
+
+<div class="stats-grid">
+
+<div class="stat-card">
+
+<span>
+
+Factory
+
+</span>
+
+<strong
+    id="factoryName">
+
+Loading...
+
+</strong>
+
+</div>
+
+<div class="stat-card">
+
+<span>
+
+LaunchKit
+
+</span>
+
+<strong
+    id="factoryVersion">
+
+Loading...
+
+</strong>
+
+</div>
+
+<div class="stat-card">
+
+<span>
+
+Total Tokens
+
+</span>
+
+<strong
+    id="totalTokens">
+
+0
+
+</strong>
+
+</div>
+
+<div class="stat-card">
+
+<span>
+
+Exchange Rate
+
+</span>
+
+<strong>
+
+1 EVOZX = 5 EVOZ
+
+</strong>
+
+</div>
+
+</div>
+
+</div>
+
         </section>
 
-        <section id="contracts" class="container" style="padding-bottom: 40px;">
-            <div class="card" style="padding: 0;">
-                <details>
-                    <summary style="padding: 20px;">View Core Contracts</summary>
-                    <div style="padding: 0 20px 20px 20px; display: grid; gap: 15px;">
-                        <div class="card" style="background: rgba(255,255,255,0.03);">
-                            <h3>Factory Contract</h3>
-                            <p style="font-family: monospace; font-size: 0.9rem; margin: 5px 0;">0xBA40...e64bB</p>
-                            <a style="color: var(--gold-light); font-size: 0.8rem;" href="https://evozscan.com/address/0xbA40773bCF0d30e83c4319796Ec45CA31d6e64bB" target="_blank">View on Explorer</a>
-                        </div>
-                        <div class="card" style="background: rgba(255,255,255,0.03);">
-                            <h3>EVOZX Token</h3>
-                            <p style="font-family: monospace; font-size: 0.9rem; margin: 5px 0;">0x032a...454B74</p>
-                            <a style="color: var(--gold-light); font-size: 0.8rem;" href="https://evozscan.com/address/0x032a962F62Fc1cbc15B19767Aa138deA3B454B74" target="_blank">View on Explorer</a>
-                        </div>
-                        <div class="card" style="background: rgba(255,255,255,0.03);">
-                            <h3>Treasury Wallet</h3>
-                            <p style="font-family: monospace; font-size: 0.9rem; margin: 5px 0;">0x50Cd...390c5C</p>
-                            <a style="color: var(--gold-light); font-size: 0.8rem;" href="https://evozscan.com/address/0x50Cd30Ff7f0fbBD9d0FDe1F60DE8c52D6F390c5C" target="_blank">View on Explorer</a>
-                        </div>
-                    </div>
-                </details>
-            </div>
+        <section class="features">
+
+<div class="container">
+
+<h2>
+
+Why LaunchFuture?
+
+</h2>
+
+<div class="feature-grid">
+
+<article class="feature-card">
+
+<h3>
+
+Fully Decentralized
+
+</h3>
+
+<p>
+
+Runs entirely on-chain using the official EVOZX Ultimate Factory.
+
+</p>
+
+</article>
+
+<article class="feature-card">
+
+<h3>
+
+GitHub Pages Ready
+
+</h3>
+
+<p>
+
+No backend, database, or server required.
+
+</p>
+
+</article>
+
+<article class="feature-card">
+
+<h3>
+
+Automatic EVOZX Top-up
+
+</h3>
+
+<p>
+
+Users only need EVOZ. Required EVOZX is purchased automatically before deployment.
+
+</p>
+
+</article>
+
+<article class="feature-card">
+
+<h3>
+
+Verified LaunchKit
+
+</h3>
+
+<p>
+
+Every token is created from the same audited LaunchKit implementation.
+
+</p>
+
+</article>
+
+</div>
+
+</div>
+
         </section>
 
-        <section class="container" style="padding: 40px 0; text-align: center;">
-            <h2>Ready To Launch?</h2>
-            <p style="color: var(--muted); margin-bottom: 25px;">Deploy directly on EVOZ using EVOZX Launch Future.</p>
-            <a href="./launch.html" class="btn btn-gold">Open Launch Builder</a>
+        <section class="workflow">
+
+<div class="container">
+
+<h2>
+
+How It Works
+
+</h2>
+
+<div class="workflow-grid">
+
+<div class="step">
+
+<div class="step-number">
+
+1
+
+</div>
+
+<h3>
+
+Connect Wallet
+
+</h3>
+
+<p>
+
+Connect your EVOZ-compatible wallet.
+
+</p>
+
+</div>
+
+<div class="step">
+
+<div class="step-number">
+
+2
+
+</div>
+
+<h3>
+
+Configure Token
+
+</h3>
+
+<p>
+
+Fill in your LaunchKit configuration.
+
+</p>
+
+</div>
+
+<div class="step">
+
+<div class="step-number">
+
+3
+
+</div>
+
+<h3>
+
+Pay Deployment Fee
+
+</h3>
+
+<p>
+
+If EVOZX is insufficient, EVOZ will automatically be converted.
+
+</p>
+
+</div>
+
+<div class="step">
+
+<div class="step-number">
+
+4
+
+</div>
+
+<h3>
+
+Deploy
+
+</h3>
+
+<p>
+
+Your token is deployed instantly on EVOZ Network.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
         </section>
-    </main>
 
-    <footer style="margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--border); text-align: center;">
-        <div class="container footer-content">
-            <div class="footer-brand">EVOZX Launch Future</div>
-            <span class="footer-copyright">© 2026 EVOZXLabs. All rights reserved.</span>
-        </div>
-    </footer>
+        <footer>
 
-    <script type="module" src="./js/app.js"></script>
+<div class="container footer-grid">
+
+<div>
+
+<img
+
+src="./images/logo.png"
+
+alt="LaunchFuture"
+
+class="footer-logo">
+
+<p>
+
+LaunchFuture is an official EVOZX token launch platform for EVOZ Network.
+
+</p>
+
+</div>
+
+<div>
+
+<h4>
+
+Resources
+
+</h4>
+
+<a
+href="./launch.html">
+
+Create Token
+
+</a>
+
+<a
+href="./dashboard.html">
+
+Dashboard
+
+</a>
+
+<a
+
+href="https://explorer.evozscan.com"
+
+target="_blank">
+
+Explorer
+
+</a>
+
+</div>
+
+<div>
+
+<h4>
+
+Network
+
+</h4>
+
+<p>
+
+EVOZ Mainnet
+
+</p>
+
+<p>
+
+RPC:
+https://rpc.evozscan.com
+
+</p>
+
+</div>
+
+</div>
+
+<div class="footer-bottom">
+
+© 2026 LaunchFuture
+
+</div>
+
+</footer>
+
+<script
+    type="module"
+    src="./js/index.js">
+</script>
+
 </body>
+
 </html>
