@@ -1,708 +1,213 @@
-import {
-    BrowserProvider,
-    Contract,
-    JsonRpcProvider
-} from "https://esm.sh/ethers@6";
+import { BrowserProvider, Contract, JsonRpcProvider, Interface } from "https://esm.sh/ethers@6";
+import { CONTRACTS, NETWORK } from "./config.js";
+import { getSigner } from "./wallet.js";
 
-import {
-    Interface
-} from "https://esm.sh/ethers@6";
-
-import {
-    CONTRACTS,
-    NETWORK
-} from "./config.js";
-
-import {
-    getSigner
-} from "./wallet.js";
-
-let factoryAbi = null;
-let evozxAbi = null;
-
-let factoryInterface = null;
-
-let readProvider = null;
-
-let factoryRead = null;
-let factoryWrite = null;
-
-let evozxRead = null;
-let evozxWrite = null;
+let factoryAbi, evozxAbi, factoryInterface, readProvider;
+let factoryRead, factoryWrite, evozxRead, evozxWrite;
 
 async function loadAbi(path) {
-
-    const response =
-        await fetch(path);
-
-    if (!response.ok) {
-
-        throw new Error(
-            `Unable to load ABI: ${path}`
-        );
-
-    }
-
-    return await response.json();
-
+  const res = await fetch(path);
+  if (!res.ok) throw new Error(`Unable to load ABI: ${path}`);
+  return await res.json();
 }
 
 export async function loadFactoryAbi() {
-
-    if (factoryAbi) {
-
-        return factoryAbi;
-
-    }
-
-    factoryAbi =
-    await loadAbi(
-        "./abi/factory.json"
-    );
-
-factoryInterface =
-    new Interface(
-        factoryAbi
-    );
-
-return factoryAbi;
-
+  if (factoryAbi) return factoryAbi;
+  factoryAbi = await loadAbi("./abi/factory.json");
+  factoryInterface = new Interface(factoryAbi);
+  return factoryAbi;
 }
 
 export async function loadEVOZXAbi() {
-
-    if (evozxAbi) {
-
-        return evozxAbi;
-
-    }
-
-    evozxAbi =
-        await loadAbi(
-            "./abi/evozx.json"
-        );
-
-    return evozxAbi;
-
+  if (evozxAbi) return evozxAbi;
+  evozxAbi = await loadAbi("./abi/evozx.json");
+  return evozxAbi;
 }
 
 export function getReadProvider() {
-
-    if (readProvider) {
-
-        return readProvider;
-
-    }
-
-    readProvider =
-        new JsonRpcProvider(
-            NETWORK.rpc
-        );
-
-    return readProvider;
-
+  if (readProvider) return readProvider;
+  return (readProvider = new JsonRpcProvider(NETWORK.rpc));
 }
 
 export async function getFactoryRead() {
-
-    if (factoryRead) {
-
-        return factoryRead;
-
-    }
-
-    const abi =
-        await loadFactoryAbi();
-
-    factoryRead =
-        new Contract(
-
-            CONTRACTS.factory,
-
-            abi,
-
-            getReadProvider()
-
-        );
-
-    return factoryRead;
-
+  if (factoryRead) return factoryRead;
+  const abi = await loadFactoryAbi();
+  return (factoryRead = new Contract(CONTRACTS.factory, abi, getReadProvider()));
 }
 
 export async function getEVOZXRead() {
-
-    if (evozxRead) {
-
-        return evozxRead;
-
-    }
-
-    const abi =
-        await loadEVOZXAbi();
-
-    evozxRead =
-        new Contract(
-
-            CONTRACTS.evozx,
-
-            abi,
-
-            getReadProvider()
-
-        );
-
-    return evozxRead;
-
+  if (evozxRead) return evozxRead;
+  const abi = await loadEVOZXAbi();
+  return (evozxRead = new Contract(CONTRACTS.evozx, abi, getReadProvider()));
 }
 
 export async function getFactoryWrite() {
-
-    const signer =
-        getSigner();
-
-    if (!signer) {
-
-        throw new Error(
-            "Wallet not connected."
-        );
-
-    }
-
-    const abi =
-        await loadFactoryAbi();
-
-    factoryWrite =
-        new Contract(
-
-            CONTRACTS.factory,
-
-            abi,
-
-            signer
-
-        );
-
-    return factoryWrite;
-
+  const signer = getSigner();
+  if (!signer) throw new Error("Wallet not connected.");
+  const abi = await loadFactoryAbi();
+  return (factoryWrite = new Contract(CONTRACTS.factory, abi, signer));
 }
 
-export async function getFactoryForWrite() {
-
-    return await getFactoryWrite();
-
-}
+export const getFactoryForWrite = getFactoryWrite;
 
 export async function getEVOZXWrite() {
-
-    const signer =
-        getSigner();
-
-    if (!signer) {
-
-        throw new Error(
-            "Wallet not connected."
-        );
-
-    }
-
-    const abi =
-        await loadEVOZXAbi();
-
-    evozxWrite =
-        new Contract(
-
-            CONTRACTS.evozx,
-
-            abi,
-
-            signer
-
-        );
-
-    return evozxWrite;
-
+  const signer = getSigner();
+  if (!signer) throw new Error("Wallet not connected.");
+  const abi = await loadEVOZXAbi();
+  return (evozxWrite = new Contract(CONTRACTS.evozx, abi, signer));
 }
 
 function parseTokenCreated(receipt) {
+  if (!receipt) return null;
 
-    if (!receipt) {
+  for (const log of receipt.logs) {
+    try {
+      const p = factoryInterface.parseLog(log);
+      if (p?.name === "TokenCreated") {
+        return {
+          token: p.args.token,
+          creator: p.args.creator,
+          name: p.args.name,
+          symbol: p.args.symbol,
+          supply: p.args.supply,
+          chainId: p.args.chainId
+        };
+      }
+    } catch {}
+  }
+  return null;
+}
 
-        return null;
-
-    }
-
-    for (const log of receipt.logs) {
-
-        try {
-
-            const parsed =
-    factoryInterface.parseLog(
-        log
-    );
-
-            if (
-
-                parsed &&
-                parsed.name ===
-                "TokenCreated"
-
-            ) {
-
-                return {
-
-                    token:
-                        parsed.args.token,
-
-                    creator:
-                        parsed.args.creator,
-
-                    name:
-                        parsed.args.name,
-
-                    symbol:
-                        parsed.args.symbol,
-
-                    supply:
-                        parsed.args.supply,
-
-                    chainId:
-                        parsed.args.chainId
-
-                };
-
-            }
-
-        }
-
-        catch {
-
-        }
-
-    }
-
-    return null;
-
-                }
-
-// =====================================================
-// FACTORY INFO
-// =====================================================
-
+// ================= FACTORY INFO =================
 export async function getFactoryName() {
-
-    const factory =
-        await getFactoryRead();
-
-    return await factory.FACTORY_NAME();
-
+  return (await getFactoryRead()).FACTORY_NAME();
 }
 
 export async function getVersion() {
-
-    const factory =
-        await getFactoryRead();
-
-    return await factory.VERSION();
-
+  return (await getFactoryRead()).VERSION();
 }
 
 export async function getTreasury() {
-
-    const factory =
-        await getFactoryRead();
-
-    return await factory.treasury();
-
+  return (await getFactoryRead()).treasury();
 }
 
-// =====================================================
-// TOKEN DATA
-// =====================================================
-
+// ================= TOKEN DATA =================
 export async function getTotalTokens() {
-
-    const factory =
-        await getFactoryRead();
-
-    const total =
-        await factory.totalTokens();
-
-    return Number(total);
-
+  return Number(await (await getFactoryRead()).totalTokens());
 }
 
 export async function getAllTokens() {
-
-    const factory =
-        await getFactoryRead();
-
-    return await factory.getAllTokens();
-
+  return (await getFactoryRead()).getAllTokens();
 }
 
-// =====================================================
-// SYMBOL VALIDATION
-// =====================================================
-
+// ================= SYMBOL =================
 export async function symbolExists(symbol) {
-
-    if (!symbol) {
-
-        return false;
-
-    }
-
-    const factory =
-        await getFactoryRead();
-
-    return await factory.symbolExists(
-    symbol.trim()
-);
-
+  if (!symbol) return false;
+  return (await getFactoryRead()).symbolExists(symbol.trim());
 }
 
-// =====================================================
-// DEPLOYMENT FEE
-// =====================================================
-
+// ================= FEE =================
 export async function getDeploymentFee(config) {
-
-    const factory =
-        await getFactoryRead();
-
-    return await factory.getDeploymentFee(
-        config
-    );
-
+  return (await getFactoryRead()).getDeploymentFee(config);
 }
 
-// =====================================================
-// EVOZX BALANCE
-// =====================================================
-
+// ================= EVOZX =================
 export async function getEVOZXBalance(address) {
-
-    if (!address) {
-    throw new Error(
-        "Wallet address is required."
-    );
-    }
-
-    const token =
-        await getEVOZXRead();
-
-    return await token.balanceOf(
-        address
-    );
-
+  if (!address) throw new Error("Wallet address is required.");
+  return (await getEVOZXRead()).balanceOf(address);
 }
-
-// =====================================================
-// EVOZX ALLOWANCE
-// =====================================================
 
 export async function getEVOZXAllowance(address) {
-
-    if (!address) {
-
-        return 0n;
-
-    }
-
-    const token =
-        await getEVOZXRead();
-
-    return await token.allowance(
-
-        address,
-
-        CONTRACTS.factory
-
-    );
-
+  if (!address) return 0n;
+  return (await getEVOZXRead()).allowance(address, CONTRACTS.factory);
 }
 
-// =====================================================
-// FACTORY CONSTANTS
-// =====================================================
-
+// ================= FACTORY CONST =================
 export async function getFeeMultiplier() {
-
-    const factory =
-        await getFactoryRead();
-
-    return await factory.feeMultiplier();
-
+  return (await getFactoryRead()).feeMultiplier();
 }
 
 export async function getLaunchKitVersion() {
-
-    const factory =
-        await getFactoryRead();
-
-    return await factory.LAUNCHKIT_VERSION();
-
+  return (await getFactoryRead()).LAUNCHKIT_VERSION();
 }
 
 export async function getOwner() {
-
-    const factory =
-        await getFactoryRead();
-
-    return await factory.owner();
-
+  return (await getFactoryRead()).owner();
 }
 
-// =====================================================
-// TOKEN LOOKUP
-// =====================================================
-
-export async function getToken(index) {
-
-    const factory =
-        await getFactoryRead();
-
-    return await factory.getToken(
-        index
-    );
-
+// ================= TOKEN LOOKUP =================
+export async function getToken(i) {
+  return (await getFactoryRead()).getToken(i);
 }
 
-export async function getTokensByCreator(address) {
-
-    if (!address) {
-
-        return [];
-
-    }
-
-    const factory =
-        await getFactoryRead();
-
-    return await factory.getTokensByCreator(
-        address
-    );
-
+export async function getTokensByCreator(addr) {
+  if (!addr) return [];
+  return (await getFactoryRead()).getTokensByCreator(addr);
 }
 
-export async function isFactoryToken(address) {
+export async function isFactoryToken(addr) {
+  if (!addr) return false;
+  return (await getFactoryRead()).isTokenFromFactory(addr);
+}
 
-    if (!address) {
-
-        return false;
-
-    }
-
-    const factory =
-        await getFactoryRead();
-
-    return await factory.isTokenFromFactory(
-        address
-    );
-
-            }
-
-// =====================================================
-// APPROVE EVOZX
-// =====================================================
-
+// ================= APPROVE EVOZX =================
 export async function approveEVOZX(amount) {
-
-    if (!amount || amount <= 0n) {
-
-        throw new Error(
-            "Invalid approval amount."
-        );
-
-    }
-
-    const token =
-        await getEVOZXWrite();
-
-    const tx =
-        await token.approve(
-
-            CONTRACTS.factory,
-
-            amount
-
-        );
-
-    await tx.wait();
-
-    return tx;
-
+  if (!amount || amount <= 0n) throw new Error("Invalid approval amount.");
+  const token = await getEVOZXWrite();
+  const tx = await token.approve(CONTRACTS.factory, amount);
+  await tx.wait();
+  return tx;
 }
 
-// =====================================================
-// CREATE TOKEN
-// =====================================================
-
+// ================= CREATE TOKEN =================
 export async function createToken(config) {
+  const factory = await getFactoryWrite();
+  const tx = await factory.createToken(config);
+  const receipt = await tx.wait();
 
-    const factory =
-        await getFactoryWrite();
+  const e = parseTokenCreated(receipt);
+  if (!e) throw new Error("TokenCreated event not found.");
 
-    const tx =
-        await factory.createToken(
-            config
-        );
-
-    const receipt =
-        await tx.wait();
-
-    const event =
-        parseTokenCreated(
-            receipt
-        );
-
-    if (!event) {
-
-        throw new Error(
-            "TokenCreated event not found."
-        );
-
-    }
-
-    return {
-
-        hash:
-            receipt.hash,
-
-        blockNumber:
-            receipt.blockNumber,
-
-        token:
-            event.token,
-
-        creator:
-            event.creator,
-
-        name:
-            event.name,
-
-        symbol:
-            event.symbol,
-
-        supply:
-            event.supply,
-
-        chainId:
-            event.chainId
-
-    };
-
+  return {
+    hash: receipt.hash,
+    blockNumber: receipt.blockNumber,
+    token: e.token,
+    creator: e.creator,
+    name: e.name,
+    symbol: e.symbol,
+    supply: e.supply,
+    chainId: e.chainId
+  };
 }
 
-// =====================================================
-// APPROVAL CHECK
-// =====================================================
-
-export async function ensureApproval(
-    owner,
-    requiredAmount
-) {
-
-    const allowance =
-        await getEVOZXAllowance(
-            owner
-        );
-
-    if (
-        allowance >= requiredAmount
-    ) {
-
-        return false;
-
-    }
-
-    await approveEVOZX(
-        requiredAmount
-    );
-
-    return true;
-
+// ================= HELPERS =================
+export async function ensureApproval(owner, amt) {
+  const a = await getEVOZXAllowance(owner);
+  if (a >= amt) return false;
+  await approveEVOZX(amt);
+  return true;
 }
 
-// =====================================================
-// BALANCE CHECK
-// =====================================================
-
-export async function hasEnoughEVOZX(
-    owner,
-    requiredAmount
-) {
-
-    const balance =
-        await getEVOZXBalance(
-            owner
-        );
-
-    return balance >= requiredAmount;
-
+export async function hasEnoughEVOZX(owner, amt) {
+  return (await getEVOZXBalance(owner)) >= amt;
 }
 
-// =====================================================
-// TOKEN INFO HELPER
-// =====================================================
+export async function getDeploymentPreview(config, owner) {
+  const fee = await getDeploymentFee(config);
+  const balance = await getEVOZXBalance(owner);
+  const allowance = await getEVOZXAllowance(owner);
 
-export async function getDeploymentPreview(
-    config,
-    owner
-) {
-
-    const fee =
-        await getDeploymentFee(
-            config
-        );
-
-    const balance =
-        await getEVOZXBalance(
-            owner
-        );
-
-    const allowance =
-        await getEVOZXAllowance(
-            owner
-        );
-
-    return {
-
-        fee,
-
-        balance,
-
-        allowance,
-
-        enoughBalance:
-            balance >= fee,
-
-        approved:
-            allowance >= fee
-
-    };
-
+  return {
+    fee,
+    balance,
+    allowance,
+    enoughBalance: balance >= fee,
+    approved: allowance >= fee
+  };
 }
 
-// =====================================================
-// FORMAT HELPERS
-// =====================================================
+// ================= FORMAT =================
+export const toBigInt = (v) => BigInt(v);
 
-export function toBigInt(value) {
-
-    return BigInt(value);
-
-}
-
-export function isZeroAddress(address) {
-
-    return (
-
-        !address ||
-
-        address ===
-        "0x0000000000000000000000000000000000000000"
-
-    );
-
-}
+export const isZeroAddress = (a) =>
+  !a || a === "0x0000000000000000000000000000000000000000";
