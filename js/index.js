@@ -159,3 +159,112 @@ function bindWalletButton() {
     );
 
         }
+
+//
+// =====================================================
+// PAGE INITIALIZATION
+// =====================================================
+//
+
+async function initializePage() {
+
+    try {
+
+        await restoreConnection();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            error
+        );
+
+    }
+
+    updateWalletButtons();
+
+    await loadFactoryInformation();
+
+}
+
+//
+// =====================================================
+// METAMASK EVENTS
+// =====================================================
+//
+
+function bindWalletEvents() {
+
+    if (
+
+        typeof window.ethereum ===
+        "undefined"
+
+    ) {
+
+        return;
+
+    }
+
+    window.ethereum.on(
+
+        "accountsChanged",
+
+        async () => {
+
+            try {
+
+                await restoreConnection();
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    error
+                );
+
+            }
+
+            updateWalletButtons();
+
+        }
+
+    );
+
+    window.ethereum.on(
+
+        "chainChanged",
+
+        () => {
+
+            window.location.reload();
+
+        }
+
+    );
+
+}
+
+//
+// =====================================================
+// BOOTSTRAP
+// =====================================================
+//
+
+document.addEventListener(
+
+    "DOMContentLoaded",
+
+    async () => {
+
+        bindWalletButton();
+
+        bindWalletEvents();
+
+        await initializePage();
+
+    }
+
+);
