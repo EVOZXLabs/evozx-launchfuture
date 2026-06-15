@@ -339,20 +339,73 @@ async function scheduleSymbolCheck() {
 
 function bindBasicEvents() {
 
+    // ------------------------------------------
+    // SYMBOL
+    // ------------------------------------------
+
     const symbol =
         $("symbol");
 
     if (symbol) {
 
         symbol.addEventListener(
-
             "input",
-
             scheduleSymbolCheck
-
         );
 
     }
+
+    // ------------------------------------------
+    // INPUT
+    // ------------------------------------------
+
+    document
+        .querySelectorAll(
+            "input[type='text'],input[type='number'],input[type='url'],textarea"
+        )
+        .forEach(
+
+            element =>
+
+                element.addEventListener(
+
+                    "input",
+
+                    calculate
+
+                )
+
+        );
+
+    // ------------------------------------------
+    // CHECKBOX
+    // ------------------------------------------
+
+    document
+        .querySelectorAll(
+            "input[type='checkbox']"
+        )
+        .forEach(
+
+            element =>
+
+                element.addEventListener(
+
+                    "change",
+
+                    () => {
+
+                        updateFeatureState();
+
+                        calculate();
+
+                    }
+
+                )
+
+        );
+
+}
     
 const fields =
 
