@@ -1,86 +1,232 @@
-// =====================================================
-// HELPERS
-// =====================================================
-const getTokens = () => JSON.parse(localStorage.getItem("myTokens") || "[]");
-const saveTokens = (data) => localStorage.setItem("myTokens", JSON.stringify(data));
+import {
 
-async function copyText(text) {
-    if (!text) return;
+    formatUnits
+
+} from "https://esm.sh/ethers@6";
+
+import {
+
+    getTokensByCreator,
+    getToken
+
+} from "./factory.js";
+
+import {
+
+    getAccount
+
+} from "./wallet.js";
+
+let account = null;
+
+let tokens = [];
+
+function setText(
+
+    selector,
+
+    value
+
+) {
+
+    const element =
+        document.querySelector(
+            selector
+        );
+
+    if (element) {
+
+        element.textContent =
+            value;
+
+    }
+
+}
+
+export function shortAddress(address) {
+
+    if (!address) {
+
+        return "";
+
+    }
+
+    return (
+
+        address.slice(0, 6)
+
+        +
+
+        "..."
+
+        +
+
+        address.slice(-4)
+
+    );
+
+}
+
+export async function copyAddress(address) {
+
     try {
-        await navigator.clipboard.writeText(text);
-        alert("Copied!");
-    } catch {
-        alert("Copy failed");
+
+        await navigator.clipboard.writeText(
+            address
+        );
+
+        alert(
+            "Address copied."
+        );
+
     }
+
+    catch {
+
+        alert(
+            "Copy failed."
+        );
+
+    }
+
 }
 
-// =====================================================
-// CORE FUNCTIONS
-// =====================================================
+export function openExplorer(address) {
 
-function loadTokens() {
-    const tokenList = document.getElementById("tokenList");
-    if (!tokenList) return;
+    window.open(
 
-    const data = getTokens();
-    if (data.length === 0) {
-        tokenList.innerHTML = "<p>No tokens deployed yet.</p>";
-        return;
-    }
+        "https://evozscan.com/address/" +
 
-    tokenList.innerHTML = "";
-    // Membalik urutan agar yang terbaru di atas
-    const list = [...data].reverse();
+        address,
 
-    list.forEach((token, index) => {
-        const div = document.createElement("div");
-        div.style.cssText = "border:1px solid #444; padding:10px; margin-bottom:10px; border-radius:8px;";
-        
-        div.innerHTML = `
-            <b>${token.name} (${token.symbol})</b><br/>
-            Address: ${token.token || "N/A"}<br/>
-            TX: ${token.txHash?.slice(0, 10) || "-"}...<br/><br/>
-            <button data-view="${token.token}">View</button>
-            <button data-copy="${token.token}">Copy</button>
-            <button data-open="${token.token}">Explorer</button>
-            <button data-delete="${index}" style="color:red">Delete</button>
-        `;
-        tokenList.appendChild(div);
-    });
+        "_blank"
+
+    );
+
 }
 
-function deleteToken(reversedIndex) {
-    const data = getTokens();
-    // Konversi balik dari index reversed ke index array asli
-    const realIndex = data.length - 1 - reversedIndex;
-    
-    if (realIndex >= 0 && realIndex < data.length) {
-        data.splice(realIndex, 1);
-        saveTokens(data);
-        loadTokens();
+function buildBadges(token) {
+
+    const badges = [];
+
+    if (token.active) {
+
+        badges.push(
+
+            `<span class="badge success">
+                Active
+            </span>`
+
+        );
+
     }
+
+    badges.push(
+
+        `<span class="badge">
+            ${token.symbol}
+        </span>`
+
+    );
+
+    return badges.join("");
+
 }
 
-// =====================================================
-// EVENT DELEGATION
-// =====================================================
+function buildCard(token) {
 
-document.addEventListener("click", (e) => {
-    const target = e.target;
-    if (!target.dataset) return;
+    const supply =
+        formatUnits(
 
-    const { view, copy, open, delete: del } = target.dataset;
+            token.supply,
 
-    if (view) {
-        localStorage.setItem("viewToken", view);
-        window.location.href = "./token.html";
-    }
-    if (copy) copyText(copy);
-    if (open) window.open(`https://evozscan.com/address/${open}`, "_blank");
-    if (del !== undefined) deleteToken(Number(del));
-});
+            0
 
-// =====================================================
-// INIT
-// =====================================================
-loadTokens();
+        );
+
+    return `
+
+<div class="token-card">
+
+    <div class="token-header">
+
+        <h3>
+
+            ${token.name}
+
+        </h3>
+
+        ${buildBadges(token)}
+
+    </div>
+
+    <div class="token-body">
+
+        <p>
+
+            <strong>Symbol</strong>
+
+            ${token.symbol}
+
+        </p>
+
+        <p>
+
+            <strong>Supply</strong>
+
+            ${supply}
+
+        </p>
+
+        <p>
+
+            <strong>Address</strong>
+
+            ${shortAddress(
+                token.token
+            )}
+
+        </p>
+
+    </div>
+
+    <div class="token-actions">
+
+        <button
+
+            data-copy="${token.token}"
+
+        >
+
+            Copy
+
+        </button>
+
+        <button
+
+            data-open="${token.token}"
+
+        >
+
+            Explorer
+
+        </button>
+
+        <button
+
+            data-view="${token.token}"
+
+        >
+
+            Details
+
+        </button>
+
+    </div>
+
+</div>
+
+`;
+
+}
+
