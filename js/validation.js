@@ -1,606 +1,126 @@
-import {
-    isAddress
-} from "https://esm.sh/ethers@6";
-
-import {
-    symbolExists
-} from "./factory.js";
-
-// =====================================================
-// CONSTANTS
-// =====================================================
+import { isAddress } from "https://esm.sh/ethers@6";
+import { symbolExists } from "./factory.js";
 
 export const LIMITS = {
-
-    MIN_NAME_LENGTH: 2,
-
-    MIN_SYMBOL_LENGTH: 2,
-
-    MAX_SYMBOL_LENGTH: 12,
-
-    MAX_SUPPLY:
-        1_000_000_000_000,
-
-    MIN_SUPPLY: 1,
-
-    MAX_TAX: 10,
-
-    MIN_PERCENT: 1,
-
-    MAX_PERCENT: 100
-
+  MIN_NAME_LENGTH: 2,
+  MIN_SYMBOL_LENGTH: 2,
+  MAX_SYMBOL_LENGTH: 12,
+  MAX_SUPPLY: 1_000_000_000_000,
+  MIN_SUPPLY: 1,
+  MAX_TAX: 10,
+  MIN_PERCENT: 1,
+  MAX_PERCENT: 100
 };
 
-// =====================================================
-// TEXT
-// =====================================================
+const text = (v) => String(v ?? "").trim();
+export const required = (v) => text(v).length > 0;
 
-function text(value) {
-
-    return String(
-        value ?? ""
-    ).trim();
-
+// ================= NAME =================
+export function validateName(n) {
+  n = text(n);
+  if (!n) return "Token name is required.";
+  if (n.length < LIMITS.MIN_NAME_LENGTH) return "Token name must contain at least 2 characters.";
+  return "";
 }
 
-// =====================================================
-// REQUIRED
-// =====================================================
-
-export function required(value) {
-
-    return text(value).length > 0;
-
+// ================= SYMBOL =================
+export function validateSymbol(s) {
+  s = text(s);
+  if (!s) return "Token symbol is required.";
+  if (s.length < LIMITS.MIN_SYMBOL_LENGTH) return "Token symbol must contain at least 2 characters.";
+  if (s.length > LIMITS.MAX_SYMBOL_LENGTH) return "Maximum symbol length is 12.";
+  return "";
 }
 
-// =====================================================
-// NAME
-// =====================================================
+export async function checkSymbol(s) {
+  const err = validateSymbol(s);
+  if (err) return { valid: false, exists: false, message: err };
 
-export function validateName(name) {
-
-    name = text(name);
-
-    if (!name) {
-
-        return "Token name is required.";
-
-    }
-
-    if (
-
-        name.length <
-        LIMITS.MIN_NAME_LENGTH
-
-    ) {
-
-        return "Token name must contain at least 2 characters.";
-
-    }
-
-    return "";
-
+  const exists = await symbolExists(text(s));
+  return {
+    valid: !exists,
+    exists,
+    message: exists ? "Symbol already exists." : ""
+  };
 }
 
-// =====================================================
-// SYMBOL
-// =====================================================
-
-export function validateSymbol(symbol) {
-
-    symbol = text(symbol);
-
-    if (!symbol) {
-
-        return "Token symbol is required.";
-
-    }
-
-    if (
-
-        symbol.length <
-        LIMITS.MIN_SYMBOL_LENGTH
-
-    ) {
-
-        return "Token symbol must contain at least 2 characters.";
-
-    }
-
-    if (
-
-        symbol.length >
-        LIMITS.MAX_SYMBOL_LENGTH
-
-    ) {
-
-        return "Maximum symbol length is 12.";
-
-    }
-
-    return "";
-
+// ================= SUPPLY =================
+export function validateSupply(v) {
+  const n = Number(v);
+  if (!Number.isFinite(n)) return "Invalid supply.";
+  if (n < LIMITS.MIN_SUPPLY) return "Supply must be greater than 0.";
+  if (n > LIMITS.MAX_SUPPLY) return "Maximum supply is 1 Trillion.";
+  return "";
 }
 
-export async function checkSymbol(symbol) {
-
-    const error =
-        validateSymbol(symbol);
-
-    if (error) {
-
-        return {
-
-            valid: false,
-
-            exists: false,
-
-            message: error
-
-        };
-
-    }
-
-    const exists =
-        await symbolExists(
-            text(symbol)
-        );
-
-    return {
-
-        valid: !exists,
-
-        exists,
-
-        message:
-            exists
-                ? "Symbol already exists."
-                : ""
-
-    };
-
+// ================= TAX =================
+export function validateTax(v) {
+  v = Number(v);
+  if (Number.isNaN(v)) return "Invalid tax.";
+  if (v < 0 || v > LIMITS.MAX_TAX) return "Tax must be between 0% and 10%.";
+  return "";
 }
 
-// =====================================================
-// SUPPLY
-// =====================================================
-
-export function validateSupply(supply) {
-
-    const value =
-        Number(supply);
-
-    if (
-
-        !Number.isFinite(value)
-
-    ) {
-
-        return "Invalid supply.";
-
-    }
-
-    if (
-
-        value <
-        LIMITS.MIN_SUPPLY
-
-    ) {
-
-        return "Supply must be greater than 0.";
-
-    }
-
-    if (
-
-        value >
-        LIMITS.MAX_SUPPLY
-
-    ) {
-
-        return "Maximum supply is 1 Trillion.";
-
-    }
-
-    return "";
-
+// ================= PERCENT =================
+export function validatePercent(v) {
+  v = Number(v);
+  if (Number.isNaN(v)) return "Invalid percentage.";
+  if (v < LIMITS.MIN_PERCENT || v > LIMITS.MAX_PERCENT)
+    return "Percentage must be between 1 and 100.";
+  return "";
 }
 
-// =====================================================
-// TAX
-// =====================================================
-
-export function validateTax(value) {
-
-    value =
-        Number(value);
-
-    if (
-
-        Number.isNaN(value)
-
-    ) {
-
-        return "Invalid tax.";
-
-    }
-
-    if (
-
-        value < 0 ||
-        value > LIMITS.MAX_TAX
-
-    ) {
-
-        return "Tax must be between 0% and 10%.";
-
-    }
-
-    return "";
-
-}
-
-// =====================================================
-// PERCENT
-// =====================================================
-
-export function validatePercent(value) {
-
-    value =
-        Number(value);
-
-    if (
-
-        Number.isNaN(value)
-
-    ) {
-
-        return "Invalid percentage.";
-
-    }
-
-    if (
-
-        value <
-        LIMITS.MIN_PERCENT ||
-
-        value >
-        LIMITS.MAX_PERCENT
-
-    ) {
-
-        return "Percentage must be between 1 and 100.";
-
-    }
-
-    return "";
-
-}
-
-// =====================================================
-// URL
-// =====================================================
-
+// ================= URL =================
 export function validateURL(url) {
-
-    url = text(url);
-
-    if (!url) {
-
-        return "";
-
-    }
-
-    try {
-
-        new URL(url);
-
-        return "";
-
-    }
-
-    catch {
-
-        return "Invalid URL.";
-
-    }
-
+  url = text(url);
+  if (!url) return "";
+  try { new URL(url); return ""; }
+  catch { return "Invalid URL."; }
 }
 
-// =====================================================
-// ADDRESS
-// =====================================================
-
-export function validateAddress(address) {
-
-    address =
-        text(address);
-
-    if (!address) {
-
-        return "";
-
-    }
-
-    if (
-
-        !isAddress(address)
-
-    ) {
-
-        return "Invalid wallet address.";
-
-    }
-
-    return "";
-
+// ================= ADDRESS =================
+export function validateAddress(a) {
+  a = text(a);
+  if (!a) return "";
+  return isAddress(a) ? "" : "Invalid wallet address.";
 }
 
-// =====================================================
-// TAX RECEIVER
-// =====================================================
+// ================= TAX RECEIVERS =================
+export function validateTaxReceivers(c) {
+  if (!c.buyTaxEnabled && !c.sellTaxEnabled) return "";
 
-export function validateTaxReceivers(config) {
+  const burn = Number(c.burnTaxShare);
+  const marketing = text(c.marketingWallet);
+  const dev = text(c.developmentWallet);
 
-  require(
-    config.burnTaxShare <= 100,
-    "Invalid burn share"
-);
-  
-    if (
+  if (burn > 0 || marketing || dev) return "";
 
-        !config.buyTaxEnabled &&
-        !config.sellTaxEnabled
-
-    ) {
-
-        return "";
-
-    }
-
-    const burn =
-        Number(
-            config.burnTaxShare
-        );
-
-    const marketing =
-        text(
-            config.marketingWallet
-        );
-
-    const development =
-        text(
-            config.developmentWallet
-        );
-
-    if (
-
-        burn > 0
-
-    ) {
-
-        return "";
-
-    }
-
-    if (
-
-        marketing
-
-    ) {
-
-        return "";
-
-    }
-
-    if (
-
-        development
-
-    ) {
-
-        return "";
-
-    }
-
-    return "Buy Tax or Sell Tax requires Burn Share or Marketing Wallet or Development Wallet.";
-
+  return "Buy Tax or Sell Tax requires Burn Share or Marketing Wallet or Development Wallet.";
 }
 
-// =====================================================
-// FORM VALIDATION
-// =====================================================
+// ================= CONFIG VALIDATION =================
+export function validateConfig(c) {
+  let e;
 
-export function validateConfig(config) {
+  if ((e = validateName(c.name))) return e;
+  if ((e = validateSymbol(c.symbol))) return e;
+  if ((e = validateSupply(c.supply))) return e;
 
-    let error;
+  if (c.buyTaxEnabled && (e = validateTax(c.buyTax))) return e;
+  if (c.sellTaxEnabled && (e = validateTax(c.sellTax))) return e;
 
-    error =
-        validateName(
-            config.name
-        );
+  if (c.maxWalletEnabled && (e = validatePercent(c.maxWalletPercent))) return e;
+  if (c.maxTxEnabled && (e = validatePercent(c.maxTxPercent))) return e;
 
-    if (error) {
+  if ((e = validateURL(c.website))) return e;
+  if ((e = validateURL(c.telegram))) return e;
+  if ((e = validateURL(c.twitter))) return e;
+  if ((e = validateURL(c.logoURI))) return e;
 
-        return error;
+  if ((e = validateAddress(c.marketingWallet))) return e;
+  if ((e = validateAddress(c.developmentWallet))) return e;
 
-    }
+  if ((e = validateTaxReceivers(c))) return e;
 
-    error =
-        validateSymbol(
-            config.symbol
-        );
-
-    if (error) {
-
-        return error;
-
-    }
-
-    error =
-        validateSupply(
-            config.supply
-        );
-
-    if (error) {
-
-        return error;
-
-    }
-
-    if (
-
-        config.buyTaxEnabled
-
-    ) {
-
-        error =
-            validateTax(
-                config.buyTax
-            );
-
-        if (error) {
-
-            return error;
-
-        }
-
-    }
-
-    if (
-
-        config.sellTaxEnabled
-
-    ) {
-
-        error =
-            validateTax(
-                config.sellTax
-            );
-
-        if (error) {
-
-            return error;
-
-        }
-
-    }
-
-    if (
-
-        config.maxWalletEnabled
-
-    ) {
-
-        error =
-            validatePercent(
-                config.maxWalletPercent
-            );
-
-        if (error) {
-
-            return error;
-
-        }
-
-    }
-
-    if (
-
-        config.maxTxEnabled
-
-    ) {
-
-        error =
-            validatePercent(
-                config.maxTxPercent
-            );
-
-        if (error) {
-
-            return error;
-
-        }
-
-    }
-
-    error =
-        validateURL(
-            config.website
-        );
-
-    if (error) {
-
-        return error;
-
-    }
-
-    error =
-        validateURL(
-            config.telegram
-        );
-
-    if (error) {
-
-        return error;
-
-    }
-
-    error =
-        validateURL(
-            config.twitter
-        );
-
-    if (error) {
-
-        return error;
-
-    }
-
-    error =
-        validateURL(
-            config.logoURI
-        );
-
-    if (error) {
-
-        return error;
-
-    }
-
-    error =
-        validateAddress(
-            config.marketingWallet
-        );
-
-    if (error) {
-
-        return error;
-
-    }
-
-    error =
-        validateAddress(
-            config.developmentWallet
-        );
-
-    if (error) {
-
-        return error;
-
-    }
-
-    error =
-        validateTaxReceivers(
-            config
-        );
-
-    if (error) {
-
-        return error;
-
-    }
-
-    return "";
-
-      }
+  return "";
+}
