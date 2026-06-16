@@ -1,270 +1,356 @@
 import {
 
-    connectWallet,
+connectWallet,
 
-    restoreConnection,
+restoreWallet,
 
-    updateWalletButtons,
+getAccount,
 
-    isConnected
+onAccountChanged,
+
+onChainChanged
 
 } from "./wallet.js";
 
 import {
 
-    getFactoryName,
+getFactoryName,
 
-    getVersion,
+getVersion,
 
-    getTotalTokens
+getTotalTokens,
+
+getOwner
 
 } from "./factory.js";
 
-//
+import {
+
+getExchangeRate
+
+} from "./exchange.js";
+
 // =====================================================
-// DOM HELPERS
+// ELEMENTS
 // =====================================================
-//
 
-function setText(
-    id,
-    value
-) {
+const connectButton =
+document.getElementById(
+"connectWallet"
+);
 
-    const element =
-        document.getElementById(
-            id
-        );
+const createButton =
+document.getElementById(
+"createButton"
+);
 
-    if (!element) {
+const dashboardButton =
+document.getElementById(
+"dashboardButton"
+);
 
-        return;
+const factoryNameElement =
+document.getElementById(
+"factoryName"
+);
 
-    }
+const versionElement =
+document.getElementById(
+"factoryVersion"
+);
 
-    element.textContent =
-        value;
+const totalTokensElement =
+document.getElementById(
+"totalTokens"
+);
+
+const ownerElement =
+document.getElementById(
+"factoryOwner"
+);
+
+const exchangeRateElement =
+document.getElementById(
+"exchangeRate"
+);
+
+// =====================================================
+// HELPERS
+// =====================================================
+
+function shortAddress(address){
+
+if(!address){
+
+return "-";
 
 }
 
-//
-// =====================================================
-// FACTORY INFO
-// =====================================================
-//
-
-async function loadFactoryInformation() {
-
-    try {
-
-        const [
-
-            name,
-
-            version,
-
-            total
-
-        ] = await Promise.all([
-
-            getFactoryName(),
-
-            getVersion(),
-
-            getTotalTokens()
-
-        ]);
-
-        setText(
-            "factoryName",
-            name
-        );
-
-        setText(
-            "factoryVersion",
-            version
-        );
-
-        setText(
-            "totalTokens",
-            total
-        );
-
-    }
-
-    catch (error) {
-
-        console.error(
-            error
-        );
-
-        setText(
-            "factoryName",
-            "Unavailable"
-        );
-
-        setText(
-            "factoryVersion",
-            "-"
-        );
-
-        setText(
-            "totalTokens",
-            "-"
-        );
-
-    }
-
-}
-
-//
-// =====================================================
-// WALLET
-// =====================================================
-//
-
-function bindWalletButton() {
-
-    const button =
-        document.getElementById(
-            "connectWallet"
-        );
-
-    if (!button) {
-
-        return;
-
-    }
-
-    button.addEventListener(
-
-        "click",
-
-        async () => {
-
-            if (
-
-                !isConnected()
-
-            ) {
-
-                await connectWallet();
-
-            }
-
-            updateWalletButtons();
-
-        }
-
-    );
-
-        }
-
-//
-// =====================================================
-// PAGE INITIALIZATION
-// =====================================================
-//
-
-async function initializePage() {
-
-    try {
-
-        await restoreConnection();
-
-    }
-
-    catch (error) {
-
-        console.error(
-            error
-        );
-
-    }
-
-    updateWalletButtons();
-
-    await loadFactoryInformation();
-
-}
-
-//
-// =====================================================
-// METAMASK EVENTS
-// =====================================================
-//
-
-function bindWalletEvents() {
-
-    if (
-
-        typeof window.ethereum ===
-        "undefined"
-
-    ) {
-
-        return;
-
-    }
-
-    window.ethereum.on(
-
-        "accountsChanged",
-
-        async () => {
-
-            try {
-
-                await restoreConnection();
-
-            }
-
-            catch (error) {
-
-                console.error(
-                    error
-                );
-
-            }
-
-            updateWalletButtons();
-
-        }
-
-    );
-
-    window.ethereum.on(
-
-        "chainChanged",
-
-        () => {
-
-            window.location.reload();
-
-        }
-
-    );
-
-}
-
-//
-// =====================================================
-// BOOTSTRAP
-// =====================================================
-//
-
-document.addEventListener(
-
-    "DOMContentLoaded",
-
-    async () => {
-
-        bindWalletButton();
-
-        bindWalletEvents();
-
-        await initializePage();
-
-    }
+return(
+
+address.slice(0,6)+
+"..." +
+address.slice(-4)
 
 );
+
+}
+
+function setButtonConnected(address){
+
+if(!connectButton){
+
+return;
+
+}
+
+connectButton.textContent=
+shortAddress(address);
+
+}
+
+function setButtonDisconnected(){
+
+if(!connectButton){
+
+return;
+
+}
+
+connectButton.textContent=
+"Connect Wallet";
+
+}
+
+// =====================================================
+// LOAD FACTORY
+// =====================================================
+
+async function loadFactoryInfo(){
+
+try{
+
+const [
+
+factoryName,
+
+version,
+
+totalTokens,
+
+owner,
+
+rate
+
+]=await Promise.all([
+
+getFactoryName(),
+
+getVersion(),
+
+getTotalTokens(),
+
+getOwner(),
+
+getExchangeRate()
+
+]);
+
+if(factoryNameElement){
+
+factoryNameElement.textContent=
+factoryName;
+
+}
+
+if(versionElement){
+
+versionElement.textContent=
+version;
+
+}
+
+if(totalTokensElement){
+
+totalTokensElement.textContent=
+totalTokens;
+
+}
+
+if(ownerElement){
+
+ownerElement.textContent=
+shortAddress(owner);
+
+}
+
+if(exchangeRateElement){
+
+exchangeRateElement.textContent=
+`1 EVOZX = ${rate} EVOZ`;
+
+}
+
+}
+
+catch(error){
+
+console.error(error);
+
+}
+
+}
+
+// =====================================================
+// CONNECT
+// =====================================================
+
+async function connect(){
+
+try{
+
+await connectWallet();
+
+const account=
+getAccount();
+
+if(account){
+
+setButtonConnected(account);
+
+}
+
+}
+
+catch(error){
+
+console.error(error);
+
+}
+
+}
+
+// =====================================================
+// EVENTS
+// =====================================================
+
+function bindEvents(){
+
+if(connectButton){
+
+connectButton.addEventListener(
+
+"click",
+
+connect
+
+);
+
+}
+
+if(createButton){
+
+createButton.addEventListener(
+
+"click",
+
+()=>{
+
+location.href=
+"./launch.html";
+
+}
+
+);
+
+}
+
+if(dashboardButton){
+
+dashboardButton.addEventListener(
+
+"click",
+
+()=>{
+
+location.href=
+"./dashboard.html";
+
+}
+
+);
+
+}
+
+onAccountChanged(
+
+(account)=>{
+
+if(account){
+
+setButtonConnected(account);
+
+}
+
+else{
+
+setButtonDisconnected();
+
+}
+
+}
+
+);
+
+onChainChanged(
+
+()=>{
+
+location.reload();
+
+}
+
+);
+
+}
+
+// =====================================================
+// INIT
+// =====================================================
+
+async function init(){
+
+try{
+
+await restoreWallet();
+
+const account=
+getAccount();
+
+if(account){
+
+setButtonConnected(account);
+
+}
+
+else{
+
+setButtonDisconnected();
+
+}
+
+await loadFactoryInfo();
+
+bindEvents();
+
+}
+
+catch(error){
+
+console.error(error);
+
+}
+
+}
+
+init();
