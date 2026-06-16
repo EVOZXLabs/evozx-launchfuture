@@ -1,173 +1,837 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Token Builder | EVOZX Launch Future</title>
-    <meta name="description" content="Configure and deploy your custom token on EVOZ.">
-    <link rel="stylesheet" href="./css/app.css">
-    <link rel="stylesheet" href="./css/launch.css">
-    <style>
-        .nav-logo { height: 40px; width: auto; object-fit: contain; }
-        .launch-container { max-width: 700px; margin: 0 auto; padding: 20px; }
-        details { background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 15px; transition: 0.3s; }
-        summary { padding: 15px; cursor: pointer; font-weight: 600; list-style: none; display: flex; justify-content: space-between; align-items: center; }
-        summary::after { content: '▼'; font-size: 0.8rem; opacity: 0.6; }
-        details[open] summary::after { content: '▲'; }
-        .accordion-content { padding: 0 15px 15px 15px; }
-        .summary-card { border: 1px solid var(--gold); background: rgba(255, 215, 0, 0.05); }
-        .total { font-size: 1.2rem; font-weight: bold; border-top: 1px solid var(--border); margin-top: 10px; padding-top: 10px; }
-    </style>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>
+
+LaunchFuture • Deploy Token
+
+</title>
+
+<link
+rel="icon"
+href="./assets/logo.png">
+
+<link
+rel="stylesheet"
+href="./css/app.css">
+
+<link
+rel="stylesheet"
+href="./css/launch.css">
+
 </head>
+
 <body>
 
-    <header>
-        <nav class="container navbar">
-            <div class="brand">
-                <img src="./images/logo.png" alt="EVOZX Logo" class="nav-logo">
-                <span style="color: var(--gold); font-weight: bold; margin-left: 10px;">EVOZX Launch Future</span>
-            </div>
-            <div class="nav-links">
-                <a href="./index.html">Home</a>
-                <a href="#" class="active">Launch</a>
-            </div>
-            <button id="connectBtn" class="btn btn-gold">Connect Wallet</button>
-        </nav>
-    </header>
+<header class="topbar">
 
-    <main class="launch-container">
-        <div class="page-header" style="margin-bottom: 30px; text-align: center;">
-            <h1>Token Builder</h1>
-            <p style="color: var(--muted);">Configure your smart contract parameters to deploy on EVOZ Mainnet.</p>
-        </div>
+<div class="container">
 
-        <div class="card">
-            <h3 class="card-title">Basic Information</h3>
-            <div class="input-grid">
-                <div class="form-group">
-                    <label>Token Name</label>
-                    <input id="tokenName" type="text" placeholder="e.g. My Token">
-                </div>
-                <div class="form-group">
-                    <label>Token Symbol</label>
-                    <input id="symbolInput" type="text" placeholder="e.g. MYTK">
-                </div>
-                <div class="form-group full-width">
-                    <label>Total Supply</label>
-                    <input id="tokenSupply" type="number" placeholder="1000000">
-                </div>
-            </div>
-        </div>
+<a
+href="./index.html"
+class="brand">
 
-        <details open>
-            <summary class="card-title">Core Features</summary>
-            <div class="accordion-content">
-                <div class="checkbox-grid">
-                    <label class="checkbox-item"><input type="checkbox" id="burnable"> Burnable</label>
-                    <label class="checkbox-item"><input type="checkbox" id="mintable"> Mintable</label>
-                    <label class="checkbox-item"><input type="checkbox" id="ownership"> Ownership</label>
-                </div>
-            </div>
-        </details>
+<img
+src="./assets/logo.png"
+alt="LaunchFuture">
 
-        <details>
-            <summary class="card-title">Trading & Security</summary>
-            <div class="accordion-content">
-                <div class="checkbox-grid" style="margin-bottom: 20px;">
-                    <label class="checkbox-item"><input type="checkbox" id="tradingControlEnabled"> Trading Control</label>
-                    <label class="checkbox-item"><input type="checkbox" id="maxWalletEnabled"> Max Wallet</label>
-                    <label class="checkbox-item"><input type="checkbox" id="maxTxEnabled"> Max Tx</label>
-                </div>
-                <div class="input-grid">
-                    <div class="form-group">
-                        <label>Max Wallet %</label>
-                        <input id="maxWalletPercent" type="number" placeholder="5">
-                    </div>
-                    <div class="form-group">
-                        <label>Max Tx %</label>
-                        <input id="maxTxPercent" type="number" placeholder="2">
-                    </div>
-                </div>
-            </div>
-        </details>
+<div>
 
-        <details>
-            <summary class="card-title">Tokenomics & Tax Distribution</summary>
-            <div class="accordion-content">
-                <div class="input-grid">
-                    <div class="form-group">
-                        <label>Buy Tax %</label>
-                        <input id="buyTax" type="number" placeholder="0">
-                    </div>
-                    <div class="form-group">
-                        <label>Sell Tax %</label>
-                        <input id="sellTax" type="number" placeholder="0">
-                    </div>
-                    <div class="form-group full-width">
-                        <label>Burn Tax Share %</label>
-                        <input id="burnTaxShare" type="number" placeholder="0">
-                    </div>
-                    <div class="form-group full-width">
-                        <label>Marketing Wallet</label>
-                        <input id="marketingWallet" type="text" placeholder="0x...">
-                    </div>
-                    <div class="form-group full-width">
-                        <label>Development Wallet</label>
-                        <input id="developmentWallet" type="text" placeholder="0x...">
-                    </div>
-                </div>
-            </div>
-        </details>
+<h1>
 
-        <details>
-            <summary class="card-title">Project Metadata</summary>
-            <div class="accordion-content">
-                <div class="form-group full-width">
-                    <label>Website</label>
-                    <input id="website" type="text" placeholder="https://...">
-                </div>
-                <div class="input-grid">
-                    <div class="form-group">
-                        <label>Telegram</label>
-                        <input id="telegram" type="text" placeholder="URL">
-                    </div>
-                    <div class="form-group">
-                        <label>Twitter/X</label>
-                        <input id="twitter" type="text" placeholder="URL">
-                    </div>
-                </div>
-                <div class="form-group full-width">
-                    <label>Logo URI</label>
-                    <input id="logoURI" type="text" placeholder="https://...">
-                </div>
-            </div>
-        </details>
+LaunchFuture
 
-        <div class="card summary-card" style="margin-top: 20px;">
-            <h2 class="card-title" style="text-align: center;">Deployment Summary</h2>
-            <div class="summary-list">
-                <div class="summary-row"><span>Factory</span><span class="val">Ultimate</span></div>
-                <div class="summary-row"><span>Fee Token</span><span class="val">EVOZX</span></div>
-                <div class="summary-row"><span>Base Fee</span><span id="baseFee" class="val">0 EVOZX</span></div>
-                <div class="summary-row"><span>Feature Fee</span><span id="featureFee" class="val">0 EVOZX</span></div>
-                <div class="summary-row total"><span>Total Fee</span><span id="totalFee" class="val">0 EVOZX</span></div>
-                <div class="summary-row"><span>Burn (30%)</span><span id="burnAmount" class="val">-</span></div>
-                <div class="summary-row"><span>Treasury (70%)</span><span id="treasuryAmount" class="val">-</span></div>
-            </div>
-        </div>
+</h1>
 
-        <button id="deployBtn" class="btn btn-gold btn-large" style="width: 100%; margin-top: 20px;">Deploy Token</button>
+<p>
 
-    </main>
+Deploy EVOZ20 Tokens
 
-    <footer style="margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--border); text-align: center;">
-        <div class="container footer-content">
-            <div class="footer-brand">EVOZX Launch Future</div>
-            <span class="footer-copyright">© 2026 EVOZXLabs. All rights reserved.</span>
-        </div>
-    </footer>
+</p>
 
-    <script type="module" src="./js/index.js"></script>
-    <script type="module" src="./js/launch.js"></script>
+</div>
+
+</a>
+
+<nav>
+
+<div
+class="network-badge">
+
+EVOZ Mainnet
+
+</div>
+
+<div
+id="walletContainer">
+
+<button
+
+id="connectWallet"
+
+class="primary-button">
+
+Connect Wallet
+
+</button>
+
+</div>
+
+</nav>
+
+</div>
+
+</header>
+
+<main
+class="launch-page">
+
+<div
+class="container">
+
+<div
+class="page-header">
+
+<h2>
+
+Deploy New Token
+
+</h2>
+
+<p>
+
+Create a verified EVOZ20 token using the official LaunchFuture Factory.
+If your wallet does not hold enough EVOZX, LaunchFuture can automatically convert EVOZ to EVOZX at the current exchange rate before deployment.
+
+</p>
+
+</div>
+
+<div
+class="launch-container">
+
+<section
+class="launch-card">
+
+<div
+class="progress">
+
+<div
+class="progress-step active"></div>
+
+<div
+class="progress-step"></div>
+
+<div
+class="progress-step"></div>
+
+<div
+class="progress-step"></div>
+
+</div>
+
+<div
+class="accordion active"
+id="basicAccordion">
+
+<div
+class="accordion-header">
+
+<div>
+
+Basic Information
+
+<span>
+
+Required
+
+</span>
+
+</div>
+
+<div>
+
+▼
+
+</div>
+
+</div>
+
+<div
+class="accordion-content">
+
+<div
+class="form-grid">
+
+<div
+class="form-group">
+
+<label
+for="tokenName">
+
+Token Name
+
+</label>
+
+<input
+
+id="tokenName"
+
+type="text"
+
+maxlength="50"
+
+placeholder="Example Token">
+
+<small>
+
+Maximum 50 characters.
+
+</small>
+
+<div
+
+id="tokenNameValidation"
+
+class="validation-message">
+
+</div>
+
+</div>
+
+<div
+class="form-group">
+
+<label
+for="tokenSymbol">
+
+Symbol
+
+</label>
+
+<input
+
+id="tokenSymbol"
+
+type="text"
+
+maxlength="10"
+
+autocomplete="off"
+
+spellcheck="false"
+
+placeholder="EXT">
+
+<small>
+
+Maximum 10 uppercase characters.
+
+</small>
+
+<div
+
+id="tokenSymbolValidation"
+
+class="validation-message">
+
+</div>
+
+</div>
+
+<div
+class="form-group">
+
+<label
+for="totalSupply">
+
+Total Supply
+
+</label>
+
+<input
+
+id="totalSupply"
+
+type="number"
+
+min="1"
+
+step="1"
+
+placeholder="1000000">
+
+<small>
+
+Whole number only.
+
+</small>
+
+<div
+
+id="totalSupplyValidation"
+
+class="validation-message">
+
+</div>
+
+</div>
+
+<div
+class="form-group">
+
+<label
+for="decimals">
+
+Decimals
+
+</label>
+
+<input
+
+id="decimals"
+
+type="number"
+
+min="0"
+
+max="18"
+
+value="18">
+
+<small>
+
+Recommended value is 18.
+
+</small>
+
+<div
+
+id="decimalsValidation"
+
+class="validation-message">
+
+</div>
+
+</div>
+
+<div
+class="form-group full">
+
+<label
+for="tokenDescription">
+
+Description
+
+</label>
+
+<textarea
+
+id="tokenDescription"
+
+maxlength="500"
+
+placeholder="Describe your project (optional).">
+
+</textarea>
+
+<small>
+
+Optional. Maximum 500 characters.
+
+</small>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+    
+<div
+class="accordion"
+id="deploymentAccordion">
+
+<div
+class="accordion-header">
+
+<div>
+
+Deployment
+
+<span>
+
+Preview & Confirmation
+
+</span>
+
+</div>
+
+<div>
+
+▼
+
+</div>
+
+</div>
+
+<div
+class="accordion-content">
+
+<div
+class="preview-card">
+
+<div
+class="preview-title">
+
+Deployment Preview
+
+</div>
+
+<div
+class="preview-row">
+
+<span>
+
+Deployment Fee
+
+</span>
+
+<strong
+id="deploymentFee">
+
+-
+
+</strong>
+
+</div>
+
+<div
+class="preview-row">
+
+<span>
+
+EVOZX Balance
+
+</span>
+
+<strong
+id="evozxBalance">
+
+-
+
+</strong>
+
+</div>
+
+<div
+class="preview-row">
+
+<span>
+
+Allowance
+
+</span>
+
+<strong
+id="allowanceAmount">
+
+-
+
+</strong>
+
+</div>
+
+<div
+class="preview-row">
+
+<span>
+
+Additional EVOZ Needed
+
+</span>
+
+<strong
+id="requiredEVOZ">
+
+0 EVOZ
+
+</strong>
+
+</div>
+
+</div>
+
+<div
+id="exchangeBox"
+class="conversion-card hidden">
+
+<h4>
+
+Automatic EVOZX Conversion
+
+</h4>
+
+<p>
+
+Your EVOZX balance is insufficient.
+LaunchFuture will purchase the missing EVOZX automatically before deployment.
+
+</p>
+
+<div
+class="conversion-rate">
+
+<span>
+
+Exchange Rate
+
+</span>
+
+<strong>
+
+1 EVOZX = 5 EVOZ
+
+</strong>
+
+</div>
+
+</div>
+
+<div
+id="deployStatus"
+class="status-panel">
+
+Waiting for validation...
+
+</div>
+
+<button
+
+id="deployButton"
+
+class="primary-button deploy-button">
+
+Deploy Token
+
+</button>
+
+<div
+id="deployLoading"
+class="deploy-loading">
+
+<div
+class="spinner"></div>
+
+<span>
+
+Waiting for wallet confirmation...
+
+</span>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<aside
+class="launch-sidebar">
+
+<div
+class="info-card">
+
+<h3>
+
+Deployment Summary
+
+</h3>
+
+<div
+class="summary-list">
+
+<div
+class="summary-item">
+
+<span
+class="summary-label">
+
+Factory
+
+</span>
+
+<span
+class="summary-value">
+
+LaunchFuture
+
+</span>
+
+</div>
+
+<div
+class="summary-item">
+
+<span
+class="summary-label">
+
+Network
+
+</span>
+
+<span
+class="summary-value">
+
+EVOZ Mainnet
+
+</span>
+
+</div>
+
+<div
+class="summary-item">
+
+<span
+class="summary-label">
+
+Exchange
+
+</span>
+
+<span
+class="summary-value">
+
+1 EVOZX = 5 EVOZ
+
+</span>
+
+</div>
+
+<div
+class="summary-item">
+
+<span
+class="summary-label">
+
+Token Standard
+
+</span>
+
+<span
+class="summary-value">
+
+EVOZ20
+
+</span>
+
+</div>
+
+</div>
+
+</div>
+
+<div
+class="balance-card">
+
+<h4>
+
+Wallet Balance
+
+</h4>
+
+<div
+
+id="walletEVOZBalance"
+
+class="balance-value">
+
+-
+
+</div>
+
+<div
+class="balance-label">
+
+Native EVOZ
+
+</div>
+
+<br>
+
+<div
+
+id="walletEVOZXBalance"
+
+class="balance-value">
+
+-
+
+</div>
+
+<div
+class="balance-label">
+
+EVOZX Token
+
+</div>
+
+</div>
+
+<div
+class="help-box">
+
+<h4>
+
+Before Deploy
+
+</h4>
+
+<ul>
+
+<li>
+
+Connect your wallet.
+
+</li>
+
+<li>
+
+Verify your token information.
+
+</li>
+
+<li>
+
+Approve EVOZX if required.
+
+</li>
+
+<li>
+
+LaunchFuture automatically purchases missing EVOZX using EVOZ when necessary.
+
+</li>
+
+</ul>
+
+</div>
+
+</aside>
+
+</div>
+
+</div>
+
+</main>
+
+<footer>
+
+<div
+class="container">
+
+<div
+class="footer-grid">
+
+<div>
+
+<img
+
+src="./assets/logo.png"
+
+class="footer-logo"
+
+alt="LaunchFuture">
+
+<p>
+
+LaunchFuture is the official LaunchKit interface for deploying verified EVOZ20 tokens on EVOZ Mainnet.
+
+</p>
+
+</div>
+
+<div>
+
+<h4>
+
+Navigation
+
+</h4>
+
+<a
+href="./index.html">
+
+Home
+
+</a>
+
+<a
+href="./dashboard.html">
+
+Dashboard
+
+</a>
+
+</div>
+
+<div>
+
+<h4>
+
+Network
+
+</h4>
+
+<p>
+
+EVOZ Mainnet
+
+</p>
+
+<p>
+
+RPC
+
+</p>
+
+<p>
+
+https://rpc.evozscan.com
+
+</p>
+
+</div>
+
+</div>
+
+<div
+class="footer-bottom">
+
+© 2026 LaunchFuture
+
+</div>
+
+</div>
+
+</footer>
+
+<script
+type="module"
+src="./js/launch.js">
+</script>
+
 </body>
+
 </html>
