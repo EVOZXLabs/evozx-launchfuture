@@ -1,64 +1,570 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Token Details | EVOZX Launch Future</title>
-    <link rel="stylesheet" href="./css/app.css">
-    <style>
-        .nav-logo { height: 40px; width: auto; object-fit: contain; }
-        
-        /* Layout Utama Terpusat */
-        .page-container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
-        
-        /* Styling tambahan agar card terlihat premium */
-        .token-detail-card { border: 1px solid var(--border); padding: 30px; border-radius: 8px; }
-    </style>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>
+
+LaunchFuture • Token
+
+</title>
+
+<link
+rel="icon"
+href="./assets/logo.png">
+
+<link
+rel="stylesheet"
+href="./css/app.css">
+
 </head>
+
 <body>
 
-    <header>
-        <nav class="container navbar">
-            <div class="brand">
-                <img src="./images/logo.png" alt="EVOZX Logo" class="nav-logo">
-                <span style="color: var(--gold); font-weight: bold; margin-left: 10px;">EVOZX Launch Future</span>
-            </div>
-            <div class="nav-links">
-                <a href="./index.html">Home</a>
-                <a href="./launch.html">Launch</a>
-            </div>
-            <button id="connectBtn" class="btn btn-gold">Connect Wallet</button>
-        </nav>
-    </header>
+<header
+class="topbar">
 
-    <main class="page-container">
-        
-        <div class="page-header" style="text-align: center; margin-bottom: 40px;">
-            <h1>Token Details</h1>
-            <p style="color: var(--muted);">View real-time information for the selected token.</p>
-        </div>
+<div
+class="container">
 
-        <section class="card token-detail-card">
-            <div id="tokenDetail">
-                <div style="text-align: center; padding: 40px;">
-                    <p style="color: var(--muted);">Loading token data...</p>
-                </div>
-            </div>
-        </section>
+<a
+href="./index.html"
+class="brand">
 
-        <div style="text-align: center; margin-top: 30px;">
-            <a href="./index.html" class="btn btn-dark">Back to Home</a>
-        </div>
+<img
+src="./assets/logo.png"
+alt="LaunchFuture">
 
-    </main>
+<div>
 
-    <footer style="margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--border); text-align: center;">
-        <div class="container footer-content">
-            <div class="footer-brand">EVOZX Launch Future</div>
-            <span class="footer-copyright">© 2026 EVOZXLabs. All rights reserved.</span>
-        </div>
-    </footer>
+<h1>
 
-    <script type="module" src="./js/token.js"></script>
+LaunchFuture
+
+</h1>
+
+<p>
+
+Token Information
+
+</p>
+
+</div>
+
+</a>
+
+<nav>
+
+<div
+class="network-badge">
+
+EVOZ Mainnet
+
+</div>
+
+<div
+id="walletContainer">
+
+<button
+
+id="connectWallet"
+
+class="primary-button">
+
+Connect Wallet
+
+</button>
+
+</div>
+
+</nav>
+
+</div>
+
+</header>
+
+<main>
+
+<section>
+
+<div
+class="container">
+
+<div
+class="page-header">
+
+<h2>
+
+Token Details
+
+</h2>
+
+<p>
+
+View on-chain information for an EVOZ20 token deployed through LaunchFuture.
+
+</p>
+
+</div>
+
+<div
+class="stats-grid">
+
+<div
+class="card stat-card">
+
+<span>
+
+Token Name
+
+</span>
+
+<strong
+id="tokenName">
+
+-
+
+</strong>
+
+</div>
+
+<div
+class="card stat-card">
+
+<span>
+
+Symbol
+
+</span>
+
+<strong
+id="tokenSymbol">
+
+-
+
+</strong>
+
+</div>
+
+<div
+class="card stat-card">
+
+<span>
+
+Decimals
+
+</span>
+
+<strong
+id="tokenDecimals">
+
+-
+
+</strong>
+
+</div>
+
+<div
+class="card stat-card">
+
+<span>
+
+Total Supply
+
+</span>
+
+<strong
+id="tokenSupply">
+
+-
+
+</strong>
+
+</div>
+
+</div>
+
+<div
+class="card mt-3">
+
+<h3>
+
+Contract Information
+
+</h3>
+
+<div
+class="summary-list">
+
+<div
+class="summary-item">
+
+<span
+class="summary-label">
+
+Contract Address
+
+</span>
+
+<strong
+id="tokenAddress"
+class="summary-value">
+
+-
+
+</strong>
+
+</div>
+
+<div
+class="summary-item">
+
+<span
+class="summary-label">
+
+Owner
+
+</span>
+
+<strong
+id="tokenOwner"
+class="summary-value">
+
+-
+
+</strong>
+
+</div>
+
+<div
+class="summary-item">
+
+<span
+class="summary-label">
+
+Creator
+
+</span>
+
+<strong
+id="tokenCreator"
+class="summary-value">
+
+-
+
+</strong>
+
+</div>
+
+<div
+class="summary-item">
+
+<span
+class="summary-label">
+
+Chain ID
+
+</span>
+
+<strong
+id="tokenChainId"
+class="summary-value">
+
+-
+
+</strong>
+
+</div>
+
+<div
+class="summary-item">
+
+<span
+class="summary-label">
+
+LaunchFuture Verified
+
+</span>
+
+<strong
+id="tokenVerified"
+class="summary-value">
+
+Yes
+
+</strong>
+
+</div>
+
+</div>
+
+</div>
+
+<div
+class="card mt-3">
+
+<h3>
+
+Wallet Information
+
+</h3>
+
+<div
+class="summary-list">
+
+<div
+class="summary-item">
+
+<span
+class="summary-label">
+
+Your Balance
+
+</span>
+
+<strong
+
+id="walletBalance"
+
+class="summary-value">
+
+-
+
+</strong>
+
+</div>
+
+<div
+class="summary-item">
+
+<span
+class="summary-label">
+
+Your Share
+
+</span>
+
+<strong
+
+id="walletPercentage"
+
+class="summary-value">
+
+-
+
+</strong>
+
+</div>
+
+</div>
+
+</div>
+
+<div
+id="loadingState"
+class="deploy-loading">
+
+<div
+class="spinner"></div>
+
+<span>
+
+Loading token information...
+
+</span>
+
+</div>
+
+<div
+id="errorState"
+class="status-panel error">
+
+Unable to load token information.
+
+</div>
+
+<div
+class="hero-buttons mt-3">
+
+<a
+
+id="openExplorer"
+
+href="#"
+
+target="_blank"
+
+rel="noopener"
+
+class="primary-button">
+
+View on Explorer
+
+</a>
+
+<button
+
+id="copyAddress"
+
+class="secondary-button">
+
+Copy Address
+
+</button>
+
+</div>
+
+<div
+class="hero-buttons mt-2">
+
+<a
+
+href="./dashboard.html"
+
+class="secondary-button">
+
+Back to Dashboard
+
+</a>
+
+<a
+
+href="./launch.html"
+
+class="secondary-button">
+
+Deploy New Token
+
+</a>
+
+<a
+
+href="./index.html"
+
+class="secondary-button">
+
+Home
+
+</a>
+
+</div>
+
+</div>
+
+</section>
+
+</main>
+
+<footer>
+
+<div
+class="container">
+
+<div
+class="footer-grid">
+
+<div>
+
+<img
+
+src="./assets/logo.png"
+
+class="footer-logo"
+
+alt="LaunchFuture">
+
+<p>
+
+LaunchFuture is the official LaunchKit interface for deploying verified EVOZ20 tokens on EVOZ Mainnet.
+
+</p>
+
+</div>
+
+<div>
+
+<h4>
+
+Navigation
+
+</h4>
+
+<a
+href="./index.html">
+
+Home
+
+</a>
+
+<a
+href="./launch.html">
+
+Deploy Token
+
+</a>
+
+<a
+href="./dashboard.html">
+
+Dashboard
+
+</a>
+
+</div>
+
+<div>
+
+<h4>
+
+Network
+
+</h4>
+
+<p>
+
+EVOZ Mainnet
+
+</p>
+
+<p>
+
+RPC
+
+</p>
+
+<p>
+
+https://rpc.evozscan.com
+
+</p>
+
+</div>
+
+</div>
+
+<div
+class="footer-bottom">
+
+© 2026 LaunchFuture
+
+</div>
+
+</div>
+
+</footer>
+
+<script
+type="module"
+src="./js/token.js">
+</script>
+
 </body>
+
 </html>
