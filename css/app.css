@@ -1440,3 +1440,159 @@ width:220px;
 }
 
   }
+
+/* ==========================================================
+GLOBAL HELPERS
+========================================================== */
+
+.hidden{
+
+display:none !important;
+
+}
+
+.mt-2{
+
+margin-top:20px;
+
+}
+
+.mt-3{
+
+margin-top:32px;
+
+}
+
+.mb-2{
+
+margin-bottom:20px;
+
+}
+
+.text-center{
+
+text-align:center;
+
+}
+
+.w-100{
+
+width:100%;
+
+}
+
+/* ==========================================================
+GLOBAL STATUS PANEL
+========================================================== */
+
+.status-panel{
+
+display:none;
+
+margin-top:20px;
+
+padding:18px 20px;
+
+border-radius:var(--radius-md);
+
+}
+
+.status-panel.show{
+
+display:block;
+
+}
+
+.status-panel.success{
+
+background:rgba(46,204,113,.10);
+
+border:1px solid rgba(46,204,113,.25);
+
+color:#2ECC71;
+
+}
+
+.status-panel.warning{
+
+background:rgba(243,156,18,.10);
+
+border:1px solid rgba(243,156,18,.25);
+
+color:#F39C12;
+
+}
+
+.status-panel.error{
+
+background:rgba(231,76,60,.10);
+
+border:1px solid rgba(231,76,60,.25);
+
+color:#E74C3C;
+
+}
+
+.status-panel.info{
+
+background:rgba(77,163,255,.10);
+
+border:1px solid rgba(77,163,255,.25);
+
+color:var(--blue);
+
+}
+
+/* ==========================================================
+GLOBAL LOADING
+========================================================== */
+
+.deploy-loading{
+
+display:none;
+
+align-items:center;
+
+justify-content:center;
+
+gap:12px;
+
+margin-top:18px;
+
+font-size:.95rem;
+
+color:var(--muted);
+
+}
+
+.deploy-loading.active{
+
+display:flex;
+
+}
+
+.spinner{
+
+width:18px;
+
+height:18px;
+
+border:2px solid rgba(255,255,255,.18);
+
+border-top-color:var(--gold);
+
+border-radius:50%;
+
+animation:spin .8s linear infinite;
+
+}
+
+@keyframes spin{
+
+to{
+
+transform:rotate(360deg);
+
+}
+
+}
