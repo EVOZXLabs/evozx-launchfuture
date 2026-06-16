@@ -26,9 +26,9 @@ getOwner
 
 import {
 
-getExchangeRate
+EXCHANGE_RATE
 
-} from "./exchange.js";
+} from "./config.js";
 
 // =====================================================
 // ELEMENTS
@@ -138,9 +138,7 @@ version,
 
 totalTokens,
 
-owner,
-
-rate
+owner
 
 ]=await Promise.all([
 
@@ -150,9 +148,7 @@ getVersion(),
 
 getTotalTokens(),
 
-getOwner(),
-
-getExchangeRate()
+getOwner()
 
 ]);
 
@@ -187,8 +183,8 @@ shortAddress(owner);
 if(exchangeRateElement){
 
 exchangeRateElement.textContent=
-`1 EVOZX = ${rate} EVOZ`;
-
+`1 EVOZX = ${EXCHANGE_RATE} EVOZ`;
+  
 }
 
 }
