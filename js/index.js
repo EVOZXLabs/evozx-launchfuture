@@ -1,352 +1,247 @@
-import {
+import{
 
-connectWallet,
+  connectWallet,
 
-restoreWallet,
+  restoreConnection,
 
-getAccount,
+  getAccount,
 
-onAccountChanged,
+  shortAddress
 
-onChainChanged
+}from"./wallet.js";
 
-} from "./wallet.js";
+import{
 
-import {
+  getFactoryName,
 
-getFactoryName,
+  getVersion,
 
-getVersion,
+  getTotalTokens,
 
-getTotalTokens,
+  getOwner
 
-getOwner
+}from"./factory.js";
 
-} from "./factory.js";
+import{
 
-import {
+  EXCHANGE
 
-EXCHANGE_RATE
-
-} from "./config.js";
+}from"./config.js";
 
 // =====================================================
 // ELEMENTS
 // =====================================================
 
-const connectButton =
+const connectButton=
+
 document.getElementById(
-"connectWallet"
+
+  "connectWallet"
+
 );
 
-const createButton =
+const factoryNameElement=
+
 document.getElementById(
-"createButton"
+
+  "factoryName"
+
 );
 
-const dashboardButton =
+const versionElement=
+
 document.getElementById(
-"dashboardButton"
+
+  "factoryVersion"
+
 );
 
-const factoryNameElement =
+const totalTokensElement=
+
 document.getElementById(
-"factoryName"
+
+  "totalTokens"
+
 );
 
-const versionElement =
+const ownerElement=
+
 document.getElementById(
-"factoryVersion"
+
+  "factoryOwner"
+
 );
 
-const totalTokensElement =
-document.getElementById(
-"totalTokens"
-);
+const exchangeRateElement=
 
-const ownerElement =
 document.getElementById(
-"factoryOwner"
-);
 
-const exchangeRateElement =
-document.getElementById(
-"exchangeRate"
+  "exchangeRate"
+
 );
 
 // =====================================================
-// HELPERS
+// WALLET UI
 // =====================================================
 
-function shortAddress(address){
+function updateWalletButton(){
 
-if(!address){
+  if(!connectButton){
 
-return "-";
+    return;
 
-}
+  }
 
-return(
+  const account=
 
-address.slice(0,6)+
-"..." +
-address.slice(-4)
+    getAccount();
 
-);
+  connectButton.textContent=
 
-}
+    account
 
-function setButtonConnected(address){
+      ? shortAddress(account)
 
-if(!connectButton){
-
-return;
-
-}
-
-connectButton.textContent=
-shortAddress(address);
-
-}
-
-function setButtonDisconnected(){
-
-if(!connectButton){
-
-return;
-
-}
-
-connectButton.textContent=
-"Connect Wallet";
+      : "Connect Wallet";
 
 }
 
 // =====================================================
-// LOAD FACTORY
+// FACTORY INFO
 // =====================================================
 
 async function loadFactoryInfo(){
 
-try{
+  try{
 
-const [
+    const[
 
-factoryName,
+      factoryName,
 
-version,
+      version,
 
-totalTokens,
+      totalTokens,
 
-owner
+      owner
 
-]=await Promise.all([
+    ]=await Promise.all([
 
-getFactoryName(),
+      getFactoryName(),
 
-getVersion(),
+      getVersion(),
 
-getTotalTokens(),
+      getTotalTokens(),
 
-getOwner()
+      getOwner()
 
-]);
+    ]);
 
-if(factoryNameElement){
+    if(factoryNameElement){
 
-factoryNameElement.textContent=
-factoryName;
+      factoryNameElement.textContent=
 
-}
+        factoryName;
 
-if(versionElement){
+    }
 
-versionElement.textContent=
-version;
+    if(versionElement){
 
-}
+      versionElement.textContent=
 
-if(totalTokensElement){
+        version;
 
-totalTokensElement.textContent=
-totalTokens;
+    }
 
-}
+    if(totalTokensElement){
 
-if(ownerElement){
+      totalTokensElement.textContent=
 
-ownerElement.textContent=
-shortAddress(owner);
+        totalTokens.toLocaleString();
 
-}
+    }
 
-if(exchangeRateElement){
+    if(ownerElement){
 
-exchangeRateElement.textContent=
-`1 EVOZX = ${EXCHANGE_RATE} EVOZ`;
-  
-}
+      ownerElement.textContent=
 
-}
+        shortAddress(owner);
 
-catch(error){
+    }
 
-console.error(error);
+    if(exchangeRateElement){
 
-}
+      exchangeRateElement.textContent=
+
+        `1 EVOZX = ${EXCHANGE.evozPerEVOZX} EVOZ`;
+
+    }
+
+  }
+
+  catch(error){
+
+    console.error(error);
+
+  }
 
 }
 
 // =====================================================
-// CONNECT
+// CONNECT WALLET
 // =====================================================
 
 async function connect(){
 
-try{
+  try{
 
-await connectWallet();
+    await connectWallet();
 
-const account=
-getAccount();
+    updateWalletButton();
 
-if(account){
+  }
 
-setButtonConnected(account);
+  catch(error){
 
-}
+    console.error(error);
 
-}
-
-catch(error){
-
-console.error(error);
-
-}
+  }
 
 }
 
 // =====================================================
-// EVENTS
+// INITIALIZATION
 // =====================================================
 
-function bindEvents(){
+async function initialize(){
 
-if(connectButton){
+  await restoreConnection();
 
-connectButton.addEventListener(
+  updateWalletButton();
 
-"click",
+  await loadFactoryInfo();
 
-connect
+  if(connectButton){
 
-);
+    connectButton.addEventListener(
 
-}
+      "click",
 
-if(createButton){
+      connect
 
-createButton.addEventListener(
+    );
 
-"click",
-
-()=>{
-
-location.href=
-"./launch.html";
-
-}
-
-);
-
-}
-
-if(dashboardButton){
-
-dashboardButton.addEventListener(
-
-"click",
-
-()=>{
-
-location.href=
-"./dashboard.html";
-
-}
-
-);
-
-}
-
-onAccountChanged(
-
-(account)=>{
-
-if(account){
-
-setButtonConnected(account);
-
-}
-
-else{
-
-setButtonDisconnected();
-
-}
-
-}
-
-);
-
-onChainChanged(
-
-()=>{
-
-location.reload();
-
-}
-
-);
+  }
 
 }
 
 // =====================================================
-// INIT
+// PAGE LOAD
 // =====================================================
 
-async function init(){
+document.addEventListener(
 
-try{
+  "DOMContentLoaded",
 
-await restoreWallet();
+  initialize
 
-const account=
-getAccount();
-
-if(account){
-
-setButtonConnected(account);
-
-}
-
-else{
-
-setButtonDisconnected();
-
-}
-
-await loadFactoryInfo();
-
-bindEvents();
-
-}
-
-catch(error){
-
-console.error(error);
-
-}
-
-}
-
-init();
+);
