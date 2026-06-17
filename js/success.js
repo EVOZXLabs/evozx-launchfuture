@@ -1,48 +1,54 @@
 import {
+    STORAGE,
+    DOWNLOADS,
+    explorerToken
+} from "./config.js";
 
-    formatUnits
+import {
+    copyToClipboard
+} from "./utils.js";
 
-} from "https://esm.sh/ethers@6";
+// ======================================================
+// DOM
+// ======================================================
 
-function setText(
+function $(id) {
 
-    selector,
-
-    value
-
-) {
-
-    const element =
-        document.querySelector(
-            selector
-        );
-
-    if (element) {
-
-        element.textContent =
-            value;
-
-    }
+    return document.getElementById(id);
 
 }
 
-export function shortAddress(address) {
+function setText(id, value) {
+
+    const element = $(id);
+
+    if (!element) {
+
+        return;
+
+    }
+
+    element.textContent = value;
+
+}
+
+// ======================================================
+// ADDRESS
+// ======================================================
+
+function shortAddress(address) {
 
     if (!address) {
 
-        return "";
+        return "-";
 
     }
 
     return (
 
-        address.slice(0, 6)
+        address.slice(0, 6) +
 
-        +
-
-        "..."
-
-        +
+        "..." +
 
         address.slice(-4)
 
@@ -50,38 +56,15 @@ export function shortAddress(address) {
 
 }
 
-export async function copyText(text) {
+// ======================================================
+// STORAGE
+// ======================================================
 
-    try {
+function getLastDeployment() {
 
-        await navigator.clipboard.writeText(
-            text
-        );
-
-        alert(
-            "Copied successfully."
-        );
-
-    }
-
-    catch {
-
-        alert(
-            "Unable to copy."
-        );
-
-    }
-
-}
-
-export function getLastToken() {
-
-    const raw =
-        sessionStorage.getItem(
-
-            "launchfuture_last_token"
-
-        );
+    const raw = sessionStorage.getItem(
+        STORAGE.lastToken
+    );
 
     if (!raw) {
 
@@ -103,25 +86,15 @@ export function getLastToken() {
 
 }
 
-function explorerUrl(address) {
-
-    return (
-
-        "https://evozscan.com/address/"
-
-        +
-
-        address
-
-    );
-
-}
+// ======================================================
+// DOWNLOAD
+// ======================================================
 
 function downloadStandardInput() {
 
     window.open(
 
-        "./docs/standard-input.json",
+        DOWNLOADS.standardInput,
 
         "_blank"
 
@@ -129,16 +102,13 @@ function downloadStandardInput() {
 
 }
 
-//
-// =====================================================
-// RENDER SUCCESS
-// =====================================================
-//
+// ======================================================
+// RENDER
+// ======================================================
 
-export function renderSuccess() {
+function renderSuccess() {
 
-    const token =
-        getLastToken();
+    const token = getLastDeployment();
 
     if (!token) {
 
@@ -150,64 +120,41 @@ export function renderSuccess() {
     }
 
     setText(
-
-        "#tokenName",
-
+        "tokenName",
         token.name
-
     );
 
     setText(
-
-        "#tokenSymbol",
-
+        "tokenSymbol",
         token.symbol
-
     );
 
     setText(
-
-        "#tokenSupply",
-
-        formatUnits(
-
-            token.supply,
-
-            0
-
-        )
-
+        "tokenSupply",
+        token.supply
     );
 
     setText(
-
-        "#tokenAddress",
-
+        "tokenAddress",
         shortAddress(
             token.token
         )
-
     );
 
     setText(
-
-        "#chainId",
-
+        "chainId",
         String(
             token.chainId
         )
-
     );
 
     const explorer =
-        document.querySelector(
-            "#explorerLink"
-        );
+        $("explorerLink");
 
     if (explorer) {
 
         explorer.href =
-            explorerUrl(
+            explorerToken(
                 token.token
             );
 
@@ -217,25 +164,46 @@ export function renderSuccess() {
     }
 
     const copyButton =
-        document.querySelector(
-            "#copyAddress"
-        );
+        $("copyAddress");
 
     if (copyButton) {
 
         copyButton.onclick =
-            () =>
+            async () => {
 
-                copyText(
-                    token.token
+                const ok =
+                    await copyToClipboard(
+                        token.token
+                    );
+
+                if (!ok) {
+
+                    return;
+
+                }
+
+                copyButton.textContent =
+                    "Copied";
+
+                setTimeout(
+
+                    () => {
+
+                        copyButton.textContent =
+                            "Copy";
+
+                    },
+
+                    1500
+
                 );
+
+            };
 
     }
 
     const downloadButton =
-        document.querySelector(
-            "#downloadStandardInput"
-        );
+        $("downloadStandardInput");
 
     if (downloadButton) {
 
@@ -246,18 +214,14 @@ export function renderSuccess() {
 
 }
 
-//
-// =====================================================
+// ======================================================
 // NAVIGATION
-// =====================================================
-//
+// ======================================================
 
 function bindNavigation() {
 
     const dashboard =
-        document.querySelector(
-            "#goDashboard"
-        );
+        $("goDashboard");
 
     if (dashboard) {
 
@@ -272,9 +236,7 @@ function bindNavigation() {
     }
 
     const deployAgain =
-        document.querySelector(
-            "#deployAnother"
-        );
+        $("deployAnother");
 
     if (deployAgain) {
 
@@ -290,22 +252,33 @@ function bindNavigation() {
 
 }
 
-//
-// =====================================================
+// ======================================================
 // INITIALIZE
-// =====================================================
-//
+// ======================================================
+
+async function initializeSuccess() {
+
+    renderSuccess();
+
+    bindNavigation();
+
+}
 
 document.addEventListener(
 
     "DOMContentLoaded",
 
-    () => {
-
-        renderSuccess();
-
-        bindNavigation();
-
-    }
+    initializeSuccess
 
 );
+
+// ======================================================
+// EXPORTS
+// ======================================================
+
+export {
+
+    initializeSuccess,
+    renderSuccess
+
+};
