@@ -1,16 +1,21 @@
 import {
-    STORAGE,
+    formatUnits
+} from "https://esm.sh/ethers@6";
+
+import {
+    STORAGE_KEYS,
     DOWNLOADS,
-    explorerToken
+    explorerAddress,
+    explorerTransaction
 } from "./config.js";
 
 import {
     copyToClipboard
 } from "./utils.js";
 
-// ======================================================
-// DOM
-// ======================================================
+// =====================================================
+// DOM HELPERS
+// =====================================================
 
 function $(id) {
 
@@ -32,9 +37,9 @@ function setText(id, value) {
 
 }
 
-// ======================================================
-// ADDRESS
-// ======================================================
+// =====================================================
+// FORMAT HELPERS
+// =====================================================
 
 function shortAddress(address) {
 
@@ -56,15 +61,35 @@ function shortAddress(address) {
 
 }
 
-// ======================================================
+function formatSupply(value) {
+
+    try {
+
+        return formatUnits(
+            BigInt(value),
+            18
+        );
+
+    }
+
+    catch {
+
+        return String(value);
+
+    }
+
+}
+
+// =====================================================
 // STORAGE
-// ======================================================
+// =====================================================
 
 function getLastDeployment() {
 
-    const raw = sessionStorage.getItem(
-        STORAGE.lastToken
-    );
+    const raw =
+        localStorage.getItem(
+            STORAGE_KEYS.lastDeployment
+        );
 
     if (!raw) {
 
@@ -86,31 +111,29 @@ function getLastDeployment() {
 
 }
 
-// ======================================================
+// =====================================================
 // DOWNLOAD
-// ======================================================
+// =====================================================
 
 function downloadStandardInput() {
 
     window.open(
-
         DOWNLOADS.standardInput,
-
         "_blank"
-
     );
 
 }
 
-// ======================================================
+// =====================================================
 // RENDER
-// ======================================================
+// =====================================================
 
 function renderSuccess() {
 
-    const token = getLastDeployment();
+    const deployment =
+        getLastDeployment();
 
-    if (!token) {
+    if (!deployment) {
 
         window.location.href =
             "./launch.html";
@@ -121,32 +144,52 @@ function renderSuccess() {
 
     setText(
         "tokenName",
-        token.name
+        deployment.name
     );
 
     setText(
         "tokenSymbol",
-        token.symbol
+        deployment.symbol
     );
 
     setText(
         "tokenSupply",
-        token.supply
+        formatSupply(
+            deployment.supply
+        )
     );
 
     setText(
         "tokenAddress",
         shortAddress(
-            token.token
+            deployment.token
+        )
+    );
+
+    setText(
+        "creator",
+        shortAddress(
+            deployment.creator
         )
     );
 
     setText(
         "chainId",
         String(
-            token.chainId
+            deployment.chainId
         )
     );
+
+    setText(
+        "txHash",
+        shortAddress(
+            deployment.hash
+        )
+    );
+
+// ==========================================
+    // EXPLORER
+    // ==========================================
 
     const explorer =
         $("explorerLink");
@@ -154,14 +197,32 @@ function renderSuccess() {
     if (explorer) {
 
         explorer.href =
-            explorerToken(
-                token.token
+            explorerTransaction(
+                deployment.hash
             );
 
         explorer.target =
             "_blank";
 
     }
+
+    // ==========================================
+    // VIEW TOKEN
+    // ==========================================
+
+    const viewToken =
+        $("viewToken");
+
+    if (viewToken) {
+
+        viewToken.href =
+            `./token.html?address=${deployment.token}`;
+
+    }
+
+    // ==========================================
+    // COPY ADDRESS
+    // ==========================================
 
     const copyButton =
         $("copyAddress");
@@ -171,12 +232,12 @@ function renderSuccess() {
         copyButton.onclick =
             async () => {
 
-                const ok =
+                const copied =
                     await copyToClipboard(
-                        token.token
+                        deployment.token
                     );
 
-                if (!ok) {
+                if (!copied) {
 
                     return;
 
@@ -190,7 +251,7 @@ function renderSuccess() {
                     () => {
 
                         copyButton.textContent =
-                            "Copy";
+                            "Copy Address";
 
                     },
 
@@ -202,65 +263,29 @@ function renderSuccess() {
 
     }
 
-    const downloadButton =
+    // ==========================================
+    // DOWNLOAD STANDARD INPUT
+    // ==========================================
+
+    const download =
         $("downloadStandardInput");
 
-    if (downloadButton) {
+    if (download) {
 
-        downloadButton.onclick =
+        download.onclick =
             downloadStandardInput;
 
     }
 
 }
 
-// ======================================================
-// NAVIGATION
-// ======================================================
-
-function bindNavigation() {
-
-    const dashboard =
-        $("goDashboard");
-
-    if (dashboard) {
-
-        dashboard.onclick =
-            () => {
-
-                window.location.href =
-                    "./dashboard.html";
-
-            };
-
-    }
-
-    const deployAgain =
-        $("deployAnother");
-
-    if (deployAgain) {
-
-        deployAgain.onclick =
-            () => {
-
-                window.location.href =
-                    "./launch.html";
-
-            };
-
-    }
-
-}
-
-// ======================================================
+// =====================================================
 // INITIALIZE
-// ======================================================
+// =====================================================
 
-async function initializeSuccess() {
+function initializeSuccess() {
 
     renderSuccess();
-
-    bindNavigation();
 
 }
 
@@ -272,9 +297,9 @@ document.addEventListener(
 
 );
 
-// ======================================================
+// =====================================================
 // EXPORTS
-// ======================================================
+// =====================================================
 
 export {
 
