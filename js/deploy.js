@@ -1,196 +1,505 @@
-import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.15.0/+esm";
-import { getAccount } from "./wallet.js";
-import { getDeploymentFee, getEVOZXBalance, getEVOZXAllowance, approveEVOZX, createToken } from "./factory.js";
-import { autoTopupEVOZX } from "./exchange.js";
+import {
 
-const DECIMALS = 18;
+  ZeroAddress
 
-// ========================= BALANCE =========================
-export async function balanceOf() {
-  return await getEVOZXBalance();
+} from "https://esm.sh/ethers@6";
+
+import {
+
+  STORAGE
+
+} from "./config.js";
+
+import {
+
+  getAccount
+
+} from "./wallet.js";
+
+import {
+
+  validateConfig
+
+} from "./validation.js";
+
+import {
+
+  symbolExists,
+
+  getDeploymentFee,
+
+  getEVOZXBalance,
+
+  getEVOZXAllowance,
+
+  approveEVOZX,
+
+  createToken
+
+} from "./factory.js";
+
+import {
+
+  autoTopupEVOZX
+
+} from "./exchange.js";
+
+// =====================================================
+// CONFIG
+// =====================================================
+
+export function buildDeployment(form){
+
+  return{
+
+    name:
+
+      form.name.trim(),
+
+    symbol:
+
+      form.symbol
+
+        .trim()
+
+        .toUpperCase(),
+
+    supply:
+
+      BigInt(form.supply),
+
+    owner:
+
+      ZeroAddress,
+
+    chainId:0,
+
+    launchKitVersion:0,
+
+    burnable:
+
+      !!form.burnable,
+
+    mintable:
+
+      !!form.mintable,
+
+    ownershipEnabled:
+
+      !!form.ownershipEnabled,
+
+    website:
+
+      form.website?.trim() ?? "",
+
+    telegram:
+
+      form.telegram?.trim() ?? "",
+
+    twitter:
+
+      form.twitter?.trim() ?? "",
+
+    logoURI:
+
+      form.logoURI?.trim() ?? "",
+
+    maxWalletEnabled:
+
+      !!form.maxWalletEnabled,
+
+    maxWalletPercent:
+
+      Number(
+
+        form.maxWalletEnabled
+
+          ? form.maxWalletPercent
+
+          : 0
+
+      ),
+
+    maxTxEnabled:
+
+      !!form.maxTxEnabled,
+
+    maxTxPercent:
+
+      Number(
+
+        form.maxTxEnabled
+
+          ? form.maxTxPercent
+
+          : 0
+
+      ),
+
+    tradingControlEnabled:
+
+      !!form.tradingControlEnabled,
+
+    tradingEnabled:
+
+      !!form.tradingEnabled,
+
+    buyTaxEnabled:
+
+      !!form.buyTaxEnabled,
+
+    buyTax:
+
+      Number(
+
+        form.buyTaxEnabled
+
+          ? form.buyTax
+
+          : 0
+
+      ),
+
+    sellTaxEnabled:
+
+      !!form.sellTaxEnabled,
+
+    sellTax:
+
+      Number(
+
+        form.sellTaxEnabled
+
+          ? form.sellTax
+
+          : 0
+
+      ),
+
+    burnTaxShare:
+
+      Number(
+
+        form.buyTaxEnabled ||
+
+        form.sellTaxEnabled
+
+          ? form.burnTaxShare
+
+          : 0
+
+      ),
+
+    marketingWallet:
+
+      form.marketingWallet ||
+
+      ZeroAddress,
+
+    developmentWallet:
+
+      form.developmentWallet ||
+
+      ZeroAddress
+
+  };
+
 }
 
-export async function allowance() {
-  return await getEVOZXAllowance();
-}
+// =====================================================
+// PREVIEW
+// =====================================================
 
-// ========================= APPROVE =========================
-export async function approve(amount) {
-  if (amount <= 0n) throw new Error("Invalid approval amount.");
-  return await approveEVOZX(amount);
-}
+export async function getDeploymentPreview(form){
 
-// ========================= FORMAT BALANCE =========================
-export async function getBalance() {
-  const raw = await balanceOf();
-  return Number(ethers.formatUnits(raw, DECIMALS));
-}
+  const account=
 
-// ========================= APPROVE FACTORY (simple) =========================
-export async function approveFactory(fee) {
-  const currentAllowance = await allowance();
-  if (currentAllowance >= fee) return;
-  await approve(fee);
-}
+    await getAccount();
 
-// ========================= VALIDATION =========================
-export function validateInput(f) {
-  if (!f) throw new Error("Invalid form.");
+  if(!account){
 
-  f.name = f.name.trim();
-  if (f.name.length < 2) throw new Error("Token name must contain at least 2 characters.");
+    throw new Error(
 
-  f.symbol = f.symbol.trim().toUpperCase();
-  if (f.symbol.length < 2) throw new Error("Token symbol must contain at least 2 characters.");
-  if (f.symbol.length > 12) throw new Error("Maximum symbol length is 12 characters.");
+      "Wallet not connected."
 
-  f.supply = Number(f.supply);
-  if (Number.isNaN(f.supply)) throw new Error("Invalid supply.");
-  if (f.supply <= 0) throw new Error("Supply must be greater than zero.");
-  if (f.supply > 1_000_000_000_000) throw new Error("Maximum supply is 1 trillion.");
+    );
 
-  f.buyTax = Number(f.buyTax);
-  if (f.buyTaxEnabled && (f.buyTax < 0 || f.buyTax > 10)) throw new Error("Buy tax must be between 0 and 10%.");
-
-  f.sellTax = Number(f.sellTax);
-  if (f.sellTaxEnabled && (f.sellTax < 0 || f.sellTax > 10)) throw new Error("Sell tax must be between 0 and 10%.");
-
-  f.burnTaxShare = Number(f.burnTaxShare);
-  if (f.burnTaxShare < 0 || f.burnTaxShare > 100) throw new Error("Burn share must be between 0 and 100%.");
-
-  if ((f.buyTaxEnabled || f.sellTaxEnabled)) {
-    const hasBurn = f.burnTaxShare > 0;
-    const hasMarketing = f.marketingWallet && ethers.isAddress(f.marketingWallet);
-    const hasDev = f.developmentWallet && ethers.isAddress(f.developmentWallet);
-
-    if (!hasBurn && !hasMarketing && !hasDev)
-      throw new Error("Tax requires burn share or at least one wallet.");
   }
 
-  if (f.marketingWallet && !ethers.isAddress(f.marketingWallet)) throw new Error("Invalid marketing wallet.");
-  if (f.developmentWallet && !ethers.isAddress(f.developmentWallet)) throw new Error("Invalid development wallet.");
+  const config=
 
-  f.maxWalletPercent = Number(f.maxWalletPercent);
-  if (f.maxWalletEnabled && (f.maxWalletPercent <= 0 || f.maxWalletPercent > 100))
-    throw new Error("Max wallet must be between 1 and 100%.");
+    buildDeployment(form);
 
-  f.maxTxPercent = Number(f.maxTxPercent);
-  if (f.maxTxEnabled && (f.maxTxPercent <= 0 || f.maxTxPercent > 100))
-    throw new Error("Max transaction must be between 1 and 100%.");
+  const error=
 
-  if (f.website.length > 300) throw new Error("Website URL is too long.");
-  if (f.telegram.length > 300) throw new Error("Telegram URL is too long.");
-  if (f.twitter.length > 300) throw new Error("Twitter URL is too long.");
-  if (f.logoURI.length > 500) throw new Error("Logo URL is too long.");
+    validateConfig(config);
 
-  return f;
-}
+  if(error){
 
-// ========================= BUILD CONFIG =========================
-export function buildConfig(f) {
-  return {
-    name: f.name.trim(),
-    symbol: f.symbol.trim().toUpperCase(),
-    supply: BigInt(f.supply),
-    owner: ethers.ZeroAddress,
+    throw new Error(error);
 
-    chainId: 0,
-    launchKitVersion: 0,
+  }
 
-    burnable: !!f.burnable,
-    mintable: !!f.mintable,
-    ownershipEnabled: !!f.ownershipEnabled,
+  const fee=
 
-    website: f.website?.trim() ?? "",
-    telegram: f.telegram?.trim() ?? "",
-    twitter: f.twitter?.trim() ?? "",
-    logoURI: f.logoURI?.trim() ?? "",
+    await getDeploymentFee(config);
 
-    maxWalletEnabled: !!f.maxWalletEnabled,
-    maxWalletPercent: Number(f.maxWalletEnabled ? f.maxWalletPercent : 0),
+  const balance=
 
-    maxTxEnabled: !!f.maxTxEnabled,
-    maxTxPercent: Number(f.maxTxEnabled ? f.maxTxPercent : 0),
+    await getEVOZXBalance(
 
-    tradingControlEnabled: !!f.tradingControlEnabled,
-    tradingEnabled: !!f.tradingEnabled,
+      account
 
-    buyTaxEnabled: !!f.buyTaxEnabled,
-    buyTax: Number(f.buyTaxEnabled ? f.buyTax : 0),
+    );
 
-    sellTaxEnabled: !!f.sellTaxEnabled,
-    sellTax: Number(f.sellTaxEnabled ? f.sellTax : 0),
+  const allowance=
 
-    burnTaxShare: Number((f.buyTaxEnabled || f.sellTaxEnabled) ? f.burnTaxShare : 0),
+    await getEVOZXAllowance(
 
-    marketingWallet: f.marketingWallet || ethers.ZeroAddress,
-    developmentWallet: f.developmentWallet || ethers.ZeroAddress
+      account
+
+    );
+
+  return{
+
+    fee,
+
+    balance,
+
+    allowance,
+
+    enoughBalance:
+
+      balance>=fee,
+
+    approved:
+
+      allowance>=fee
+
   };
+
 }
 
-// ========================= APPROVE FACTORY =========================
-export async function approveFactory(config) {
-  const fee = await getDeploymentFee(config);
-  const current = await getEVOZXAllowance();
+// =====================================================
+// APPROVAL
+// =====================================================
 
-  if (current >= fee) return fee;
+export async function approveFactory(config){
 
-  const tx = await approveEVOZX(fee);
+  const account=
+
+    await getAccount();
+
+  if(!account){
+
+    throw new Error(
+
+      "Wallet not connected."
+
+    );
+
+  }
+
+  const fee=
+
+    await getDeploymentFee(config);
+
+  const allowance=
+
+    await getEVOZXAllowance(
+
+      account
+
+    );
+
+  if(
+
+    allowance>=fee
+
+  ){
+
+    return fee;
+
+  }
+
+  const tx=
+
+    await approveEVOZX(fee);
+
   await tx.wait();
 
-  const newAllowance = await getEVOZXAllowance();
-  if (newAllowance < fee) throw new Error("Factory approval failed.");
-
   return fee;
+
 }
 
-// ========================= DEPLOY TOKEN =========================
-export async function deployToken(formData) {
-  const account = getAccount();
-  if (!account) throw new Error("Wallet not connected.");
+// =====================================================
+// DEPLOY
+// =====================================================
 
-  validateInput(formData);
+export async function deployToken(form){
 
-  const config = buildConfig(formData);
+  const account = await getAccount();
 
-  const exists = await symbolExists(config.symbol);
-  if (exists) throw new Error("Symbol already exists.");
+  if(!account){
 
-  const fee = await getDeploymentFee(config);
-  const balance = await getEVOZXBalance(account);
+    throw new Error(
 
-  if (balance < fee) await autoTopupEVOZX(fee);
+      "Wallet not connected."
 
-  await approveFactory(config);
+    );
 
-  const result = await createToken(config);
+  }
 
-  const key = "launchfuture:history";
+  const config =
 
-  localStorage.setItem("launchfuture:lastDeployment", JSON.stringify({
-    hash: result.hash,
-    token: result.token,
-    creator: result.creator,
-    name: result.name,
-    symbol: result.symbol,
-    supply: result.supply.toString(),
-    chainId: result.chainId.toString(),
-    deployedAt: Date.now()
-  }));
+    buildDeployment(form);
 
-  const history = JSON.parse(localStorage.getItem(key) ?? "[]");
-  history.unshift({
-    hash: result.hash,
-    token: result.token,
-    creator: result.creator,
-    name: result.name,
-    symbol: result.symbol,
-    supply: result.supply.toString(),
-    chainId: result.chainId.toString(),
-    deployedAt: Date.now()
-  });
+  const error =
 
-  localStorage.setItem(key, JSON.stringify(history));
+    validateConfig(config);
 
-  window.location.href = `success.html?token=${result.token}`;
-}
+  if(error){
+
+    throw new Error(error);
+
+  }
+
+  if(
+
+    await symbolExists(
+
+      config.symbol
+
+    )
+
+  ){
+
+    throw new Error(
+
+      "Symbol already exists."
+
+    );
+
+  }
+
+  const fee =
+
+    await getDeploymentFee(
+
+      config
+
+    );
+
+  const balance =
+
+    await getEVOZXBalance(
+
+      account
+
+    );
+
+  if(balance < fee){
+
+    await autoTopupEVOZX(
+
+      fee
+
+    );
+
+  }
+
+  await approveFactory(
+
+    config
+
+  );
+
+  const result =
+
+    await createToken(
+
+      config
+
+    );
+
+  const deployment = {
+
+    hash:
+
+      result.hash,
+
+    token:
+
+      result.token,
+
+    creator:
+
+      result.creator,
+
+    name:
+
+      result.name,
+
+    symbol:
+
+      result.symbol,
+
+    supply:
+
+      result.supply.toString(),
+
+    chainId:
+
+      result.chainId.toString(),
+
+    deployedAt:
+
+      Date.now()
+
+  };
+
+  localStorage.setItem(
+
+    STORAGE.lastToken,
+
+    JSON.stringify(
+
+      deployment
+
+    )
+
+  );
+
+  const history = JSON.parse(
+
+    localStorage.getItem(
+
+      STORAGE.deployHistory
+
+    ) ?? "[]"
+
+  );
+
+  history.unshift(
+
+    deployment
+
+  );
+
+  localStorage.setItem(
+
+    STORAGE.deployHistory,
+
+    JSON.stringify(
+
+      history
+
+    )
+
+  );
+
+  window.location.href =
+
+    `success.html?token=${result.token}`;
+
+      }
