@@ -24,15 +24,17 @@ href="./images/logo.png">
 rel="stylesheet"
 href="./css/app.css">
 
+<link
+rel="stylesheet"
+href="./css/success.css">
+
 </head>
 
 <body>
 
-<header
-class="topbar">
+<header class="topbar">
 
-<div
-class="container">
+<div class="container">
 
 <a
 href="./index.html"
@@ -52,7 +54,7 @@ LaunchFuture
 
 <p>
 
-Verified EVOZ20 Launcher
+Deployment Completed
 
 </p>
 
@@ -62,27 +64,19 @@ Verified EVOZ20 Launcher
 
 <nav>
 
-<div
-class="network-badge">
+<div class="network-badge">
 
 EVOZ Mainnet
 
 </div>
 
-<div
-id="walletContainer">
-
 <button
-
 id="connectWallet"
-
 class="primary-button">
 
 Connect Wallet
 
 </button>
-
-</div>
 
 </nav>
 
@@ -90,15 +84,11 @@ Connect Wallet
 
 </header>
 
-<main>
+<main class="success-page">
 
-<section>
+<div class="container">
 
-<div
-class="container">
-
-<div
-class="page-header text-center">
+<div class="success-header">
 
 <h2>
 
@@ -114,224 +104,179 @@ Your EVOZ20 token has been deployed successfully through the official LaunchFutu
 
 </div>
 
-<div
-class="hero-card">
+<section class="success-card">
 
-<div
-class="w-100">
+<div class="detail-grid">
 
-<div
-class="summary-list">
+<div>
 
-<div
-class="summary-item">
-
-<span
-class="summary-label">
+<label>
 
 Token Name
 
-</span>
+</label>
 
-<strong
-
-id="successName"
-
-class="summary-value">
+<p id="tokenName">
 
 -
 
-</strong>
+</p>
 
 </div>
 
-<div
-class="summary-item">
+<div>
 
-<span
-class="summary-label">
+<label>
 
 Symbol
 
-</span>
+</label>
 
-<strong
-
-id="successSymbol"
-
-class="summary-value">
+<p id="tokenSymbol">
 
 -
 
-</strong>
+</p>
 
 </div>
 
-<div
-class="summary-item">
+<div>
 
-<span
-class="summary-label">
+<label>
 
 Total Supply
 
-</span>
+</label>
 
-<strong
-
-id="successSupply"
-
-class="summary-value">
+<p id="tokenSupply">
 
 -
 
-</strong>
+</p>
 
 </div>
 
-<div
-class="summary-item">
+<div>
 
-<span
-class="summary-label">
-
-Creator
-
-</span>
-
-<strong
-
-id="successCreator"
-
-class="summary-value">
-
--
-
-</strong>
-
-</div>
-
-<div
-class="summary-item">
-
-<span
-class="summary-label">
+<label>
 
 Token Address
 
-</span>
+</label>
 
-<strong
-
-id="successToken"
-
-class="summary-value">
+<p id="tokenAddress">
 
 -
 
-</strong>
+</p>
 
 </div>
 
-<div
-class="summary-item">
+<div>
 
-<span
-class="summary-label">
-
-Transaction Hash
-
-</span>
-
-<strong
-
-id="successHash"
-
-class="summary-value">
-
--
-
-</strong>
-
-</div>
-
-<div
-class="summary-item">
-
-<span
-class="summary-label">
-
-Block Number
-
-</span>
-
-<strong
-
-id="successBlock"
-
-class="summary-value">
-
--
-
-</strong>
-
-</div>
-
-<div
-class="summary-item">
-
-<span
-class="summary-label">
+<label>
 
 Chain ID
 
-</span>
+</label>
 
-<strong
-
-id="successChain"
-
-class="summary-value">
+<p id="chainId">
 
 -
 
-</strong>
+</p>
+
+</div>
+
+<div>
+
+<label>
+
+Creator
+
+</label>
+
+<p id="creator">
+
+-
+
+</p>
+
+</div>
+
+<div>
+
+<label>
+
+Transaction Hash
+
+</label>
+
+<p id="txHash">
+
+-
+
+</p>
 
 </div>
 
 </div>
 
-<div
-class="hero-buttons mt-3">
+</section>
+
+<section class="success-actions">
+
+<div class="button-group">
 
 <a
 
-id="openTokenButton"
+id="explorerLink"
 
 class="primary-button"
 
-href="#">
+href="#"
 
-Open Token
+target="_blank"
 
-</a>
+rel="noopener">
 
-<a
-
-id="openExplorerButton"
-
-class="secondary-button"
-
-href="#">
-
-View Transaction
+Open Explorer
 
 </a>
+
+<button
+
+id="copyAddress"
+
+class="secondary-button">
+
+Copy Address
+
+</button>
+
+<button
+
+id="downloadStandardInput"
+
+class="secondary-button">
+
+Download Standard Input
+
+</button>
 
 </div>
 
-<div
-class="hero-buttons mt-2">
+<div class="button-group">
+
+<a
+
+href="./token.html"
+
+class="primary-button">
+
+View Token
+
+</a>
 
 <a
 
@@ -339,7 +284,7 @@ href="./launch.html"
 
 class="secondary-button">
 
-Deploy Another Token
+Deploy Another
 
 </a>
 
@@ -365,23 +310,17 @@ Home
 
 </div>
 
-</div>
-
-</div>
-
-</div>
-
 </section>
+
+</div>
 
 </main>
 
-<footer>
+<footer class="footer">
 
-<div
-class="container">
+<div class="container">
 
-<div
-class="footer-grid">
+<div class="footer-grid">
 
 <div>
 
@@ -395,7 +334,7 @@ alt="LaunchFuture">
 
 <p>
 
-LaunchFuture is the official Launchpad interface for deploying verified EVOZ20 tokens on EVOZ Mainnet.
+LaunchFuture is the official launchpad interface for deploying verified EVOZ20 tokens on EVOZ Mainnet.
 
 </p>
 
@@ -405,26 +344,21 @@ LaunchFuture is the official Launchpad interface for deploying verified EVOZ20 t
 
 <h4>
 
-Navigation
+Navigation</h4>
 
-</h4>
-
-<a
-href="./index.html">
+<a href="./index.html">
 
 Home
 
 </a>
 
-<a
-href="./launch.html">
+<a href="./launch.html">
 
 Deploy Token
 
 </a>
 
-<a
-href="./dashboard.html">
+<a href="./dashboard.html">
 
 Dashboard
 
@@ -462,8 +396,7 @@ https://rpc.evozscan.com
 
 </div>
 
-<div
-class="footer-bottom">
+<div class="footer-bottom">
 
 © 2026 LaunchFuture
 
