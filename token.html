@@ -12,7 +12,7 @@ content="width=device-width, initial-scale=1.0">
 
 <title>
 
-LaunchFuture • Token
+LaunchFuture • Token Details
 
 </title>
 
@@ -24,15 +24,17 @@ href="./images/logo.png">
 rel="stylesheet"
 href="./css/app.css">
 
+<link
+rel="stylesheet"
+href="./css/token.css">
+
 </head>
 
 <body>
 
-<header
-class="topbar">
+<header class="topbar">
 
-<div
-class="container">
+<div class="container">
 
 <a
 href="./index.html"
@@ -52,7 +54,7 @@ LaunchFuture
 
 <p>
 
-Token Information
+Verified EVOZ20 Token
 
 </p>
 
@@ -62,27 +64,19 @@ Token Information
 
 <nav>
 
-<div
-class="network-badge">
+<div class="network-badge">
 
 EVOZ Mainnet
 
 </div>
 
-<div
-id="walletContainer">
-
 <button
-
 id="connectWallet"
-
 class="primary-button">
 
 Connect Wallet
 
 </button>
-
-</div>
 
 </nav>
 
@@ -90,15 +84,14 @@ Connect Wallet
 
 </header>
 
-<main>
-
-<section>
+<main class="token-page">
 
 <div
-class="container">
+class="container"
 
-<div
-class="page-header">
+id="tokenContainer">
+
+<div class="page-header">
 
 <h2>
 
@@ -108,17 +101,15 @@ Token Details
 
 <p>
 
-View on-chain information for an EVOZ20 token deployed through LaunchFuture.
+View on-chain information and LaunchFuture configuration for this EVOZ20 token.
 
 </p>
 
 </div>
 
-<div
-class="stats-grid">
+<section class="token-grid">
 
-<div
-class="card stat-card">
+<div class="info-card">
 
 <span>
 
@@ -126,8 +117,7 @@ Token Name
 
 </span>
 
-<strong
-id="tokenName">
+<strong id="tokenName">
 
 -
 
@@ -135,8 +125,7 @@ id="tokenName">
 
 </div>
 
-<div
-class="card stat-card">
+<div class="info-card">
 
 <span>
 
@@ -144,8 +133,7 @@ Symbol
 
 </span>
 
-<strong
-id="tokenSymbol">
+<strong id="tokenSymbol">
 
 -
 
@@ -153,26 +141,7 @@ id="tokenSymbol">
 
 </div>
 
-<div
-class="card stat-card">
-
-<span>
-
-Decimals
-
-</span>
-
-<strong
-id="tokenDecimals">
-
--
-
-</strong>
-
-</div>
-
-<div
-class="card stat-card">
+<div class="info-card">
 
 <span>
 
@@ -180,8 +149,7 @@ Total Supply
 
 </span>
 
-<strong
-id="tokenSupply">
+<strong id="supply">
 
 -
 
@@ -189,53 +157,15 @@ id="tokenSupply">
 
 </div>
 
-</div>
+<div class="info-card">
 
-<div
-class="card mt-3">
-
-<h3>
-
-Contract Information
-
-</h3>
-
-<div
-class="summary-list">
-
-<div
-class="summary-item">
-
-<span
-class="summary-label">
-
-Contract Address
-
-</span>
-
-<strong
-id="tokenAddress"
-class="summary-value">
-
--
-
-</strong>
-
-</div>
-
-<div
-class="summary-item">
-
-<span
-class="summary-label">
+<span>
 
 Owner
 
 </span>
 
-<strong
-id="tokenOwner"
-class="summary-value">
+<strong id="owner">
 
 -
 
@@ -243,171 +173,469 @@ class="summary-value">
 
 </div>
 
-<div
-class="summary-item">
+</section>
 
-<span
-class="summary-label">
-
-Creator
-
-</span>
-
-<strong
-id="tokenCreator"
-class="summary-value">
-
--
-
-</strong>
-
-</div>
-
-<div
-class="summary-item">
-
-<span
-class="summary-label">
-
-Chain ID
-
-</span>
-
-<strong
-id="tokenChainId"
-class="summary-value">
-
--
-
-</strong>
-
-</div>
-
-<div
-class="summary-item">
-
-<span
-class="summary-label">
-
-LaunchFuture Verified
-
-</span>
-
-<strong
-id="tokenVerified"
-class="summary-value">
-
-Yes
-
-</strong>
-
-</div>
-
-</div>
-
-</div>
-
-<div
-class="card mt-3">
+<section class="token-section">
 
 <h3>
 
-Wallet Information
+General Information
 
 </h3>
 
-<div
-class="summary-list">
+<div class="detail-grid">
 
-<div
-class="summary-item">
+<div>
 
-<span
-class="summary-label">
+<label>
 
-Your Balance
+Token Address
 
-</span>
+</label>
 
-<strong
-
-id="walletBalance"
-
-class="summary-value">
+<p id="tokenAddress">
 
 -
 
-</strong>
+</p>
 
 </div>
 
-<div
-class="summary-item">
+<div>
 
-<span
-class="summary-label">
+<label>
 
-Your Share
+Chain ID
 
-</span>
+</label>
 
-<strong
-
-id="walletPercentage"
-
-class="summary-value">
+<p id="chainId">
 
 -
 
-</strong>
+</p>
+
+</div>
+
+<div>
+
+<label>
+
+LaunchKit Version
+
+</label>
+
+<p id="version">
+
+-
+
+</p>
+
+</div>
+
+<div>
+
+<label>
+
+Website
+
+</label>
+
+<p id="website">
+
+-
+
+</p>
+
+</div>
+
+<div>
+
+<label>
+
+Telegram
+
+</label>
+
+<p id="telegram">
+
+-
+
+</p>
+
+</div>
+
+<div>
+
+<label>
+
+Twitter / X
+
+</label>
+
+<p id="twitter">
+
+-
+
+</p>
 
 </div>
 
 </div>
 
+</section>
+
+<section class="token-section">
+
+<h3>
+
+Features
+
+</h3>
+
+<div class="detail-grid">
+
+<div>
+
+<label>
+
+Burnable
+
+</label>
+
+<p id="burnable" class="status">
+
+-
+
+</p>
+
 </div>
 
-<div
-id="loadingState"
-class="deploy-loading">
+<div>
 
-<div
-class="spinner"></div>
+<label>
 
-<span>
+Mintable
 
-Loading token information...
+</label>
 
-</span>
+<p id="mintable" class="status">
 
-</div>
+-
 
-<div
-id="errorState"
-class="status-panel error">
-
-Unable to load token information.
+</p>
 
 </div>
 
-<div
-class="hero-buttons mt-3">
+<div>
 
-<a
+<label>
 
-id="openExplorer"
+Ownership
 
-href="#"
+</label>
 
-target="_blank"
+<p id="ownership" class="status">
 
-rel="noopener"
+-
 
-class="primary-button">
+</p>
 
-View on Explorer
+</div>
 
-</a>
+<div>
+
+<label>
+
+Mint Used
+
+</label>
+
+<p id="mintUsed" class="status">
+
+-
+
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+<section class="token-section">
+
+<h3>
+
+Security
+
+</h3>
+
+<div class="detail-grid">
+
+<div>
+
+<label>
+
+Max Wallet
+
+</label>
+
+<p id="maxWalletEnabled">
+
+-
+
+</p>
+
+</div>
+
+<div>
+
+<label>
+
+Max Wallet %
+
+</label>
+
+<p id="maxWalletPercent">
+
+-
+
+</p>
+
+</div>
+
+<div>
+
+<label>
+
+Max Transaction
+
+</label>
+
+<p id="maxTxEnabled">
+
+-
+
+</p>
+
+</div>
+
+<div>
+
+<label>
+
+Max Transaction %
+
+</label>
+
+<p id="maxTxPercent">
+
+-
+
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+<section class="token-section">
+
+<h3>
+
+Trading & Tax
+
+</h3>
+
+<div class="detail-grid">
+
+<div>
+
+<label>
+
+Trading Control
+
+</label>
+
+<p id="tradingControlEnabled">
+
+-
+
+</p>
+
+</div>
+
+<div>
+
+<label>
+
+Trading Enabled
+
+</label>
+
+<p id="tradingEnabled">
+
+-
+
+</p>
+
+</div>
+
+<div>
+
+<label>
+
+Buy Tax
+
+</label>
+
+<p id="buyTax">
+
+-
+
+</p>
+
+</div>
+
+<div>
+
+<label>
+
+Sell Tax
+
+</label>
+
+<p id="sellTax">
+
+-
+
+</p>
+
+</div>
+
+<div>
+
+<label>
+
+Burn Share
+
+</label>
+
+<p id="burnShare">
+
+-
+
+</p>
+
+</div>
+
+<div>
+
+<label>
+
+Marketing Wallet
+
+</label>
+
+<p id="marketingWallet">
+
+-
+
+</p>
+
+</div>
+
+<div>
+
+<label>
+
+Development Wallet
+
+</label>
+
+<p id="developmentWallet">
+
+-
+
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+<section class="token-section">
+
+<h3>
+
+DEX Information
+
+</h3>
+
+<div class="detail-grid">
+
+<div>
+
+<label>
+
+Pair Initialized
+
+</label>
+
+<p id="pairInitialized">
+
+-
+
+</p>
+
+</div>
+
+<div>
+
+<label>
+
+DEX Pair
+
+</label>
+
+<p id="dexPair">
+
+-
+
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+<section class="token-section">
+
+<h3>
+
+Project Logo
+
+</h3>
+
+<div class="logo-preview">
+
+<img
+
+id="logo"
+
+src="./images/logo.png"
+
+alt="Project Logo">
+
+</div>
+
+</section>
+
+<div class="action-bar">
 
 <button
 
@@ -419,10 +647,15 @@ Copy Address
 
 </button>
 
-</div>
+<button
 
-<div
-class="hero-buttons mt-2">
+id="openExplorer"
+
+class="primary-button">
+
+Open Explorer
+
+</button>
 
 <a
 
@@ -434,47 +667,23 @@ Back to Dashboard
 
 </a>
 
-<a
-
-href="./launch.html"
-
-class="secondary-button">
-
-Deploy New Token
-
-</a>
-
-<a
-
-href="./index.html"
-
-class="secondary-button">
-
-Home
-
-</a>
-
 </div>
 
 </div>
-
-</section>
 
 </main>
 
-<footer>
+<footer class="footer">
 
-<div
-class="container">
+<div class="container">
 
-<div
-class="footer-grid">
+<div class="footer-grid">
 
 <div>
 
 <img
 
-src="./assets/logo.png"
+src="./images/logo.png"
 
 class="footer-logo"
 
@@ -482,7 +691,7 @@ alt="LaunchFuture">
 
 <p>
 
-LaunchFuture is the official LaunchKit interface for deploying verified EVOZ20 tokens on EVOZ Mainnet.
+LaunchFuture is the official launchpad interface for deploying verified EVOZ20 tokens on EVOZ Mainnet.
 
 </p>
 
@@ -496,22 +705,19 @@ Navigation
 
 </h4>
 
-<a
-href="./index.html">
+<a href="./index.html">
 
 Home
 
 </a>
 
-<a
-href="./launch.html">
+<a href="./launch.html">
 
 Deploy Token
 
 </a>
 
-<a
-href="./dashboard.html">
+<a href="./dashboard.html">
 
 Dashboard
 
@@ -549,8 +755,7 @@ https://rpc.evozscan.com
 
 </div>
 
-<div
-class="footer-bottom">
+<div class="footer-bottom">
 
 © 2026 LaunchFuture
 
