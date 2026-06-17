@@ -1,242 +1,185 @@
 import {
-
     Contract,
     JsonRpcProvider,
     formatUnits
-
 } from "https://esm.sh/ethers@6";
 
 import {
-
-    NETWORK
-
+    NETWORK,
+    ABI,
+    STORAGE,
+    explorerAddress,
+    isZeroAddress
 } from "./config.js";
 
+let provider = null;
 let tokenAbi = null;
 
-let provider = null;
+// =====================================================
+// ABI
+// =====================================================
 
-async function loadJson(path) {
-
-    const response =
-        await fetch(path);
-
-    if (!response.ok) {
-
-        throw new Error(
-            "Unable to load ABI."
-        );
-
-    }
-
-    return await response.json();
-
-}
-
-export async function loadAbi() {
+async function loadAbi() {
 
     if (tokenAbi) {
-
         return tokenAbi;
-
     }
 
-    tokenAbi =
-        await loadJson(
-            "./abi/token.json"
-        );
+    const response = await fetch(ABI.token);
+
+    if (!response.ok) {
+        throw new Error("Unable to load token ABI.");
+    }
+
+    tokenAbi = await response.json();
 
     return tokenAbi;
 
 }
 
+// =====================================================
+// PROVIDER
+// =====================================================
+
 function getProvider() {
 
-    if (provider) {
-
-        return provider;
-
-    }
-
-    provider =
-        new JsonRpcProvider(
-            NETWORK.rpc
+    if (!provider) {
+        provider = new JsonRpcProvider(
+            NETWORK.rpcUrl
         );
+    }
 
     return provider;
 
 }
 
-async function getToken(address) {
+// =====================================================
+// CONTRACT
+// =====================================================
 
-    const abi =
-        await loadAbi();
+async function getTokenContract(address) {
+
+    const abi = await loadAbi();
 
     return new Contract(
-
         address,
-
         abi,
-
         getProvider()
-
     );
 
 }
 
-function getAddressFromUrl() {
+// =====================================================
+// ADDRESS
+// =====================================================
+
+function getTokenAddress() {
 
     const params =
         new URLSearchParams(
             window.location.search
         );
 
-    return params.get("address");
+    const query =
+        params.get("address");
+
+    if (query) {
+        return query;
+    }
+
+    return sessionStorage.getItem(
+        STORAGE.selectedToken
+    );
 
 }
 
-//
 // =====================================================
 // LOAD TOKEN
 // =====================================================
-//
 
 export async function loadToken() {
 
     const address =
-        getAddressFromUrl();
+        getTokenAddress();
 
     if (!address) {
-
-        throw new Error(
-            "Token address not found."
-        );
-
+        throw new Error("Token address not found.");
     }
 
     const token =
-        await getToken(
-            address
-        );
+        await getTokenContract(address);
 
     const [
-
         name,
-
         symbol,
-
         owner,
-
         totalSupply,
-
         deployedChainId,
-
         launchKitVersion,
-
         ownershipEnabled,
-
         burnable,
-
         mintable,
-
         mintUsed,
-
         website,
-
         telegram,
-
         twitter,
-
         logoURI,
-
         maxWalletEnabled,
-
         maxWalletPercent,
-
         maxTxEnabled,
-
         maxTxPercent,
-
         tradingControlEnabled,
-
         tradingEnabled,
-
         buyTaxEnabled,
-
         buyTax,
-
         sellTaxEnabled,
-
         sellTax,
-
         burnTaxShare,
-
         marketingWallet,
-
         developmentWallet,
-
         dexPair,
-
         pairInitialized
-
     ] = await Promise.all([
 
         token.name(),
-
         token.symbol(),
-
         token.owner(),
-
         token.totalSupply(),
 
         token.deployedChainId(),
-
         token.launchKitVersion(),
 
         token.ownershipEnabled(),
-
         token.burnable(),
-
         token.mintable(),
-
         token.mintUsed(),
 
         token.website(),
-
         token.telegram(),
-
         token.twitter(),
-
         token.logoURI(),
 
         token.maxWalletEnabled(),
-
         token.maxWalletPercent(),
 
         token.maxTxEnabled(),
-
         token.maxTxPercent(),
 
         token.tradingControlEnabled(),
-
         token.tradingEnabled(),
 
         token.buyTaxEnabled(),
-
         token.buyTax(),
 
         token.sellTaxEnabled(),
-
         token.sellTax(),
 
         token.burnTaxShare(),
 
         token.marketingWallet(),
-
         token.developmentWallet(),
 
         token.dexPair(),
-
         token.pairInitialized()
 
     ]);
@@ -246,218 +189,137 @@ export async function loadToken() {
         address,
 
         name,
-
         symbol,
-
         owner,
-
         totalSupply,
 
         deployedChainId,
-
         launchKitVersion,
 
         ownershipEnabled,
-
         burnable,
-
         mintable,
-
         mintUsed,
 
         website,
-
         telegram,
-
         twitter,
-
         logoURI,
 
         maxWalletEnabled,
-
         maxWalletPercent,
 
         maxTxEnabled,
-
         maxTxPercent,
 
         tradingControlEnabled,
-
         tradingEnabled,
 
         buyTaxEnabled,
-
         buyTax,
 
         sellTaxEnabled,
-
         sellTax,
 
         burnTaxShare,
 
         marketingWallet,
-
         developmentWallet,
 
         dexPair,
-
         pairInitialized
 
     };
 
-        }
+}
 
-//
 // =====================================================
-// FORMAT HELPERS
+// DOM HELPERS
 // =====================================================
-//
 
-function setText(
-    selector,
-    value
-) {
+function $(selector) {
+    return document.querySelector(selector);
+}
 
-    const element =
-        document.querySelector(
-            selector
-        );
+function setText(selector, value) {
+    const element = $(selector);
+    if (element) {
+        element.textContent = value;
+    }
+}
+
+function setStatus(selector, enabled) {
+    const element = $(selector);
 
     if (!element) {
-
         return;
-
     }
 
-    element.textContent =
-        value;
-
-}
-
-function shortAddress(
-    address
-) {
-
-    if (
-
-        !address ||
-
-        address ===
-        "0x0000000000000000000000000000000000000000"
-
-    ) {
-
-        return "Not Set";
-
-    }
-
-    return (
-
-        address.slice(0, 6)
-
-        +
-
-        "..."
-
-        +
-
-        address.slice(-4)
-
-    );
-
-}
-
-function boolText(
-    value
-) {
-
-    return value
-        ? "Enabled"
-        : "Disabled";
-
-}
-
-function boolClass(
-    value
-) {
-
-    return value
+    element.textContent = enabled ? "Enabled" : "Disabled";
+    element.className = enabled
         ? "status enabled"
         : "status disabled";
-
 }
 
-function setStatus(
-    selector,
-    value
-) {
-
-    const element =
-        document.querySelector(
-            selector
-        );
-
-    if (!element) {
-
-        return;
-
+function shortAddress(address) {
+    if (
+        !address ||
+        address === ethers.ZeroAddress
+    ) {
+        return "-";
     }
 
-    element.textContent =
-        boolText(
-            value
-        );
-
-    element.className =
-        boolClass(
-            value
-        );
-
+    return `${address.slice(0, 6)}...${address.slice(-4)}`;
 }
 
-function formatSupply(
-    value
-) {
+function formatSupply(value) {
+    return formatUnits(value, 18);
+}
 
-    return formatUnits(
+function explorerAddress(address) {
+    return `${NETWORK.explorer}/address/${address}`;
+}
 
-        value,
+// =====================================================
+// BASIC INFO
+// =====================================================
 
-        18
+function renderBasic(token) {
 
+    setText("#tokenName", token.name);
+    setText("#tokenSymbol", token.symbol);
+
+    setText(
+        "#tokenAddress",
+        shortAddress(token.address)
     );
 
-}
-
-function explorerLink(
-    address
-) {
-
-    return (
-
-        NETWORK.explorer
-
-        +
-
-        "/address/"
-
-        +
-
-        address
-
+    setText(
+        "#owner",
+        shortAddress(token.owner)
     );
 
+    setText(
+        "#supply",
+        formatSupply(token.totalSupply)
+    );
+
+    setText(
+        "#chainId",
+        String(token.deployedChainId)
+    );
+
+    setText(
+        "#version",
+        String(token.launchKitVersion)
+    );
 }
 
-//
 // =====================================================
 // METADATA
 // =====================================================
-//
 
-function renderMetadata(
-    token
-) {
+function renderMetadata(token) {
 
     setText(
         "#website",
@@ -474,92 +336,18 @@ function renderMetadata(
         token.twitter || "-"
     );
 
-    const logo =
-        document.querySelector(
-            "#logo"
-        );
+    const logo = $("#logo");
 
-    if (
-
-        logo &&
-
-        token.logoURI
-
-    ) {
-
-        logo.src =
-            token.logoURI;
-
+    if (logo && token.logoURI) {
+        logo.src = token.logoURI;
     }
+}
 
-        }
-
-//
-// =====================================================
-// BASIC INFO
-// =====================================================
-//
-
-function renderBasic(
-    token
-) {
-
-    setText(
-        "#tokenName",
-        token.name
-    );
-
-    setText(
-        "#tokenSymbol",
-        token.symbol
-    );
-
-    setText(
-        "#owner",
-        shortAddress(
-            token.owner
-        )
-    );
-
-    setText(
-        "#tokenAddress",
-        shortAddress(
-            token.address
-        )
-    );
-
-    setText(
-        "#supply",
-        formatSupply(
-            token.totalSupply
-        )
-    );
-
-    setText(
-        "#chainId",
-        String(
-            token.deployedChainId
-        )
-    );
-
-    setText(
-        "#version",
-        String(
-            token.launchKitVersion
-        )
-    );
-
-    }
-
-//
 // =====================================================
 // FEATURES
 // =====================================================
-//
 
-function renderFeatures(
-    token
-) {
+function renderFeatures(token) {
 
     setStatus(
         "#burnable",
@@ -580,18 +368,13 @@ function renderFeatures(
         "#mintUsed",
         token.mintUsed
     );
-
 }
 
-//
 // =====================================================
 // SECURITY
 // =====================================================
-//
 
-function renderSecurity(
-    token
-) {
+function renderSecurity(token) {
 
     setStatus(
         "#maxWalletEnabled",
@@ -605,37 +388,24 @@ function renderSecurity(
 
     setText(
         "#maxWalletPercent",
-
         token.maxWalletEnabled
-
-            ? token.maxWalletPercent + "%"
-
+            ? `${token.maxWalletPercent}%`
             : "-"
-
     );
 
     setText(
         "#maxTxPercent",
-
         token.maxTxEnabled
-
-            ? token.maxTxPercent + "%"
-
+            ? `${token.maxTxPercent}%`
             : "-"
-
     );
-
 }
 
-//
 // =====================================================
 // TRADING
 // =====================================================
-//
 
-function renderTrading(
-    token
-) {
+function renderTrading(token) {
 
     setStatus(
         "#tradingControlEnabled",
@@ -646,285 +416,54 @@ function renderTrading(
         "#tradingEnabled",
         token.tradingEnabled
     );
-
 }
 
-//
 // =====================================================
-// TAX
+// RENDER
 // =====================================================
-//
 
-function renderTax(
-    token
-) {
-
-    setStatus(
-        "#buyTaxEnabled",
-        token.buyTaxEnabled
-    );
-
-    setStatus(
-        "#sellTaxEnabled",
-        token.sellTaxEnabled
-    );
-
-    setText(
-
-        "#buyTax",
-
-        token.buyTaxEnabled
-
-            ? token.buyTax + "%"
-
-            : "-"
-
-    );
-
-    setText(
-
-        "#sellTax",
-
-        token.sellTaxEnabled
-
-            ? token.sellTax + "%"
-
-            : "-"
-
-    );
-
-    setText(
-
-        "#burnShare",
-
-        token.burnTaxShare + "%"
-
-    );
-
-    setText(
-
-        "#marketingWallet",
-
-        shortAddress(
-            token.marketingWallet
-        )
-
-    );
-
-    setText(
-
-        "#developmentWallet",
-
-        shortAddress(
-            token.developmentWallet
-        )
-
-    );
-
-}
-
-//
-// =====================================================
-// DEX
-// =====================================================
-//
-
-function renderDex(
-    token
-) {
-
-    setStatus(
-        "#pairInitialized",
-        token.pairInitialized
-    );
-
-    setText(
-
-        "#dexPair",
-
-        shortAddress(
-            token.dexPair
-        )
-
-    );
-
-}
-
-//
-// =====================================================
-// EXPLORER
-// =====================================================
-//
-
-function renderExplorer(
-    token
-) {
-
-    const explorer =
-        document.querySelector(
-            "#openExplorer"
-        );
-
-    if (
-
-        !explorer
-
-    ) {
-
-        return;
-
-    }
-
-    explorer.onclick =
-        () => {
-
-            window.open(
-
-                explorerLink(
-                    token.address
-                ),
-
-                "_blank"
-
-            );
-
-        };
-
-}
-
-//
-// =====================================================
-// COPY ADDRESS
-// =====================================================
-//
-
-function renderCopyButton(
-    token
-) {
-
-    const button =
-        document.querySelector(
-            "#copyAddress"
-        );
-
-    if (
-
-        !button
-
-    ) {
-
-        return;
-
-    }
-
-    button.onclick =
-        async () => {
-
-            await navigator.clipboard.writeText(
-
-                token.address
-
-            );
-
-            button.textContent =
-                "Copied";
-
-            setTimeout(
-
-                () => {
-
-                    button.textContent =
-                        "Copy";
-
-                },
-
-                1500
-
-            );
-
-        };
-
-}
-
-//
-// =====================================================
-// RENDER TOKEN
-// =====================================================
-//
-
-async function renderToken() {
+export async function renderToken() {
 
     try {
 
-        const token =
-            await loadToken();
+        const token = await loadTokenData();
 
-        renderBasic(
-            token
-        );
+        renderBasicInfo(token);
 
-        renderMetadata(
-            token
-        );
+        renderMetadata(token);
 
-        renderFeatures(
-            token
-        );
+        renderFeatures(token);
 
-        renderSecurity(
-            token
-        );
+        renderSecurity(token);
 
-        renderTrading(
-            token
-        );
+        renderTrading(token);
 
-        renderTax(
-            token
-        );
+        renderTax(token);
 
-        renderDex(
-            token
-        );
+        renderDex(token);
 
-        renderExplorer(
-            token
-        );
-
-        renderCopyButton(
-            token
-        );
+        bindActions(token);
 
     }
 
     catch (error) {
 
-        console.error(
-            error
-        );
+        console.error(error);
 
         const container =
-            document.querySelector(
-                "#tokenContainer"
-            );
+            $("#tokenContainer");
 
         if (container) {
 
             container.innerHTML = `
 
-                <div class="token-error">
+                <div class="empty-state">
 
-                    <h2>
-
-                        Unable to load token
-
-                    </h2>
+                    <h2>Unable to load token</h2>
 
                     <p>
-
-                        This address is not a valid LaunchKit token
-                        or the contract is unavailable.
-
+                        The supplied address is not a valid
+                        LaunchFuture token contract.
                     </p>
 
                 </div>
@@ -937,51 +476,32 @@ async function renderToken() {
 
 }
 
-//
 // =====================================================
-// NAVIGATION
+// INITIALIZATION
 // =====================================================
-//
 
-function bindNavigation() {
+async function initialize() {
 
-    const back =
-        document.querySelector(
-            "#backDashboard"
-        );
+    bindNavigation();
 
-    if (!back) {
-
-        return;
-
-    }
-
-    back.onclick =
-        () => {
-
-            window.location.href =
-                "./dashboard.html";
-
-        };
+    await renderToken();
 
 }
-
-//
-// =====================================================
-// INITIALIZE
-// =====================================================
-//
 
 document.addEventListener(
 
     "DOMContentLoaded",
 
-    () => {
-
-        renderToken();
-
-        bindNavigation();
-
-    }
+    initialize
 
 );
+
+// =====================================================
+// EXPORTS
+// =====================================================
+
+export {
+
+    loadTokenData
+
+};
