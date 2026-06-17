@@ -24,6 +24,10 @@ href="./images/logo.png">
 rel="stylesheet"
 href="./css/app.css">
 
+<link
+rel="stylesheet"
+href="./css/dashboard.css">
+
 </head>
 
 <body>
@@ -69,9 +73,6 @@ EVOZ Mainnet
 
 </div>
 
-<div
-id="walletContainer">
-
 <button
 
 id="connectWallet"
@@ -82,17 +83,14 @@ Connect Wallet
 
 </button>
 
-</div>
-
 </nav>
 
 </div>
 
 </header>
 
-<main>
-
-<section>
+<main
+class="dashboard-page">
 
 <div
 class="container">
@@ -108,17 +106,17 @@ Dashboard
 
 <p>
 
-View every EVOZ20 token deployed by your connected wallet through LaunchFuture Factory.
+View every EVOZ20 token deployed using your connected wallet through the official LaunchFuture Factory.
 
 </p>
 
 </div>
 
-<div
+<section
 class="stats-grid">
 
 <div
-class="card stat-card">
+class="info-card">
 
 <span>
 
@@ -136,7 +134,7 @@ id="dashboardWallet">
 </div>
 
 <div
-class="card stat-card">
+class="info-card">
 
 <span>
 
@@ -154,7 +152,7 @@ id="dashboardTotalTokens">
 </div>
 
 <div
-class="card stat-card">
+class="info-card">
 
 <span>
 
@@ -172,7 +170,7 @@ LaunchFuture
 </div>
 
 <div
-class="card stat-card">
+class="info-card">
 
 <span>
 
@@ -188,10 +186,15 @@ EVOZ Mainnet
 
 </div>
 
-</div>
+</section>
+
+<section
+class="dashboard-section">
 
 <div
-class="card mt-3">
+class="section-header">
+
+<div>
 
 <h3>
 
@@ -199,65 +202,13 @@ My Tokens
 
 </h3>
 
-<p
-class="mb-2">
-
-Every token created using the connected wallet will appear below.
-
-</p>
-
-<div
-id="tokenList">
-
-</div>
-
-</div>
-
-<div
-id="emptyState"
-class="card text-center mt-3 hidden">
-
-<h3>
-
-No Tokens Found
-
-</h3>
-
 <p>
 
-The connected wallet has not deployed any EVOZ20 tokens using LaunchFuture yet.
+Every verified EVOZ20 token deployed from this wallet will appear below.
 
 </p>
 
-<a
-
-href="./launch.html"
-
-class="primary-button mt-2">
-
-Deploy Your First Token
-
-</a>
-
 </div>
-
-<div
-id="loadingState"
-class="deploy-loading">
-
-<div
-class="spinner"></div>
-
-<span>
-
-Loading your deployed tokens...
-
-</span>
-
-</div>
-
-<div
-class="hero-buttons mt-3">
 
 <a
 
@@ -269,118 +220,261 @@ Deploy New Token
 
 </a>
 
+</div>
+
+<div
+
+id="loadingState"
+
+class="loading-panel"
+
+hidden>
+
+<div
+class="spinner">
+
+</div>
+
+<p>
+
+Loading deployed tokens...
+
+</p>
+
+</div>
+
+<div
+
+id="emptyState"
+
+class="empty-state"
+
+hidden>
+
+<h3>
+
+No Tokens Found
+
+</h3>
+
+<p>
+
+No verified EVOZ20 tokens have been deployed from this wallet yet.
+
+</p>
+
 <a
 
-href="./index.html"
+href="./launch.html"
 
-class="secondary-button">
+class="primary-button">
 
-Back Home
+Deploy Your First Token
 
 </a>
 
 </div>
+
+<div
+
+id="tokenList"
+
+class="token-grid">
+
+<!-- Filled by dashboard.js -->
 
 </div>
 
 </section>
 
+</div>
+
 </main>
 
-<footer>
+<footer class="footer">
 
-<div
-class="container">
+    <div class="container">
 
-<div
-class="footer-grid">
+        <div class="footer-grid">
 
-<div>
+            <div>
 
-<img
+                <img
+                    src="./images/logo.png"
+                    class="footer-logo"
+                    alt="LaunchFuture">
 
-src="./images/logo.png"
+                <p>
 
-class="footer-logo"
+                    LaunchFuture is the official launchpad interface for deploying verified EVOZ20 tokens on EVOZ Mainnet.
 
-alt="LaunchFuture">
+                </p>
 
-<p>
+            </div>
 
-LaunchFuture is the official Launchpad interface for deploying verified EVOZ20 tokens on EVOZ Mainnet.
+            <div>
 
-</p>
+                <h4>
 
-</div>
+                    Navigation
 
-<div>
+                </h4>
 
-<h4>
+                <a href="./index.html">
 
-Navigation
+                    Home
 
-</h4>
+                </a>
 
-<a
-href="./index.html">
+                <a href="./launch.html">
 
-Home
+                    Deploy Token
 
-</a>
+                </a>
 
-<a
-href="./launch.html">
+                <a href="./dashboard.html">
 
-Deploy Token
+                    Dashboard
 
-</a>
+                </a>
 
-</div>
+            </div>
 
-<div>
+            <div>
 
-<h4>
+                <h4>
 
-Network
+                    Network
 
-</h4>
+                </h4>
 
-<p>
+                <p>
 
-EVOZ Mainnet
+                    EVOZ Mainnet
 
-</p>
+                </p>
 
-<p>
+                <p>
 
-RPC
+                    RPC
 
-</p>
+                </p>
 
-<p>
+                <p>
 
-https://rpc.evozscan.com
+                    https://rpc.evozscan.com
 
-</p>
+                </p>
 
-</div>
+            </div>
 
-</div>
+        </div>
 
-<div
-class="footer-bottom">
+        <div class="footer-bottom">
 
-© 2026 LaunchFuture
+            © 2026 LaunchFuture
 
-</div>
+        </div>
 
-</div>
+    </div>
 
 </footer>
 
+<!-- =====================================================
+TOKEN CARD TEMPLATE
+Filled automatically by dashboard.js
+===================================================== -->
+
+<template id="tokenCardTemplate">
+
+    <article class="token-card">
+
+        <div class="token-card-header">
+
+            <div>
+
+                <h3 class="token-name">
+
+                </h3>
+
+                <p class="token-symbol">
+
+                </p>
+
+            </div>
+
+            <span class="badge success">
+
+                Active
+
+            </span>
+
+        </div>
+
+        <div class="token-card-body">
+
+            <div class="token-row">
+
+                <span>
+
+                    Address
+
+                </span>
+
+                <strong class="token-address">
+
+                </strong>
+
+            </div>
+
+            <div class="token-row">
+
+                <span>
+
+                    Supply
+
+                </span>
+
+                <strong class="token-supply">
+
+                </strong>
+
+            </div>
+
+        </div>
+
+        <div class="token-card-actions">
+
+            <button
+                class="secondary-button token-copy">
+
+                Copy
+
+            </button>
+
+            <button
+                class="secondary-button token-explorer">
+
+                Explorer
+
+            </button>
+
+            <button
+                class="primary-button token-details">
+
+                Details
+
+            </button>
+
+        </div>
+
+    </article>
+
+</template>
+
 <script
-type="module"
-src="./js/dashboard.js">
+    type="module"
+    src="./js/dashboard.js">
 </script>
 
 </body>
