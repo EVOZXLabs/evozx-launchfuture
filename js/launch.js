@@ -1,151 +1,107 @@
 import {
 
-    formatEther,
-    formatUnits
+  formatUnits
 
 } from "https://esm.sh/ethers@6";
 
 import {
 
-    getDeploymentFee,
-    getDeploymentPreview,
-    getEVOZXBalance
+  getDeploymentFee,
+  getDeploymentPreview
 
 } from "./factory.js";
 
 import {
 
-    validateConfig,
-    checkSymbol
-
-} from "./validation.js";
-
-import {
-
-    deployToken
-
-} from "./deploy.js";
-
-import {
-
-    calculateEVOZNeeded
+  calculateEVOZNeeded
 
 } from "./exchange.js";
 
 import {
 
-    getAccount,
-    restoreConnection
+  validateConfig,
+  checkSymbol
+
+} from "./validation.js";
+
+import {
+
+  deployToken
+
+} from "./deploy.js";
+
+import {
+
+  getAccount,
+  restoreConnection
 
 } from "./wallet.js";
 
 // =====================================================
-// DOM HELPERS
+// DOM
 // =====================================================
 
-function $(id) {
+const $ = (id)=>
 
-    return document.getElementById(id);
+  document.getElementById(id);
 
-}
+function text(id,value){
 
-function setText(id, value) {
+  const element = $(id);
 
-    const el = $(id);
+  if(element){
 
-    if (!el) {
+    element.textContent = value;
 
-        return;
-
-    }
-
-    el.textContent =
-        value;
+  }
 
 }
 
-function setHTML(id, value) {
+function html(id,value){
 
-    const el = $(id);
+  const element = $(id);
 
-    if (!el) {
+  if(element){
 
-        return;
+    element.innerHTML = value;
 
-    }
-
-    el.innerHTML =
-        value;
+  }
 
 }
 
-function show(id) {
+function enable(id,state=true){
 
-    const el = $(id);
+  const element = $(id);
 
-    if (!el) {
+  if(element){
 
-        return;
+    element.disabled = !state;
 
-    }
-
-    el.hidden = false;
+  }
 
 }
 
-function hide(id) {
+function value(id){
 
-    const el = $(id);
+  const element = $(id);
 
-    if (!el) {
+  return element
 
-        return;
+    ? element.value.trim()
 
-    }
-
-    el.hidden = true;
+    : "";
 
 }
 
-function value(id) {
+function checked(id){
 
-    const el = $(id);
+  const element = $(id);
 
-    if (!el) {
+  return element
 
-        return "";
+    ? element.checked
 
-    }
-
-    return el.value.trim();
-
-}
-
-function checked(id) {
-
-    const el = $(id);
-
-    if (!el) {
-
-        return false;
-
-    }
-
-    return el.checked;
-
-}
-
-function enable(id, state = true) {
-
-    const el = $(id);
-
-    if (!el) {
-
-        return;
-
-    }
-
-    el.disabled = !state;
+    : false;
 
 }
 
@@ -153,95 +109,145 @@ function enable(id, state = true) {
 // STATE
 // =====================================================
 
-let currentFee = 0n;
+let deploymentFee = 0n;
+
+let deployRunning = false;
 
 let symbolTimer = null;
 
-let deploying = false;
-
-let currentConfig = null;
-
 // =====================================================
-// ACCORDION
+// BUILD FORM
 // =====================================================
 
-function initAccordion() {
+function getFormData(){
 
-    const items =
-        document.querySelectorAll(
-            ".accordion"
-        );
+  return{
 
-    items.forEach(item => {
+    name:
 
-        const header =
-            item.querySelector(
-                ".accordion-header"
-            );
+      value("name"),
 
-        const body =
-            item.querySelector(
-                ".accordion-body"
-            );
+    symbol:
 
-        if (
+      value("symbol"),
 
-            !header ||
-            !body
+    supply:
 
-        ) {
+      Number(
 
-            return;
+        value("supply")
 
-        }
+      ),
 
-        header.addEventListener(
-            "click",
+    burnable:
 
-            () => {
+      checked("burnable"),
 
-                item.classList.toggle(
-                    "open"
-                );
+    mintable:
 
-            }
+      checked("mintable"),
 
-        );
+    ownershipEnabled:
 
-    });
+      checked("ownership"),
 
-}
+    website:
 
-// =====================================================
-// LOADING
-// =====================================================
+      value("website"),
 
-function setLoading(state) {
+    telegram:
 
-    deploying =
-        state;
+      value("telegram"),
 
-    const button =
-        $("deployButton");
+    twitter:
 
-    if (!button) {
+      value("twitter"),
 
-        return;
+    logoURI:
 
-    }
+      value("logoURI"),
 
-    button.disabled =
-        state;
+    maxWalletEnabled:
 
-    button.classList.toggle(
-        "loading",
-        state
-    );
+      checked("maxWalletEnabled"),
 
-    button.textContent =
-        state
-            ? "Deploying..."
-            : "Deploy Token";
+    maxWalletPercent:
+
+      Number(
+
+        value("maxWalletPercent")
+
+      )||0,
+
+    maxTxEnabled:
+
+      checked("maxTxEnabled"),
+
+    maxTxPercent:
+
+      Number(
+
+        value("maxTxPercent")
+
+      )||0,
+
+    tradingControlEnabled:
+
+      checked(
+
+        "tradingControlEnabled"
+
+      ),
+
+    tradingEnabled:
+
+      checked(
+
+        "tradingEnabled"
+
+      ),
+
+    buyTaxEnabled:
+
+      checked("buyTaxEnabled"),
+
+    buyTax:
+
+      Number(
+
+        value("buyTax")
+
+      )||0,
+
+    sellTaxEnabled:
+
+      checked("sellTaxEnabled"),
+
+    sellTax:
+
+      Number(
+
+        value("sellTax")
+
+      )||0,
+
+    burnTaxShare:
+
+      Number(
+
+        value("burnTaxShare")
+
+      )||0,
+
+    marketingWallet:
+
+      value("marketingWallet"),
+
+    developmentWallet:
+
+      value("developmentWallet")
+
+  };
 
 }
 
@@ -249,95 +255,293 @@ function setLoading(state) {
 // STATUS
 // =====================================================
 
-function clearStatus() {
+function setStatus(message=""){
 
-    setText(
-        "statusText",
-        ""
-    );
+  text(
 
-}
+    "statusText",
 
-function setStatus(message) {
+    message
 
-    setText(
-        "statusText",
-        message
-    );
+  );
 
 }
 
-// =====================================================
-// FEE DISPLAY
-// =====================================================
+function clearStatus(){
 
-function updateFeeDisplay(fee) {
-
-    currentFee =
-        fee;
-
-    setText(
-
-        "deploymentFee",
-
-        Number(
-            formatUnits(
-                fee,
-                18
-            )
-        ).toLocaleString()
-
-        + " EVOZX"
-
-    );
+  setStatus("");
 
 }
 
 // =====================================================
-// SYMBOL CHECK
+// ACCORDION
 // =====================================================
 
-async function scheduleSymbolCheck() {
+function initializeAccordion(){
 
-    clearTimeout(
-        symbolTimer
-    );
+  document
 
-    symbolTimer =
-        setTimeout(
+    .querySelectorAll(".accordion")
 
-            async () => {
+    .forEach(item=>{
 
-                const result =
-                    await checkSymbol(
-                        value(
-                            "symbol"
-                        )
-                    );
+      const header =
 
-                if (
+        item.querySelector(
 
-                    result.exists
-
-                ) {
-
-                    setStatus(
-                        result.message
-                    );
-
-                    return;
-
-                }
-
-                clearStatus();
-
-                await refreshSymbolIndicator();
-
-            },
-
-            400
+          ".accordion-header"
 
         );
+
+      if(!header){
+
+        return;
+
+      }
+
+      header.addEventListener(
+
+        "click",
+
+        ()=>{
+
+          item.classList.toggle(
+
+            "open"
+
+          );
+
+        }
+
+      );
+
+    });
+
+}
+
+// =====================================================
+// FEATURE STATE
+// =====================================================
+
+function updateFeatureState(){
+
+  enable(
+
+    "maxWalletPercent",
+
+    checked(
+
+      "maxWalletEnabled"
+
+    )
+
+  );
+
+  enable(
+
+    "maxTxPercent",
+
+    checked(
+
+      "maxTxEnabled"
+
+    )
+
+  );
+
+  enable(
+
+    "tradingEnabled",
+
+    checked(
+
+      "tradingControlEnabled"
+
+    )
+
+  );
+
+  const taxEnabled =
+
+    checked("buyTaxEnabled") ||
+
+    checked("sellTaxEnabled");
+
+  enable(
+
+    "buyTax",
+
+    checked(
+
+      "buyTaxEnabled"
+
+    )
+
+  );
+
+  enable(
+
+    "sellTax",
+
+    checked(
+
+      "sellTaxEnabled"
+
+    )
+
+  );
+
+  enable(
+
+    "burnTaxShare",
+
+    taxEnabled
+
+  );
+
+  enable(
+
+    "marketingWallet",
+
+    taxEnabled
+
+  );
+
+  enable(
+
+    "developmentWallet",
+
+    taxEnabled
+
+  );
+
+}
+
+// =====================================================
+// SYMBOL
+// =====================================================
+
+async function updateSymbolStatus(){
+
+  const badge =
+
+    $("symbolStatus");
+
+  if(!badge){
+
+    return;
+
+  }
+
+  const symbol =
+
+    value("symbol");
+
+  if(!symbol){
+
+    badge.textContent="";
+
+    badge.className="";
+
+    return;
+
+  }
+
+  try{
+
+    const result =
+
+      await checkSymbol(
+
+        symbol
+
+      );
+
+    if(result.exists){
+
+      badge.textContent=
+
+        "Already Used";
+
+      badge.className=
+
+        "badge badge-red";
+
+    }
+
+    else{
+
+      badge.textContent=
+
+        "Available";
+
+      badge.className=
+
+        "badge badge-green";
+
+    }
+
+  }
+
+  catch{
+
+    badge.textContent=
+
+      "";
+
+    badge.className=
+
+      "";
+
+  }
+
+}
+
+function scheduleSymbolCheck(){
+
+  clearTimeout(
+
+    symbolTimer
+
+  );
+
+  symbolTimer =
+
+    setTimeout(
+
+      updateSymbolStatus,
+
+      400
+
+    );
+
+}
+
+// =====================================================
+// VALIDATION
+// =====================================================
+
+function validateForm(){
+
+  const error =
+
+    validateConfig(
+
+      getFormData()
+
+    );
+
+  if(error){
+
+    setStatus(error);
+
+    return false;
+
+  }
+
+  clearStatus();
+
+  return true;
 
 }
 
@@ -345,73 +549,287 @@ async function scheduleSymbolCheck() {
 // EVENTS
 // =====================================================
 
-function bindBasicEvents() {
+function bindEvents(){
 
-    // ------------------------------------------
-    // SYMBOL
-    // ------------------------------------------
+  document
 
-    const symbol =
-        $("symbol");
+    .querySelectorAll(
 
-    if (symbol) {
+      "input,textarea,select"
 
-        symbol.addEventListener(
-            "input",
-            scheduleSymbolCheck
-        );
+    )
+
+    .forEach(element=>{
+
+      element.addEventListener(
+
+        "input",
+
+        async()=>{
+
+          updateFeatureState();
+
+          validateForm();
+
+          scheduleSymbolCheck();
+
+          await refreshPreview();
+
+        }
+
+      );
+
+      element.addEventListener(
+
+        "change",
+
+        async()=>{
+
+          updateFeatureState();
+
+          validateForm();
+
+          scheduleSymbolCheck();
+
+          await refreshPreview();
+
+        }
+
+      );
+
+    });
+
+          }
+
+// =====================================================
+// DEPLOY BUTTON
+// =====================================================
+
+function setDeployLoading(state){
+
+  deployRunning = state;
+
+  const button = $("deployButton");
+
+  if(!button){
+
+    return;
+
+  }
+
+  button.disabled = state;
+
+  button.classList.toggle(
+
+    "loading",
+
+    state
+
+  );
+
+  button.textContent =
+
+    state
+
+      ? "Deploying..."
+
+      : "Deploy Token";
+
+}
+
+// =====================================================
+// PREVIEW
+// =====================================================
+
+async function refreshPreview(){
+
+  try{
+
+    if(!validateForm()){
+
+      return;
 
     }
 
-    // ------------------------------------------
-    // INPUT
-    // ------------------------------------------
+    const account =
 
-    document
-        .querySelectorAll(
-            "input[type='text'],input[type='number'],input[type='url'],textarea"
-        )
-        .forEach(
+      getAccount();
 
-            element =>
+    if(!account){
 
-                element.addEventListener(
+      return;
 
-                    "input",
+    }
 
-                    calculate
+    const form =
 
-                )
+      getFormData();
 
-        );
+    const fee =
 
-    // ------------------------------------------
-    // CHECKBOX
-    // ------------------------------------------
+      await getDeploymentFee(
 
-    document
-        .querySelectorAll(
-            "input[type='checkbox']"
-        )
-        .forEach(
+        form
 
-            element =>
+      );
 
-                element.addEventListener(
+    deploymentFee = fee;
 
-                    "change",
+    text(
 
-                    () => {
+      "deploymentFee",
 
-                        updateFeatureState();
+      `${formatUnits(fee,18)} EVOZX`
 
-                        calculate();
+    );
 
-                    }
+    const preview =
 
-                )
+      await getDeploymentPreview(
 
-        );
+        form,
+
+        account
+
+      );
+
+    text(
+
+      "evozxBalance",
+
+      formatUnits(
+
+        preview.balance,
+
+        18
+
+      )
+
+    );
+
+    const missing =
+
+      preview.balance >= preview.fee
+
+        ? 0n
+
+        : preview.fee -
+
+          preview.balance;
+
+    text(
+
+      "missingEVOZX",
+
+      formatUnits(
+
+        missing,
+
+        18
+
+      )
+
+    );
+
+    const requiredEVOZ =
+
+      await calculateEVOZNeeded(
+
+        missing
+
+      );
+
+    text(
+
+      "neededEVOZ",
+
+      formatUnits(
+
+        requiredEVOZ,
+
+        18
+
+      )
+
+    );
+
+    text(
+
+      "readyStatus",
+
+      preview.enoughBalance
+
+        ? "Ready to Deploy"
+
+        : "Automatic EVOZX Top-up Required"
+
+    );
+
+  }
+
+  catch(error){
+
+    console.error(error);
+
+    setStatus(
+
+      error.message
+
+    );
+
+  }
+
+}
+
+// =====================================================
+// DEPLOY
+// =====================================================
+
+async function onDeploy(){
+
+  if(deployRunning){
+
+    return;
+
+  }
+
+  try{
+
+    if(!validateForm()){
+
+      return;
+
+    }
+
+    setDeployLoading(true);
+
+    await deployToken(
+
+      getFormData()
+
+    );
+
+  }
+
+  catch(error){
+
+    console.error(error);
+
+    setStatus(
+
+      error.message ||
+
+      "Deployment failed."
+
+    );
+
+  }
+
+  finally{
+
+    setDeployLoading(false);
+
+  }
 
 }
 
@@ -419,882 +837,68 @@ function bindBasicEvents() {
 // INITIALIZATION
 // =====================================================
 
-export function initializeLaunchPage() {
+async function initialize(){
 
-    initAccordion();
+  try{
 
-    bindBasicEvents();
+    await restoreConnection();
 
-    updateFeatureState();
+  }
 
-    calculate();
+  catch(error){
 
-    refreshSymbolIndicator();
+    console.error(error);
 
-}
+  }
 
-// =====================================================
-// BUILD TOKEN CONFIG
-// =====================================================
+  initializeAccordion();
 
-function buildConfig() {
+  updateFeatureState();
 
-    currentConfig = {
+  bindEvents();
 
-        // ==========================================
-        // BASIC
-        // ==========================================
+  await updateSymbolStatus();
 
-        name:
-            value("name"),
+  await refreshPreview();
 
-        symbol:
-            value("symbol"),
+  const deployButton =
 
-        supply:
-    Math.floor(
+    $("deployButton");
 
-        Number(
-            value("supply")
-        )
+  if(deployButton){
 
-    ),
-        owner:
-            "0x0000000000000000000000000000000000000000",
+    deployButton.addEventListener(
 
-        // ==========================================
-        // DEPLOYMENT
-        // ==========================================
+      "click",
 
-        chainId:
-            0,
-
-        launchKitVersion:
-            0,
-
-        // ==========================================
-        // CORE FEATURES
-        // ==========================================
-
-        burnable:
-            checked("burnable"),
-
-        mintable:
-            checked("mintable"),
-
-        ownershipEnabled:
-            checked("ownership"),
-
-        // ==========================================
-        // METADATA
-        // ==========================================
-
-        website:
-            value("website"),
-
-        telegram:
-            value("telegram"),
-
-        twitter:
-            value("twitter"),
-
-        logoURI:
-            value("logoURI"),
-
-        // ==========================================
-        // SECURITY
-        // ==========================================
-
-        maxWalletEnabled:
-            checked("maxWalletEnabled"),
-
-        maxWalletPercent:
-
-            Number(
-                value("maxWalletPercent")
-            ) || 0,
-
-        maxTxEnabled:
-            checked("maxTxEnabled"),
-
-        maxTxPercent:
-
-            Number(
-                value("maxTxPercent")
-            ) || 0,
-
-        tradingControlEnabled:
-            checked("tradingControlEnabled"),
-
-        tradingEnabled:
-            checked("tradingEnabled"),
-
-        // ==========================================
-        // TOKENOMICS
-        // ==========================================
-
-        buyTaxEnabled:
-            checked("buyTaxEnabled"),
-
-        buyTax:
-
-            Number(
-                value("buyTax")
-            ) || 0,
-
-        sellTaxEnabled:
-            checked("sellTaxEnabled"),
-
-        sellTax:
-
-            Number(
-                value("sellTax")
-            ) || 0,
-
-        burnTaxShare:
-
-            Number(
-                value("burnTaxShare")
-            ) || 0,
-
-        marketingWallet:
-            value("marketingWallet"),
-
-        developmentWallet:
-            value("developmentWallet")
-
-    };
-
-    return currentConfig;
-
-}
-
-// =====================================================
-// VALIDATE CURRENT CONFIG
-// =====================================================
-
-function validateCurrentConfig() {
-
-    const config =
-        buildConfig();
-
-    const error =
-        validateConfig(
-            config
-        );
-
-    if (error) {
-
-        setStatus(
-            error
-        );
-
-        return false;
-
-    }
-
-    clearStatus();
-
-    return true;
-
-}
-
-// =====================================================
-// FEATURE UI
-// =====================================================
-
-function updateFeatureState() {
-
-    // ------------------------------------------
-    // MAX WALLET
-    // ------------------------------------------
-
-    enable(
-
-        "maxWalletPercent",
-
-        checked(
-            "maxWalletEnabled"
-        )
+      onDeploy
 
     );
 
-    // ------------------------------------------
-    // MAX TX
-    // ------------------------------------------
-
-    enable(
-
-        "maxTxPercent",
-
-        checked(
-            "maxTxEnabled"
-        )
-
-    );
-
-    // ------------------------------------------
-    // TRADING
-    // ------------------------------------------
-
-    enable(
-
-        "tradingEnabled",
-
-        checked(
-            "tradingControlEnabled"
-        )
-
-    );
-
-    // ------------------------------------------
-    // BUY TAX
-    // ------------------------------------------
-
-    const buy =
-        checked(
-            "buyTaxEnabled"
-        );
-
-    enable(
-        "buyTax",
-        buy
-    );
-
-    // ------------------------------------------
-    // SELL TAX
-    // ------------------------------------------
-
-    const sell =
-        checked(
-            "sellTaxEnabled"
-        );
-
-    enable(
-        "sellTax",
-        sell
-    );
-
-    // ------------------------------------------
-    // TAX RECEIVER
-    // ------------------------------------------
-
-    const taxEnabled =
-        buy || sell;
-
-    enable(
-        "burnTaxShare",
-        taxEnabled
-    );
-
-    enable(
-        "marketingWallet",
-        taxEnabled
-    );
-
-    enable(
-        "developmentWallet",
-        taxEnabled
-    );
+  }
 
 }
 
 // =====================================================
-// SYMBOL INDICATOR
+// PAGE LOAD
 // =====================================================
-
-async function refreshSymbolIndicator() {
-
-    const result =
-        await checkSymbol(
-
-            value(
-                "symbol"
-            )
-
-        );
-
-    const badge =
-        $("symbolStatus");
-
-    if (!badge) {
-
-        return;
-
-    }
-
-    if (!value("symbol")) {
-
-        badge.textContent = "";
-
-        badge.className = "";
-
-        return;
-
-    }
-
-    if (result.exists) {
-
-        badge.textContent =
-            "Already Used";
-
-        badge.className =
-            "badge badge-red";
-
-        return;
-
-    }
-
-    badge.textContent =
-        "Available";
-
-    badge.className =
-        "badge badge-green";
-
-}
-
-// =====================================================
-// CURRENT CONFIG
-// =====================================================
-
-export function getCurrentConfig() {
-
-    return buildConfig();
-
-        }
-
-// =====================================================
-// LIVE DEPLOYMENT FEE
-// =====================================================
-
-async function calculate() {
-
-    try {
-
-        const config =
-            buildConfig();
-
-        const valid =
-            validateCurrentConfig();
-
-        if (!valid) {
-
-            return;
-
-        }
-
-        const fee =
-            await getDeploymentFee(
-                config
-            );
-
-        updateFeeDisplay(
-            fee
-        );
-
-        const account =
-            getAccount();
-
-        if (!account) {
-
-            return;
-
-        }
-
-        const preview =
-            await getDeploymentPreview(
-
-                config,
-
-                account
-
-            );
-
-        // ------------------------------------------
-
-        setText(
-
-            "evozxBalance",
-
-            Number(
-
-                formatUnits(
-
-                    preview.balance,
-
-                    18
-
-                )
-
-            ).toLocaleString()
-
-        );
-
-        // ------------------------------------------
-
-        const missing =
-
-            preview.balance >= preview.fee
-
-                ? 0n
-
-                : preview.fee -
-                  preview.balance;
-
-        setText(
-
-            "missingEVOZX",
-
-            Number(
-
-                formatUnits(
-
-                    missing,
-
-                    18
-
-                )
-
-            ).toLocaleString()
-
-        );
-
-        // ------------------------------------------
-
-        const evozNeeded =
-            await calculateEVOZNeeded(
-                missing
-            );
-
-        setText(
-
-            "neededEVOZ",
-
-            Number(
-
-                formatUnits(
-
-                    evozNeeded,
-
-                    18
-
-                )
-
-            ).toLocaleString()
-
-        );
-
-        // ------------------------------------------
-
-        if (
-
-            preview.enoughBalance
-
-        ) {
-
-            setText(
-
-                "readyStatus",
-
-                "Ready to Deploy"
-
-            );
-
-        }
-
-        else {
-
-            setText(
-
-                "readyStatus",
-
-                "EVOZX will be purchased automatically"
-
-            );
-
-        }
-
-    }
-
-    catch (error) {
-
-        console.error(
-            error
-        );
-
-        setStatus(
-            error.message
-        );
-
-    }
-
-}
-
-// =====================================================
-// DEPLOYMENT SUMMARY
-// =====================================================
-
-export async function updateDeploymentSummary() {
-
-    try {
-
-        if (!connectedAccount) {
-
-            return;
-
-        }
-
-        const config =
-            buildConfig();
-
-        const fee =
-            await getDeploymentFee(
-                config
-            );
-
-        currentFee =
-            fee;
-
-        setText(
-
-            "#deployFee",
-
-            formatUnits(
-                fee,
-                18
-            ) + " EVOZX"
-
-        );
-
-        const balance =
-            await getEVOZXBalance(
-                connectedAccount
-            );
-
-        setText(
-
-            "#walletBalance",
-
-            formatUnits(
-                balance,
-                18
-            ) + " EVOZX"
-
-        );
-
-        if (balance >= fee) {
-
-            setText(
-
-                "#needToBuy",
-
-                "0 EVOZ"
-
-            );
-
-            setText(
-
-                "#deploymentStatus",
-
-                "Ready to deploy"
-
-            );
-
-            document
-                .querySelector(
-                    "#deploymentStatus"
-                )
-                ?.classList
-                .remove("warning");
-
-        }
-
-        else {
-
-            const missing =
-                fee - balance;
-
-            const needed =
-                await calculateEVOZNeeded(
-                    missing
-                );
-
-            setText(
-
-                "#needToBuy",
-
-                formatEther(
-                    needed
-                ) + " EVOZ"
-
-            );
-
-            setText(
-
-                "#deploymentStatus",
-
-                "Additional EVOZX required"
-
-            );
-
-            document
-                .querySelector(
-                    "#deploymentStatus"
-                )
-                ?.classList
-                .add("warning");
-
-        }
-
-        updateContinueState();
-
-    }
-
-    catch (error) {
-
-        console.error(error);
-
-    }
-
-}
-
-//
-// =====================================================
-// AUTO UPDATE
-// =====================================================
-//
-
-export async function refreshLaunchUI() {
-
-    await calculate();
-
-    await updateDeploymentSummary();
-
-}
-
-//
-// =====================================================
-// EVENT BINDING
-// =====================================================
-//
-
-export function bindFormEvents() {
-
-    const inputs =
-        document.querySelectorAll(
-
-            "input, textarea, select"
-
-        );
-
-    for (const input of inputs) {
-
-        input.addEventListener(
-
-            "input",
-
-            refreshLaunchUI
-
-        );
-
-        input.addEventListener(
-
-            "change",
-
-            refreshLaunchUI
-
-        );
-
-    }
-
-}
-
-//
-// =====================================================
-// INITIALIZE
-// =====================================================
-//
-
-export async function initializeLaunch() {
-
-    connectedAccount =
-        getAccount();
-
-    bindFormEvents();
-
-    await refreshLaunchUI();
-
-                    }
-
-//
-// =====================================================
-// DEPLOY BUTTON
-// =====================================================
-//
-
-let deploying = false;
-
-async function onDeployClick() {
-
-    if (deploying) {
-
-        return;
-
-    }
-
-    deploying = true;
-
-    try {
-
-        const button =
-            document.querySelector(
-                "#deployButton"
-            );
-
-        if (button) {
-
-            button.disabled = true;
-
-            button.classList.add(
-                "loading"
-            );
-
-            button.textContent =
-                "Deploying...";
-
-        }
-
-        const result =
-            await deployToken();
-
-        sessionStorage.setItem(
-
-            "launchfuture_last_token",
-
-            JSON.stringify(result)
-
-        );
-
-        window.location.href =
-            "./success.html";
-
-    }
-
-    catch (error) {
-
-        console.error(error);
-
-        alert(
-            error.message ??
-            "Deployment failed."
-        );
-
-    }
-
-    finally {
-
-        deploying = false;
-
-        const button =
-            document.querySelector(
-                "#deployButton"
-            );
-
-        if (button) {
-
-            button.disabled = false;
-
-            button.classList.remove(
-                "loading"
-            );
-
-            button.textContent =
-                "Deploy Token";
-
-        }
-
-    }
-
-}
-
-//
-// =====================================================
-// WALLET STATE
-// =====================================================
-//
-
-async function refreshWalletState() {
-
-    connectedAccount =
-        getAccount();
-
-    if (!connectedAccount) {
-
-        updateContinueState();
-
-        return;
-
-    }
-
-    await refreshLaunchUI();
-
-}
-
-//
-// =====================================================
-// PAGE INITIALIZATION
-// =====================================================
-//
 
 document.addEventListener(
 
-    "DOMContentLoaded",
+  "DOMContentLoaded",
 
-    async () => {
-
-        try {
-
-            await restoreConnection();
-
-        }
-
-        catch {
-
-        }
-
-        await refreshWalletState();
-
-        const deployButton =
-            document.querySelector(
-                "#deployButton"
-            );
-
-        if (deployButton) {
-
-            deployButton.addEventListener(
-
-                "click",
-
-                onDeployClick
-
-            );
-
-        }
-
-    }
+  initialize
 
 );
 
-//
 // =====================================================
 // EXPORTS
 // =====================================================
-//
 
-export {
+export{
 
-    onDeployClick,
+  refreshPreview,
 
-    refreshWalletState
+  onDeploy
 
 };
