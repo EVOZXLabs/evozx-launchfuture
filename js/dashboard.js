@@ -1,269 +1,144 @@
-import {
-
-    formatUnits
-
-} from "https://esm.sh/ethers@6";
+import { Contract } from "https://esm.sh/ethers@6";
 
 import {
+  CONTRACTS,
+  ABI,
+  explorerToken
+} from "./config.js";
 
-    getTokensByCreator,
-    getToken
-
+import {
+  getReadProvider
 } from "./factory.js";
 
 import {
-
-    getAccount
-
+  getAccount,
+  restoreConnection
 } from "./wallet.js";
 
-let account = null;
+// ======================================================
+// STATE
+// ======================================================
 
-let tokens = [];
+let tokenAbi = null;
+let tokenCache = [];
 
-function setText(
+// ======================================================
+// DOM
+// ======================================================
 
-    selector,
+const tokenList =
+  document.getElementById("tokenList");
 
-    value
+const tokenCount =
+  document.getElementById("tokenCount");
 
-) {
+// ======================================================
+// HELPERS
+// ======================================================
 
-    const element =
-        document.querySelector(
-            selector
-        );
+function setTokenCount(value) {
 
-    if (element) {
+  if (!tokenCount) {
+    return;
+  }
 
-        element.textContent =
-            value;
-
-    }
-
-}
-
-export function shortAddress(address) {
-
-    if (!address) {
-
-        return "";
-
-    }
-
-    return (
-
-        address.slice(0, 6)
-
-        +
-
-        "..."
-
-        +
-
-        address.slice(-4)
-
-    );
+  tokenCount.textContent = String(value);
 
 }
 
-export async function copyAddress(address) {
+function shortAddress(address) {
 
-    try {
+  if (!address) {
+    return "";
+  }
 
-        await navigator.clipboard.writeText(
-            address
-        );
-
-        alert(
-            "Address copied."
-        );
-
-    }
-
-    catch {
-
-        alert(
-            "Copy failed."
-        );
-
-    }
+  return (
+    address.slice(0, 6) +
+    "..." +
+    address.slice(-4)
+  );
 
 }
 
-export function openExplorer(address) {
+async function loadTokenAbi() {
 
-    window.open(
+  if (tokenAbi) {
+    return tokenAbi;
+  }
 
-        "https://evozscan.com/address/" +
+  const response =
+    await fetch("./abi/token.json");
 
-        address,
+  if (!response.ok) {
+    throw new Error("Unable to load token ABI.");
+  }
 
-        "_blank"
+  tokenAbi =
+    await response.json();
 
-    );
-
-}
-
-function buildBadges(token) {
-
-    const badges = [];
-
-    if (token.active) {
-
-        badges.push(
-
-            `<span class="badge success">
-                Active
-            </span>`
-
-        );
-
-    }
-
-    badges.push(
-
-        `<span class="badge">
-            ${token.symbol}
-        </span>`
-
-    );
-
-    return badges.join("");
+  return tokenAbi;
 
 }
 
-function buildCard(token) {
+async function createTokenContract(address) {
 
-    const supply =
-        formatUnits(
+  const abi =
+    await loadTokenAbi();
 
-            token.supply,
+  return new Contract(
 
-            0
+    address,
 
-        );
+    abi,
 
-    return `
+    getReadProvider()
 
-<div class="token-card">
-
-    <div class="token-header">
-
-        <h3>
-
-            ${token.name}
-
-        </h3>
-
-        ${buildBadges(token)}
-
-    </div>
-
-    <div class="token-body">
-
-        <p>
-
-            <strong>Symbol</strong>
-
-            ${token.symbol}
-
-        </p>
-
-        <p>
-
-            <strong>Supply</strong>
-
-            ${supply}
-
-        </p>
-
-        <p>
-
-            <strong>Address</strong>
-
-            ${shortAddress(
-                token.token
-            )}
-
-        </p>
-
-    </div>
-
-    <div class="token-actions">
-
-        <button
-
-            data-copy="${token.token}"
-
-        >
-
-            Copy
-
-        </button>
-
-        <button
-
-            data-open="${token.token}"
-
-        >
-
-            Explorer
-
-        </button>
-
-        <button
-
-            data-view="${token.token}"
-
-        >
-
-            Details
-
-        </button>
-
-    </div>
-
-</div>
-
-`;
+  );
 
 }
 
-//
-// =====================================================
+// ======================================================
 // EMPTY STATE
-// =====================================================
-//
+// ======================================================
 
-function renderEmpty() {
+function renderEmpty(message =
+  "No tokens found.") {
 
-    const container =
-        document.querySelector(
-            "#tokenList"
-        );
+  if (!tokenList) {
+    return;
+  }
 
-    if (!container) {
-
-        return;
-
-    }
-
-    container.innerHTML = `
+  tokenList.innerHTML = `
 
 <div class="empty-state">
 
-    <h3>
+<h3>No Tokens</h3>
 
-        No Tokens Found
+<p>${message}</p>
 
-    </h3>
+</div>
 
-    <p>
+`;
 
-        This wallet has not created any token yet.
+  setTokenCount(0);
 
-    </p>
+}
+
+// ======================================================
+// LOADING
+// ======================================================
+
+function renderLoading() {
+
+  if (!tokenList) {
+    return;
+  }
+
+  tokenList.innerHTML = `
+
+<div class="loading-card">
+
+Loading tokens...
 
 </div>
 
@@ -271,332 +146,375 @@ function renderEmpty() {
 
 }
 
-//
-// =====================================================
-// TOKEN RENDER
-// =====================================================
-//
+// ======================================================
+// TOKEN INFO
+// ======================================================
 
-function renderTokens() {
+async function loadTokenInfo(address) {
 
-    const container =
-        document.querySelector(
-            "#tokenList"
-        );
+  const token =
+    await createTokenContract(address);
 
-    if (!container) {
+  const [
 
-        return;
+    name,
+    symbol,
+    supply
 
-    }
+  ] = await Promise.all([
 
-    if (tokens.length === 0) {
+    token.name(),
+    token.symbol(),
+    token.totalSupply()
 
-        renderEmpty();
+  ]);
 
-        return;
+  return {
 
-    }
+    address,
+    name,
+    symbol,
+    supply
 
-    container.innerHTML =
-    tokens
-        .map(buildCard)
-        .join("");
-
-bindButtons();
+  };
 
 }
 
-//
-// =====================================================
-// LOAD TOKENS
-// =====================================================
-//
+// ======================================================
+// TOKEN CARD
+// ======================================================
 
-export async function loadTokens() {
+function buildCard(token) {
 
-    account =
-        getAccount();
+  return `
 
-    if (!account) {
+<div class="token-card">
 
-        renderEmpty();
+  <div class="token-header">
 
-        return;
+    <h3>${token.name}</h3>
 
-    }
+    <span class="badge">
+      ${token.symbol}
+    </span>
 
-    const addresses =
-        await getTokensByCreator(
-            account
-        );
+  </div>
 
-    tokens = [];
+  <div class="token-body">
 
-    if (addresses.length === 0) {
+    <p>
 
-        renderEmpty();
+      <strong>Supply</strong><br>
 
-        return;
+      ${token.supply.toLocaleString()}
 
-    }
+    </p>
 
-    const total =
-        addresses.length;
+    <p>
 
-    for (
+      <strong>Address</strong><br>
 
-        let i = 0;
+      ${shortAddress(token.address)}
 
-        i < total;
+    </p>
 
-        i++
+  </div>
 
-    ) {
+  <div class="token-actions">
 
-        try {
+    <button
+      class="secondary-button"
+      data-copy="${token.address}"
+    >
+      Copy
+    </button>
 
-            const token =
-                await getToken(i);
+    <button
+      class="secondary-button"
+      data-explorer="${token.address}"
+    >
+      Explorer
+    </button>
 
-            if (
+    <button
+      class="primary-button"
+      data-details="${token.address}"
+    >
+      Details
+    </button>
 
-                token.creator
-                    .toLowerCase()
+  </div>
 
-                !==
+</div>
 
-                account
-                    .toLowerCase()
-
-            ) {
-
-                continue;
-
-            }
-
-            tokens.push(token);
-
-        }
-
-        catch (error) {
-
-            console.error(error);
-
-        }
-
-    }
-
-    renderTokens();
-
-    setText(
-
-        "#tokenCount",
-
-        String(tokens.length)
-
-    );
-
-        }
-
-//
-// =====================================================
-// VIEW TOKEN
-// =====================================================
-//
-
-export function viewToken(address) {
-
-    if (!address) {
-
-        return;
-
-    }
-
-    sessionStorage.setItem(
-
-        "launchfuture_selected_token",
-
-        address
-
-    );
-
-    window.location.href =
-        "./token.html";
+`;
 
 }
 
-//
-// =====================================================
-// DELETE TOKEN
-// =====================================================
-//
-// Tidak menghapus token di blockchain.
-// Hanya placeholder apabila suatu saat
-// ingin menyembunyikan card dari dashboard.
-//
-
-export function deleteToken(address) {
-
-    console.warn(
-
-        "deleteToken() is not implemented.",
-
-        address
-
-    );
-
-}
-
-//
-// =====================================================
+// ======================================================
 // BUTTON EVENTS
-// =====================================================
-//
+// ======================================================
 
 function bindButtons() {
 
-    document
+  document
 
-        .querySelectorAll(
+    .querySelectorAll("[data-copy]")
 
-            "[data-copy]"
+    .forEach(button => {
 
-        )
-
-        .forEach(
-
-            button => {
-
-                button.onclick = () =>
-
-                    copyAddress(
-
-                        button.dataset.copy
-
-                    );
-
-            }
-
-        );
-
-    document
-
-        .querySelectorAll(
-
-            "[data-open]"
-
-        )
-
-        .forEach(
-
-            button => {
-
-                button.onclick = () =>
-
-                    openExplorer(
-
-                        button.dataset.open
-
-                    );
-
-            }
-
-        );
-
-    document
-
-        .querySelectorAll(
-
-            "[data-view]"
-
-        )
-
-        .forEach(
-
-            button => {
-
-                button.onclick = () =>
-
-                    viewToken(
-
-                        button.dataset.view
-
-                    );
-
-            }
-
-        );
-
-}
-
-//
-// =====================================================
-// REFRESH
-// =====================================================
-//
-
-async function refreshDashboard() {
-
-    account =
-        getAccount();
-
-    if (!account) {
-
-        renderEmpty();
-
-        setText(
-
-            "#tokenCount",
-
-            "0"
-
-        );
-
-        return;
-
-    }
-
-    await loadTokens();
-
-}
-
-//
-// =====================================================
-// INITIALIZE
-// =====================================================
-//
-
-document.addEventListener(
-
-    "DOMContentLoaded",
-
-    async () => {
+      button.onclick = async () => {
 
         try {
 
-            await refreshDashboard();
+          await navigator.clipboard.writeText(
+
+            button.dataset.copy
+
+          );
 
         }
 
         catch (error) {
 
-            console.error(error);
+          console.error(error);
 
         }
 
+      };
+
+    });
+
+  document
+
+    .querySelectorAll("[data-explorer]")
+
+    .forEach(button => {
+
+      button.onclick = () => {
+
+        window.open(
+
+          explorerToken(
+
+            button.dataset.explorer
+
+          ),
+
+          "_blank"
+
+        );
+
+      };
+
+    });
+
+  document
+
+    .querySelectorAll("[data-details]")
+
+    .forEach(button => {
+
+      button.onclick = () => {
+
+        location.href =
+
+          `./token.html?address=${button.dataset.details}`;
+
+      };
+
+    });
+
+      }
+
+// ======================================================
+// LOAD TOKENS
+// ======================================================
+
+async function loadTokens() {
+
+  await restoreConnection();
+
+  const account =
+
+    getAccount();
+
+  if (!account) {
+
+    renderEmpty(
+
+      "Connect your wallet to view your deployed tokens."
+
+    );
+
+    return;
+
+  }
+
+  try {
+
+    const factory =
+
+      await createTokenContract(
+
+        CONTRACTS.factory
+
+      );
+
+    const addresses =
+
+      await factory.getTokensByCreator(
+
+        account
+
+      );
+
+    if (addresses.length === 0) {
+
+      renderEmpty(
+
+        "This wallet has not deployed any token."
+
+      );
+
+      return;
+
     }
+
+    tokenCache = [];
+
+    renderLoading();
+
+    for (const address of addresses) {
+
+      try {
+
+        const token =
+
+          await loadTokenInfo(
+
+            address
+
+          );
+
+        tokenCache.push({
+
+          ...token,
+
+          supply: Number(
+
+            formatUnits(
+
+              token.supply,
+
+              18
+
+            )
+
+          )
+
+        });
+
+      }
+
+      catch (error) {
+
+        console.error(
+
+          address,
+
+          error
+
+        );
+
+      }
+
+    }
+
+    tokenCache.sort(
+
+      (a,b)=>
+
+        a.name.localeCompare(
+
+          b.name
+
+        )
+
+    );
+
+    tokenList.innerHTML =
+
+      tokenCache
+
+        .map(buildCard)
+
+        .join("");
+
+    setTokenCount(
+
+      tokenCache.length
+
+    );
+
+    bindButtons();
+
+  }
+
+  catch (error) {
+
+    console.error(error);
+
+    renderEmpty(
+
+      "Unable to load token list."
+
+    );
+
+  }
+
+}
+
+// ======================================================
+// INITIALIZATION
+// ======================================================
+
+async function initialize() {
+
+  try {
+
+    await loadTokens();
+
+  }
+
+  catch (error) {
+
+    console.error(error);
+
+    renderEmpty(
+
+      "Unexpected error."
+
+    );
+
+  }
+
+}
+
+document.addEventListener(
+
+  "DOMContentLoaded",
+
+  initialize
 
 );
 
-        //
-// =====================================================
+// ======================================================
 // EXPORTS
-// =====================================================
-//
+// ======================================================
 
 export {
 
-    refreshDashboard
+  loadTokens
 
 };
