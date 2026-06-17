@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
@@ -7,8 +6,8 @@
 <meta charset="UTF-8">
 
 <meta
-name="viewport"
-content="width=device-width, initial-scale=1.0">
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
 
 <title>
 
@@ -17,16 +16,16 @@ LaunchFuture • Deploy Token
 </title>
 
 <link
-rel="icon"
-href="./images/logo.png">
+    rel="icon"
+    href="./images/logo.png">
 
 <link
-rel="stylesheet"
-href="./css/app.css">
+    rel="stylesheet"
+    href="./css/app.css">
 
 <link
-rel="stylesheet"
-href="./css/launch.css">
+    rel="stylesheet"
+    href="./css/launch.css">
 
 </head>
 
@@ -37,12 +36,12 @@ href="./css/launch.css">
 <div class="container">
 
 <a
-href="./index.html"
-class="brand">
+    href="./index.html"
+    class="brand">
 
 <img
-src="./images/logo.png"
-alt="LaunchFuture">
+    src="./images/logo.png"
+    alt="LaunchFuture">
 
 <div>
 
@@ -64,27 +63,19 @@ Deploy EVOZ20 Tokens
 
 <nav>
 
-<div
-class="network-badge">
+<div class="network-badge">
 
 EVOZ Mainnet
 
 </div>
 
-<div
-id="walletContainer">
-
 <button
-
-id="connectWallet"
-
-class="primary-button">
+    id="connectBtn"
+    class="primary-button">
 
 Connect Wallet
 
 </button>
-
-</div>
 
 </nav>
 
@@ -92,14 +83,11 @@ Connect Wallet
 
 </header>
 
-<main
-class="launch-page">
+<main class="launch-page">
 
-<div
-class="container">
+<div class="container">
 
-<div
-class="page-header">
+<div class="page-header">
 
 <h2>
 
@@ -109,246 +97,140 @@ Deploy New Token
 
 <p>
 
-Create a verified EVOZ20 token using the official LaunchFuture Factory.
-If your wallet does not hold enough EVOZX, LaunchFuture can automatically convert EVOZ to EVOZX at the current exchange rate before deployment.
+Configure every aspect of your EVOZ20 token before deploying it through the official LaunchFuture Factory.
 
 </p>
 
 </div>
 
-<div
-class="launch-container">
+<div class="launch-layout">
 
-<section
-class="launch-card">
+<section class="launch-form">
 
-<div
-class="progress">
+<!-- ===================================================== -->
+<!-- BASIC INFORMATION -->
+<!-- ===================================================== -->
 
-<div
-class="progress-step active"></div>
+<div class="accordion open">
 
-<div
-class="progress-step"></div>
+<div class="accordion-header">
 
-<div
-class="progress-step"></div>
-
-<div
-class="progress-step"></div>
-
-</div>
-
-<div
-class="accordion active"
-id="basicAccordion">
-
-<div
-class="accordion-header">
-
-<div>
+<h3>
 
 Basic Information
 
-<span>
-
-Required
-
-</span>
+</h3>
 
 </div>
 
-<div>
+<div class="accordion-body">
 
-▼
+<div class="form-grid">
 
-</div>
+<div class="form-group">
 
-</div>
-
-<div
-class="accordion-content">
-
-<div
-class="form-grid">
-
-<div
-class="form-group">
-
-<label
-for="tokenName">
+<label>
 
 Token Name
 
 </label>
 
 <input
-
-id="tokenName"
-
-type="text"
-
-maxlength="50"
-
-placeholder="Example Token">
-
-<small>
-
-Maximum 50 characters.
-
-</small>
-
-<div
-
-id="tokenNameValidation"
-
-class="validation-message">
+    id="name"
+    type="text"
+    maxlength="50">
 
 </div>
 
-</div>
+<div class="form-group">
 
-<div
-class="form-group">
-
-<label
-for="tokenSymbol">
+<label>
 
 Symbol
 
 </label>
 
 <input
-
-id="tokenSymbol"
-
-type="text"
-
-maxlength="10"
-
-autocomplete="off"
-
-spellcheck="false"
-
-placeholder="EXT">
-
-<small>
-
-Maximum 10 uppercase characters.
-
-</small>
+    id="symbol"
+    type="text"
+    maxlength="10">
 
 <div
-
-id="tokenSymbolValidation"
-
-class="validation-message">
+    id="symbolStatus"
+    class="badge">
 
 </div>
 
 </div>
 
-<div
-class="form-group">
+<div class="form-group">
 
-<label
-for="totalSupply">
+<label>
 
 Total Supply
 
 </label>
 
 <input
-
-id="totalSupply"
-
-type="number"
-
-min="1"
-
-step="1"
-
-placeholder="1000000">
-
-<small>
-
-Whole number only.
-
-</small>
-
-<div
-
-id="totalSupplyValidation"
-
-class="validation-message">
+    id="supply"
+    type="number"
+    min="1">
 
 </div>
 
-</div>
+<div class="form-group">
 
-<div
-class="form-group">
+<label>
 
-<label
-for="decimals">
-
-Decimals
+Website
 
 </label>
 
 <input
-
-id="decimals"
-
-type="number"
-
-min="0"
-
-max="18"
-
-value="18">
-
-<small>
-
-Recommended value is 18.
-
-</small>
-
-<div
-
-id="decimalsValidation"
-
-class="validation-message">
+    id="website"
+    type="url">
 
 </div>
 
-</div>
+<div class="form-group">
 
-<div
-class="form-group full">
+<label>
 
-<label
-for="tokenDescription">
-
-Description
+Telegram
 
 </label>
 
-<textarea
+<input
+    id="telegram"
+    type="url">
 
-id="tokenDescription"
+</div>
 
-maxlength="500"
+<div class="form-group">
 
-placeholder="Describe your project (optional).">
+<label>
 
-</textarea>
+Twitter / X
 
-<small>
+</label>
 
-Optional. Maximum 500 characters.
+<input
+    id="twitter"
+    type="url">
 
-</small>
+</div>
+
+<div class="form-group full">
+
+<label>
+
+Logo URI
+
+</label>
+
+<input
+    id="logoURI"
+    type="url">
 
 </div>
 
@@ -357,479 +239,389 @@ Optional. Maximum 500 characters.
 </div>
 
 </div>
-    
-<div
-class="accordion"
-id="deploymentAccordion">
 
-<div
-class="accordion-header">
+<!-- ===================================================== -->
+<!-- TOKEN FEATURES -->
+<!-- ===================================================== -->
 
-<div>
+<div class="accordion">
 
-Deployment
-
-<span>
-
-Preview & Confirmation
-
-</span>
-
-</div>
-
-<div>
-
-▼
-
-</div>
-
-</div>
-
-<div
-class="accordion-content">
-
-<div
-class="preview-card">
-
-<div
-class="preview-title">
-
-Deployment Preview
-
-</div>
-
-<div
-class="preview-row">
-
-<span>
-
-Deployment Fee
-
-</span>
-
-<strong
-id="deploymentFee">
-
--
-
-</strong>
-
-</div>
-
-<div
-class="preview-row">
-
-<span>
-
-EVOZX Balance
-
-</span>
-
-<strong
-id="evozxBalance">
-
--
-
-</strong>
-
-</div>
-
-<div
-class="preview-row">
-
-<span>
-
-Allowance
-
-</span>
-
-<strong
-id="allowanceAmount">
-
--
-
-</strong>
-
-</div>
-
-<div
-class="preview-row">
-
-<span>
-
-Additional EVOZ Needed
-
-</span>
-
-<strong
-id="requiredEVOZ">
-
-0 EVOZ
-
-</strong>
-
-</div>
-
-</div>
-
-<div
-id="exchangeBox"
-class="conversion-card hidden">
-
-<h4>
-
-Automatic EVOZX Conversion
-
-</h4>
-
-<p>
-
-Your EVOZX balance is insufficient.
-LaunchFuture will purchase the missing EVOZX automatically before deployment.
-
-</p>
-
-<div
-class="conversion-rate">
-
-<span>
-
-Exchange Rate
-
-</span>
-
-<strong>
-
-1 EVOZX = 5 EVOZ
-
-</strong>
-
-</div>
-
-</div>
-
-<div
-id="deployStatus"
-class="status-panel">
-
-Waiting for validation...
-
-</div>
-
-<button
-
-id="deployButton"
-
-class="primary-button deploy-button">
-
-Deploy Token
-
-</button>
-
-<div
-id="deployLoading"
-class="deploy-loading">
-
-<div
-class="spinner"></div>
-
-<span>
-
-Waiting for wallet confirmation...
-
-</span>
-
-</div>
-
-</div>
-
-</div>
-
-</section>
-
-<aside
-class="launch-sidebar">
-
-<div
-class="info-card">
+<div class="accordion-header">
 
 <h3>
 
-Deployment Summary
+Core Features
 
 </h3>
 
-<div
-class="summary-list">
-
-<div
-class="summary-item">
-
-<span
-class="summary-label">
-
-Factory
-
-</span>
-
-<span
-class="summary-value">
-
-LaunchFuture
-
-</span>
-
 </div>
 
-<div
-class="summary-item">
+<div class="accordion-body">
 
-<span
-class="summary-label">
+<label class="checkbox">
 
-Network
+<input
+    id="burnable"
+    type="checkbox">
 
-</span>
+Burnable
 
-<span
-class="summary-value">
+</label>
 
-EVOZ Mainnet
+<label class="checkbox">
 
-</span>
+<input
+    id="mintable"
+    type="checkbox">
 
-</div>
+Mintable
 
-<div
-class="summary-item">
+</label>
 
-<span
-class="summary-label">
+<label class="checkbox">
 
-Exchange
+<input
+    id="ownership"
+    type="checkbox"
+    checked>
 
-</span>
+Ownership
 
-<span
-class="summary-value">
-
-1 EVOZX = 5 EVOZ
-
-</span>
-
-</div>
-
-<div
-class="summary-item">
-
-<span
-class="summary-label">
-
-Token Standard
-
-</span>
-
-<span
-class="summary-value">
-
-EVOZ20
-
-</span>
-
-</div>
+</label>
 
 </div>
 
 </div>
 
 <div
-class="balance-card">
+                    class="accordion-content">
 
-<h4>
+                    <div
+                        class="preview-card">
 
-Wallet Balance
+                        <div class="preview-title">
+                            Deployment Preview
+                        </div>
 
-</h4>
+                        <div class="preview-row">
+                            <span>Deployment Fee</span>
+                            <strong id="deploymentFee">
+                                -
+                            </strong>
+                        </div>
 
-<div
+                        <div class="preview-row">
+                            <span>EVOZX Balance</span>
+                            <strong id="evozxBalance">
+                                -
+                            </strong>
+                        </div>
 
-id="walletEVOZBalance"
+                        <div class="preview-row">
+                            <span>Missing EVOZX</span>
+                            <strong id="missingEVOZX">
+                                -
+                            </strong>
+                        </div>
 
-class="balance-value">
+                        <div class="preview-row">
+                            <span>Required EVOZ</span>
+                            <strong id="neededEVOZ">
+                                -
+                            </strong>
+                        </div>
 
--
+                        <div class="preview-row">
+                            <span>Status</span>
+                            <strong id="readyStatus">
+                                Waiting...
+                            </strong>
+                        </div>
 
-</div>
+                    </div>
 
-<div
-class="balance-label">
+                    <div
+                        id="statusText"
+                        class="status-panel">
+                    </div>
 
-Native EVOZ
+                    <button
+                        id="deployButton"
+                        class="primary-button deploy-button">
 
-</div>
+                        Deploy Token
 
-<br>
+                    </button>
 
-<div
+                </div>
 
-id="walletEVOZXBalance"
+            </div>
 
-class="balance-value">
+        </section>
 
--
+        <!-- ===================================== -->
+        <!-- SIDEBAR -->
+        <!-- ===================================== -->
 
-</div>
+        <aside
+            class="launch-sidebar">
 
-<div
-class="balance-label">
+            <div
+                class="info-card">
 
-EVOZX Token
+                <h3>
 
-</div>
+                    Deployment Summary
 
-</div>
+                </h3>
 
-<div
-class="help-box">
+                <div class="summary-list">
 
-<h4>
+                    <div class="summary-item">
 
-Before Deploy
+                        <span>
 
-</h4>
+                            Factory
 
-<ul>
+                        </span>
 
-<li>
+                        <strong>
 
-Connect your wallet.
+                            LaunchFuture
 
-</li>
+                        </strong>
 
-<li>
+                    </div>
 
-Verify your token information.
+                    <div class="summary-item">
 
-</li>
+                        <span>
 
-<li>
+                            Network
 
-Approve EVOZX if required.
+                        </span>
 
-</li>
+                        <strong>
 
-<li>
+                            EVOZ Mainnet
 
-LaunchFuture automatically purchases missing EVOZX using EVOZ when necessary.
+                        </strong>
 
-</li>
+                    </div>
 
-</ul>
+                    <div class="summary-item">
 
-</div>
+                        <span>
 
-</aside>
+                            Exchange
 
-</div>
+                        </span>
 
-</div>
+                        <strong>
+
+                            1 EVOZX = 5 EVOZ
+
+                        </strong>
+
+                    </div>
+
+                    <div class="summary-item">
+
+                        <span>
+
+                            Token Standard
+
+                        </span>
+
+                        <strong>
+
+                            EVOZ20
+
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div
+                class="balance-card">
+
+                <h4>
+
+                    Wallet Balance
+
+                </h4>
+
+                <div
+                    id="walletEVOZBalance"
+                    class="balance-value">
+
+                    -
+
+                </div>
+
+                <div class="balance-label">
+
+                    Native EVOZ
+
+                </div>
+
+                <br>
+
+                <div
+                    id="walletEVOZXBalance"
+                    class="balance-value">
+
+                    -
+
+                </div>
+
+                <div class="balance-label">
+
+                    EVOZX
+
+                </div>
+
+            </div>
+
+            <div
+                class="help-box">
+
+                <h4>
+
+                    Before Deploy
+
+                </h4>
+
+                <ul>
+
+                    <li>
+                        Connect your wallet.
+                    </li>
+
+                    <li>
+                        Complete all required fields.
+                    </li>
+
+                    <li>
+                        Verify deployment fee.
+                    </li>
+
+                    <li>
+                        Missing EVOZX will be purchased automatically using EVOZ.
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </aside>
+
+    </div>
 
 </main>
 
-<footer>
+</aside>
 
-<div
-class="container">
+    </div>
 
-<div
-class="footer-grid">
+</main>
 
-<div>
+<footer class="footer">
 
-<img
+    <div class="container">
 
-src="./images/logo.png"
+        <div class="footer-grid">
 
-class="footer-logo"
+            <div>
 
-alt="LaunchFuture">
+                <img
+                    src="./images/logo.png"
+                    class="footer-logo"
+                    alt="LaunchFuture">
 
-<p>
+                <p>
 
-LaunchFuture is the official Launchpad interface for deploying verified EVOZ20 tokens on EVOZ Mainnet.
+                    LaunchFuture is the official launchpad interface
+                    for deploying verified EVOZ20 tokens on EVOZ Mainnet.
 
-</p>
+                </p>
 
-</div>
+            </div>
 
-<div>
+            <div>
 
-<h4>
+                <h4>
 
-Navigation
+                    Navigation
 
-</h4>
+                </h4>
 
-<a
-href="./index.html">
+                <a href="./index.html">
 
-Home
+                    Home
 
-</a>
+                </a>
 
-<a
-href="./dashboard.html">
+                <a href="./dashboard.html">
 
-Dashboard
+                    Dashboard
 
-</a>
+                </a>
 
-</div>
+                <a href="./launch.html">
 
-<div>
+                    Deploy
 
-<h4>
+                </a>
 
-Network
+            </div>
 
-</h4>
+            <div>
 
-<p>
+                <h4>
 
-EVOZ Mainnet
+                    Network
 
-</p>
+                </h4>
 
-<p>
+                <p>
 
-RPC
+                    EVOZ Mainnet
 
-</p>
+                </p>
 
-<p>
+                <p>
 
-https://rpc.evozscan.com
+                    RPC
 
-</p>
+                </p>
 
-</div>
+                <p>
 
-</div>
+                    https://rpc.evozscan.com
 
-<div
-class="footer-bottom">
+                </p>
 
-© 2026 LaunchFuture
+            </div>
 
-</div>
+        </div>
 
-</div>
+        <div class="footer-bottom">
+
+            © 2026 LaunchFuture
+
+        </div>
+
+    </div>
 
 </footer>
 
 <script
-type="module"
-src="./js/launch.js">
+    type="module"
+    src="./js/launch.js">
 </script>
 
 </body>
