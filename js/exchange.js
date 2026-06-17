@@ -1,61 +1,80 @@
 import {
-    Contract,
-    JsonRpcProvider,
-    parseEther
+
+  Contract,
+
+  JsonRpcProvider
+
 } from "https://esm.sh/ethers@6";
 
 import {
-    CONTRACTS,
-    NETWORK
+
+  CONTRACTS,
+
+  NETWORK,
+
+  ABI
+
 } from "./config.js";
 
 import {
-    getSigner
+
+  getSigner,
+
+  getAccount
+
 } from "./wallet.js";
 
-let exchangeAbi = null;
+import {
 
-let provider = null;
+  getEVOZXBalance
 
-let exchangeRead = null;
+} from "./factory.js";
 
-let exchangeWrite = null;
+let exchangeAbi;
+
+let provider;
+
+let exchangeRead;
+
+let exchangeWrite;
 
 // =====================================================
 // ABI
 // =====================================================
 
-async function loadAbi(path) {
+async function loadAbi(path){
 
-    const response =
-        await fetch(path);
+  const response = await fetch(path);
 
-    if (!response.ok) {
+  if(!response.ok){
 
-        throw new Error(
-            `Unable to load ABI: ${path}`
-        );
+    throw new Error(
 
-    }
+      `Unable to load ABI: ${path}`
 
-    return await response.json();
+    );
+
+  }
+
+  return await response.json();
 
 }
 
-export async function loadExchangeAbi() {
+export async function loadExchangeAbi(){
 
-    if (exchangeAbi) {
-
-        return exchangeAbi;
-
-    }
-
-    exchangeAbi =
-        await loadAbi(
-            "./abi/exchange.json"
-        );
+  if(exchangeAbi){
 
     return exchangeAbi;
+
+  }
+
+  exchangeAbi = await loadAbi(
+
+    ABI.exchange
+
+  );
+
+  return exchangeAbi;
 
 }
 
@@ -63,20 +82,21 @@ export async function loadExchangeAbi() {
 // PROVIDER
 // =====================================================
 
-export function getReadProvider() {
+export function getReadProvider(){
 
-    if (provider) {
-
-        return provider;
-
-    }
-
-    provider =
-        new JsonRpcProvider(
-            NETWORK.rpc
-        );
+  if(provider){
 
     return provider;
+
+  }
+
+  provider = new JsonRpcProvider(
+
+    NETWORK.rpcUrl
+
+  );
+
+  return provider;
 
 }
 
@@ -84,60 +104,57 @@ export function getReadProvider() {
 // CONTRACT
 // =====================================================
 
-export async function getExchangeRead() {
+export async function getExchangeRead(){
 
-    if (exchangeRead) {
-
-        return exchangeRead;
-
-    }
-
-    const abi =
-        await loadExchangeAbi();
-
-    exchangeRead =
-        new Contract(
-
-            CONTRACTS.exchange,
-
-            abi,
-
-            getReadProvider()
-
-        );
+  if(exchangeRead){
 
     return exchangeRead;
 
+  }
+
+  const abi = await loadExchangeAbi();
+
+  exchangeRead = new Contract(
+
+    CONTRACTS.exchange,
+
+    abi,
+
+    getReadProvider()
+
+  );
+
+  return exchangeRead;
+
 }
 
-export async function getExchangeWrite() {
+export async function getExchangeWrite(){
 
-    const signer =
-        getSigner();
+  const signer = getSigner();
 
-    if (!signer) {
+  if(!signer){
 
-        throw new Error(
-            "Wallet not connected."
-        );
+    throw new Error(
 
-    }
+      "Wallet not connected."
 
-    const abi =
-        await loadExchangeAbi();
+    );
 
-    exchangeWrite =
-        new Contract(
+  }
 
-            CONTRACTS.exchange,
+  const abi = await loadExchangeAbi();
 
-            abi,
+  exchangeWrite = new Contract(
 
-            signer
+    CONTRACTS.exchange,
 
-        );
+    abi,
 
-    return exchangeWrite;
+    signer
+
+  );
+
+  return exchangeWrite;
 
 }
 
@@ -145,30 +162,77 @@ export async function getExchangeWrite() {
 // INFO
 // =====================================================
 
-export async function getRate() {
+export async function getRate(){
 
-    const exchange =
-        await getExchangeRead();
-
-    return await exchange.rate();
+  return (await getExchangeRead()).rate();
 
 }
 
-export async function getStock() {
+export async function getStock(){
 
-    const exchange =
-        await getExchangeRead();
-
-    return await exchange.getAvailableStock();
+  return (await getExchangeRead()).getAvailableStock();
 
 }
 
-export async function isPaused() {
+export async function isPaused(){
 
-    const exchange =
-        await getExchangeRead();
+  return (await getExchangeRead()).paused();
 
-    return await exchange.paused();
+}
+
+export async function getOwner(){
+
+  return (await getExchangeRead()).owner();
+
+}
+
+export async function getTreasury(){
+
+  return (await getExchangeRead()).treasury();
+
+}
+
+export async function getExchangeStatus(){
+
+  const [
+
+    paused,
+
+    rate,
+
+    stock,
+
+    owner,
+
+    treasury
+
+  ] = await Promise.all([
+
+    isPaused(),
+
+    getRate(),
+
+    getStock(),
+
+    getOwner(),
+
+    getTreasury()
+
+  ]);
+
+  return {
+
+    paused,
+
+    rate,
+
+    stock,
+
+    owner,
+
+    treasury
+
+  };
 
 }
 
@@ -176,155 +240,162 @@ export async function isPaused() {
 // CALCULATION
 // =====================================================
 
-export async function calculateEVOZNeeded(
-    missingEVOZX
-) {
+export async function calculateEVOZNeeded(missingEVOZX){
 
-    if (
+  if(missingEVOZX <= 0n){
 
-        missingEVOZX <= 0n
+    return 0n;
 
-    ) {
+  }
 
-        return 0n;
+  const rate = await getRate();
 
-    }
-
-    const rate =
-        await getRate();
-
-    return (
-
-        missingEVOZX *
-        rate
-
-    );
+  return missingEVOZX * rate;
 
 }
 
-export async function hasEnoughStock(
-    amount
-) {
+export async function hasEnoughStock(amount){
 
-    const stock =
-        await getStock();
+  return (await getStock()) >= amount;
 
-    return stock >= amount;
+}
 
-        }
+export async function estimatePurchase(requiredFee){
 
-// ======================================================
+  const account = await getAccount();
+
+  const balance = await getEVOZXBalance(account);
+
+  if(balance >= requiredFee){
+
+    return {
+
+      needPurchase: false,
+
+      missingEVOZX: 0n,
+
+      requiredEVOZ: 0n
+
+    };
+
+  }
+
+  const missingEVOZX =
+
+    requiredFee - balance;
+
+  return {
+
+    needPurchase: true,
+
+    missingEVOZX,
+
+    requiredEVOZ:
+
+      await calculateEVOZNeeded(
+
+        missingEVOZX
+
+      )
+
+  };
+
+}
+
+// =====================================================
+// BUY EVOZX
+// =====================================================
+
+export async function buyEVOZX(requiredEVOZ){
+
+  if(requiredEVOZ <= 0n){
+
+    return null;
+
+  }
+
+  const exchange = await getExchangeWrite();
+
+  const tx = await exchange.buyEVOZX({
+
+    value: requiredEVOZ
+
+  });
+
+  await tx.wait();
+
+  return tx;
+
+}
+
+// =====================================================
 // AUTO TOPUP
-// ======================================================
+// =====================================================
 
-export async function autoTopupEVOZX(requiredFee) {
+export async function autoTopupEVOZX(requiredFee){
 
-    const currentBalance =
-        await getEVOZXBalance();
+  const account = await getAccount();
 
-    if (
-        currentBalance >= requiredFee
-    ) {
-        return {
-            purchased: false,
-            amount: 0n
-        };
-    }
+  const currentBalance = await getEVOZXBalance(
 
-    const missing =
-        requiredFee -
-        currentBalance;
+    account
 
-    const nativeNeeded =
-        await calculateEVOZNeeded(
-            missing
-        );
+  );
 
-    await buyEVOZX(
-        nativeNeeded
+  if(currentBalance >= requiredFee){
+
+    return {
+
+      purchased: false,
+
+      amount: 0n
+
+    };
+
+  }
+
+  const missingEVOZX =
+
+    requiredFee - currentBalance;
+
+  const requiredEVOZ =
+
+    await calculateEVOZNeeded(
+
+      missingEVOZX
+
     );
 
-    const updatedBalance =
-        await getEVOZXBalance();
+  await buyEVOZX(
 
-    if (
-        updatedBalance < requiredFee
-    ) {
-        throw new Error(
-            "Automatic EVOZX purchase failed."
-        );
-    }
+    requiredEVOZ
 
-    return {
-        purchased: true,
-        amount: missing
-    };
-        }
+  );
 
-// ======================================================
-// EXCHANGE STATUS
-// ======================================================
+  const updatedBalance =
 
-export async function getExchangeStatus() {
+    await getEVOZXBalance(
 
-    const exchange =
-        await getExchangeRead();
+      account
 
-    return {
+    );
 
-        paused:
-            await exchange.paused(),
+  if(updatedBalance < requiredFee){
 
-        rate:
-            await exchange.rate(),
+    throw new Error(
 
-        stock:
-            await exchange.getAvailableStock()
+      "Automatic EVOZX purchase failed."
 
-    };
-}
+    );
 
-// ======================================================
-// DEPLOY ESTIMATION
-// ======================================================
+  }
 
-export async function estimatePurchase(requiredFee) {
+  return {
 
-    const balance =
-        await getEVOZXBalance();
+    purchased: true,
 
-    if (
-        balance >= requiredFee
-    ) {
+    amount: missingEVOZX
 
-        return {
+  };
 
-            needPurchase: false,
-
-            missingEVOZX: 0n,
-
-            requiredEVOZ: 0n
-
-        };
-
-    }
-
-    const missing =
-        requiredFee -
-        balance;
-
-    const evoz =
-        await calculateEVOZNeeded(
-            missing
-        );
-
-    return {
-
-        needPurchase: true,
-
-        missingEVOZX: missing,
-
-        requiredEVOZ: evoz
-
-    };
 }
