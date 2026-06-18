@@ -265,6 +265,11 @@ async function loadWalletSummary() {
         );
 
         setText(
+            "dashboardEVOZ",
+            "-"
+        );
+
+        setText(
             "dashboardTotalTokens",
             0
         );
@@ -274,16 +279,58 @@ async function loadWalletSummary() {
     }
 
     setText(
-
         "dashboardWallet",
-
-        shortAddress(
-            account
-        )
-
+        shortAddress(account)
     );
 
+    try {
+
+        const provider =
+            getReadProvider();
+
+        console.log(
+            "PROVIDER:",
+            provider
+        );
+
+        const evozBalance =
+            await provider.getBalance(
+                account
+            );
+
+        console.log(
+            "BALANCE:",
+            evozBalance.toString()
+        );
+
+        setText(
+            "dashboardEVOZ",
+            `${Number(
+                formatUnits(
+                    evozBalance,
+                    18
+                )
+            ).toLocaleString()} EVOZ`
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "EVOZ BALANCE ERROR:",
+            error
+        );
+
+        setText(
+            "dashboardEVOZ",
+            "-"
+        );
+
+    }
+
 }
+
 // =====================================================
 // PLATFORM STATISTICS
 // =====================================================
