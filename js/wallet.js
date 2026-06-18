@@ -667,13 +667,3 @@ export async function initializeWallet() {
     }
 
 }
-
-// =====================================================
-// EXPORTS
-// =====================================================
-
-export {
-
-    initializeWallet
-
-};
