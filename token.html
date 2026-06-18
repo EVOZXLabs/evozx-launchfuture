@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
@@ -7,8 +6,8 @@
 <meta charset="UTF-8">
 
 <meta
-name="viewport"
-content="width=device-width, initial-scale=1.0">
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
 
 <title>
 
@@ -16,17 +15,21 @@ LaunchFuture • Token Details
 
 </title>
 
-<link
-rel="icon"
-href="./images/logo.png">
+<meta
+    name="description"
+    content="View complete EVOZ20 token information deployed with LaunchFuture.">
 
 <link
-rel="stylesheet"
-href="./css/app.css">
+    rel="icon"
+    href="./images/logo.png">
 
 <link
-rel="stylesheet"
-href="./css/token.css">
+    rel="stylesheet"
+    href="./css/app.css">
+
+<link
+    rel="stylesheet"
+    href="./css/token.css">
 
 </head>
 
@@ -34,742 +37,820 @@ href="./css/token.css">
 
 <header class="topbar">
 
-<div class="container">
+    <div class="container">
 
-<a
-href="./index.html"
-class="brand">
+        <a
+            href="./index.html"
+            class="brand">
 
-<img
-src="./images/logo.png"
-alt="LaunchFuture">
+            <img
+                src="./images/logo.png"
+                alt="LaunchFuture">
 
-<div>
+            <div>
 
-<h1>
+                <h1>
 
-LaunchFuture
+                    LaunchFuture
 
-</h1>
+                </h1>
 
-<p>
+                <p>
 
-Verified EVOZ20 Token
+                    Verified EVOZ20 Token
 
-</p>
+                </p>
 
-</div>
+            </div>
 
-</a>
+        </a>
 
-<nav>
+        <nav>
 
-<div class="network-badge">
+            <div class="network-badge">
 
-EVOZ Mainnet
+                EVOZ Mainnet
 
-</div>
+            </div>
 
-<button
-id="connectWallet"
-class="primary-button">
+            <button
+                id="connectWallet"
+                class="primary-button">
 
-Connect Wallet
+                Connect Wallet
 
-</button>
+            </button>
 
-</nav>
+        </nav>
 
-</div>
+    </div>
 
 </header>
 
 <main class="token-page">
 
-<div
-class="container"
+    <div
+        class="container"
+        id="tokenContainer">
 
-id="tokenContainer">
+        <!-- ========================================= -->
+        <!-- HEADER -->
+        <!-- ========================================= -->
 
-<div class="page-header">
+        <section class="token-header-card">
 
-<h2>
+            <div class="token-header-left">
 
-Token Details
+                <div class="logo-wrapper">
 
-</h2>
+                    <img
+                        id="logo"
+                        src="./images/logo.png"
+                        alt="Token Logo">
 
-<p>
+                </div>
 
-View on-chain information and LaunchFuture configuration for this EVOZ20 token.
+                <div>
 
-</p>
+                    <h2 id="tokenName">
 
-</div>
+                        Loading...
 
-<section class="token-grid">
+                    </h2>
 
-<div class="info-card">
+                    <p id="tokenSymbol">
 
-<span>
+                        -
 
-Token Name
+                    </p>
 
-</span>
+                </div>
 
-<strong id="tokenName">
+            </div>
 
--
+            <div class="token-header-actions">
 
-</strong>
+                <button
+                    id="copyAddress"
+                    class="secondary-button">
 
-</div>
+                    Copy Address
 
-<div class="info-card">
+                </button>
 
-<span>
+                <button
+                    id="openExplorer"
+                    class="primary-button">
 
-Symbol
+                    Open Explorer
 
-</span>
+                </button>
 
-<strong id="tokenSymbol">
+            </div>
 
--
+        </section>
 
-</strong>
+        <!-- ========================================= -->
+        <!-- SUMMARY -->
+        <!-- ========================================= -->
 
-</div>
+        <section class="stats-grid">
 
-<div class="info-card">
+            <div class="info-card">
 
-<span>
+                <span>
 
-Total Supply
+                    Total Supply
 
-</span>
+                </span>
 
-<strong id="supply">
+                <strong id="supply">
 
--
+                    -
 
-</strong>
+                </strong>
 
-</div>
+            </div>
 
-<div class="info-card">
+            <div class="info-card">
 
-<span>
+                <span>
 
-Owner
+                    Owner
 
-</span>
+                </span>
 
-<strong id="owner">
+                <strong id="owner">
 
--
+                    -
 
-</strong>
+                </strong>
 
-</div>
+            </div>
 
-</section>
+            <div class="info-card">
 
-<section class="token-section">
+                <span>
 
-<h3>
+                    Chain ID
 
-General Information
+                </span>
 
-</h3>
+                <strong id="chainId">
 
-<div class="detail-grid">
+                    -
 
-<div>
+                </strong>
 
-<label>
+            </div>
 
-Token Address
+            <div class="info-card">
 
-</label>
+                <span>
 
-<p id="tokenAddress">
+                    LaunchKit
 
--
+                </span>
 
-</p>
+                <strong id="version">
 
-</div>
+                    -
 
-<div>
+                </strong>
 
-<label>
+            </div>
 
-Chain ID
+        </section>
 
-</label>
+        <!-- ========================================= -->
+        <!-- GENERAL -->
+        <!-- ========================================= -->
 
-<p id="chainId">
+        <section class="token-section">
 
--
+            <h3>
 
-</p>
+                General Information
 
-</div>
+            </h3>
 
-<div>
+            <div class="detail-grid">
 
-<label>
+                <div>
 
-LaunchKit Version
+                    <label>
 
-</label>
+                        Token Address
 
-<p id="version">
+                    </label>
 
--
+                    <p id="tokenAddress">
 
-</p>
+                        -
 
-</div>
+                    </p>
 
-<div>
+                </div>
 
-<label>
+                <div>
 
-Website
+                    <label>
 
-</label>
+                        Owner Address
 
-<p id="website">
+                    </label>
 
--
+                    <p id="ownerAddress">
 
-</p>
+                        -
 
-</div>
+                    </p>
 
-<div>
+                </div>
 
-<label>
+                <div>
 
-Telegram
+                    <label>
 
-</label>
+                        Website
 
-<p id="telegram">
+                    </label>
 
--
+                    <p id="website">
 
-</p>
+                        -
 
-</div>
+                    </p>
 
-<div>
+                </div>
 
-<label>
+                <div>
 
-Twitter / X
+                    <label>
 
-</label>
+                        Telegram
 
-<p id="twitter">
+                    </label>
 
--
+                    <p id="telegram">
 
-</p>
+                        -
 
-</div>
+                    </p>
 
-</div>
+                </div>
 
-</section>
+                <div>
 
-<section class="token-section">
+                    <label>
 
-<h3>
+                        Twitter / X
 
-Features
+                    </label>
 
-</h3>
+                    <p id="twitter">
 
-<div class="detail-grid">
+                        -
 
-<div>
+                    </p>
 
-<label>
+                </div>
 
-Burnable
+            </div>
 
-</label>
+        </section>
 
-<p id="burnable" class="status">
+        <!-- ========================================= -->
+        <!-- FEATURES -->
+        <!-- ========================================= -->
 
--
+        <section class="token-section">
 
-</p>
+            <h3>
 
-</div>
+                Features
 
-<div>
+            </h3>
 
-<label>
+            <div class="detail-grid">
 
-Mintable
+                <div>
 
-</label>
+                    <label>
 
-<p id="mintable" class="status">
+                        Burnable
 
--
+                    </label>
 
-</p>
+                    <p
+                        id="burnable"
+                        class="status">
 
-</div>
+                        -
 
-<div>
+                    </p>
 
-<label>
+                </div>
 
-Ownership
+                <div>
 
-</label>
+                    <label>
 
-<p id="ownership" class="status">
+                        Mintable
 
--
+                    </label>
 
-</p>
+                    <p
+                        id="mintable"
+                        class="status">
 
-</div>
+                        -
 
-<div>
+                    </p>
 
-<label>
+                </div>
 
-Mint Used
+                <div>
 
-</label>
+                    <label>
 
-<p id="mintUsed" class="status">
+                        Ownership Enabled
 
--
+                    </label>
 
-</p>
+                    <p
+                        id="ownership"
+                        class="status">
 
-</div>
+                        -
 
-</div>
+                    </p>
 
-</section>
+                </div>
 
-<section class="token-section">
+                <div>
 
-<h3>
+                    <label>
 
-Security
+                        Mint Used
 
-</h3>
+                    </label>
 
-<div class="detail-grid">
+                    <p
+                        id="mintUsed"
+                        class="status">
 
-<div>
+                        -
 
-<label>
+                    </p>
 
-Max Wallet
+                </div>
 
-</label>
+            </div>
 
-<p id="maxWalletEnabled">
+        </section>
 
--
+        <!-- ========================================= -->
+        <!-- SECURITY -->
+        <!-- ========================================= -->
 
-</p>
+        <section class="token-section">
 
-</div>
+            <h3>
 
-<div>
+                Security
 
-<label>
+            </h3>
 
-Max Wallet %
+            <div class="detail-grid">
 
-</label>
+                <div>
 
-<p id="maxWalletPercent">
+                    <label>
 
--
+                        Max Wallet
 
-</p>
+                    </label>
 
-</div>
+                    <p id="maxWalletEnabled">
 
-<div>
+                        -
 
-<label>
+                    </p>
 
-Max Transaction
+                </div>
 
-</label>
+                <div>
 
-<p id="maxTxEnabled">
+                    <label>
 
--
+                        Max Wallet %
 
-</p>
+                    </label>
 
-</div>
+                    <p id="maxWalletPercent">
 
-<div>
+                        -
 
-<label>
+                    </p>
 
-Max Transaction %
+                </div>
 
-</label>
+                <div>
 
-<p id="maxTxPercent">
+                    <label>
 
--
+                        Max Transaction
 
-</p>
+                    </label>
 
-</div>
+                    <p id="maxTxEnabled">
 
-</div>
+                        -
 
-</section>
+                    </p>
 
-<section class="token-section">
+                </div>
 
-<h3>
+                <div>
 
-Trading & Tax
+                    <label>
 
-</h3>
+                        Max Transaction %
 
-<div class="detail-grid">
+                    </label>
 
-<div>
+                    <p id="maxTxPercent">
 
-<label>
+                        -
 
-Trading Control
+                    </p>
 
-</label>
+                </div>
 
-<p id="tradingControlEnabled">
+            </div>
 
--
+        </section>
 
-</p>
+        <!-- ========================================= -->
+        <!-- TRADING & TAX -->
+        <!-- ========================================= -->
 
-</div>
+        <section class="token-section">
 
-<div>
+            <h3>
 
-<label>
+                Trading & Tax
 
-Trading Enabled
+            </h3>
 
-</label>
+            <div class="detail-grid">
 
-<p id="tradingEnabled">
+                <div>
 
--
+                    <label>
 
-</p>
+                        Trading Control
 
-</div>
+                    </label>
 
-<div>
+                    <p id="tradingControlEnabled">
 
-<label>
+                        -
 
-Buy Tax
+                    </p>
 
-</label>
+                </div>
 
-<p id="buyTax">
+                <div>
 
--
+                    <label>
 
-</p>
+                        Trading Enabled
 
-</div>
+                    </label>
 
-<div>
+                    <p id="tradingEnabled">
 
-<label>
+                        -
 
-Sell Tax
+                    </p>
 
-</label>
+                </div>
 
-<p id="sellTax">
+                <div>
 
--
+                    <label>
 
-</p>
+                        Buy Tax Enabled
 
-</div>
+                    </label>
 
-<div>
+                    <p id="buyTaxEnabled">
 
-<label>
+                        -
 
-Burn Share
+                    </p>
 
-</label>
+                </div>
 
-<p id="burnShare">
+                <div>
 
--
+                    <label>
 
-</p>
+                        Buy Tax
 
-</div>
+                    </label>
 
-<div>
+                    <p id="buyTax">
 
-<label>
+                        -
 
-Marketing Wallet
+                    </p>
 
-</label>
+                </div>
 
-<p id="marketingWallet">
+                <div>
 
--
+                    <label>
 
-</p>
+                        Sell Tax Enabled
 
-</div>
+                    </label>
 
-<div>
+                    <p id="sellTaxEnabled">
 
-<label>
+                        -
 
-Development Wallet
+                    </p>
 
-</label>
+                </div>
 
-<p id="developmentWallet">
+                <div>
 
--
+                    <label>
 
-</p>
+                        Sell Tax
 
-</div>
+                    </label>
 
-</div>
+                    <p id="sellTax">
 
-</section>
+                        -
 
-<section class="token-section">
+                    </p>
 
-<h3>
+                </div>
 
-DEX Information
+                <div>
 
-</h3>
+                    <label>
 
-<div class="detail-grid">
+                        Burn Tax Share
 
-<div>
+                    </label>
 
-<label>
+                    <p id="burnTaxShare">
 
-Pair Initialized
+                        -
 
-</label>
+                    </p>
 
-<p id="pairInitialized">
+                </div>
 
--
+            </div>
 
-</p>
+        </section>
 
-</div>
+        <!-- ========================================= -->
+        <!-- DISTRIBUTION -->
+        <!-- ========================================= -->
 
-<div>
+        <section class="token-section">
 
-<label>
+            <h3>
 
-DEX Pair
+                Distribution Wallets
 
-</label>
+            </h3>
 
-<p id="dexPair">
+            <div class="detail-grid">
 
--
+                <div>
 
-</p>
+                    <label>
 
-</div>
+                        Marketing Wallet
 
-</div>
+                    </label>
 
-</section>
+                    <p id="marketingWallet">
 
-<section class="token-section">
+                        -
 
-<h3>
+                    </p>
 
-Project Logo
+                </div>
 
-</h3>
+                <div>
 
-<div class="logo-preview">
+                    <label>
 
-<img
+                        Development Wallet
 
-id="logo"
+                    </label>
 
-src="./images/logo.png"
+                    <p id="developmentWallet">
 
-alt="Project Logo">
+                        -
 
-</div>
+                    </p>
 
-</section>
+                </div>
 
-<div class="action-bar">
+            </div>
 
-<button
+        </section>
 
-id="copyAddress"
+        <!-- ========================================= -->
+        <!-- DEX -->
+        <!-- ========================================= -->
 
-class="secondary-button">
+        <section class="token-section">
 
-Copy Address
+            <h3>
 
-</button>
+                DEX Information
 
-<button
+            </h3>
 
-id="openExplorer"
+            <div class="detail-grid">
 
-class="primary-button">
+                <div>
 
-Open Explorer
+                    <label>
 
-</button>
+                        Pair Initialized
 
-<a
+                    </label>
 
-href="./dashboard.html"
+                    <p id="pairInitialized">
 
-class="secondary-button">
+                        -
 
-Back to Dashboard
+                    </p>
 
-</a>
+                </div>
 
-</div>
+                <div>
 
-</div>
+                    <label>
+
+                        DEX Pair
+
+                    </label>
+
+                    <p id="dexPair">
+
+                        -
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ========================================= -->
+        <!-- ACTIONS -->
+        <!-- ========================================= -->
+
+        <div class="action-bar">
+
+            <a
+                href="./dashboard.html"
+                class="secondary-button">
+
+                Dashboard
+
+            </a>
+
+            <a
+                href="./launch.html"
+                class="secondary-button">
+
+                Deploy New Token
+
+            </a>
+
+            <a
+                href="./index.html"
+                class="secondary-button">
+
+                Home
+
+            </a>
+
+        </div>
+
+    </div>
 
 </main>
 
 <footer class="footer">
 
-<div class="container">
+    <div class="container">
 
-<div class="footer-grid">
+        <div class="footer-grid">
 
-<div>
+            <div>
 
-<img
+                <img
+                    src="./images/logo.png"
+                    class="footer-logo"
+                    alt="LaunchFuture">
 
-src="./images/logo.png"
+                <p>
 
-class="footer-logo"
+                    LaunchFuture is the official launchpad interface for deploying verified EVOZ20 tokens on EVOZ Mainnet.
 
-alt="LaunchFuture">
+                </p>
 
-<p>
+            </div>
 
-LaunchFuture is the official launchpad interface for deploying verified EVOZ20 tokens on EVOZ Mainnet.
+            <div>
 
-</p>
+                <h4>
 
-</div>
+                    Navigation
 
-<div>
+                </h4>
 
-<h4>
+                <a href="./index.html">
 
-Navigation
+                    Home
 
-</h4>
+                </a>
 
-<a href="./index.html">
+                <a href="./launch.html">
 
-Home
+                    Deploy Token
 
-</a>
+                </a>
 
-<a href="./launch.html">
+                <a href="./dashboard.html">
 
-Deploy Token
+                    Dashboard
 
-</a>
+                </a>
 
-<a href="./dashboard.html">
+            </div>
 
-Dashboard
+            <div>
 
-</a>
+                <h4>
 
-</div>
+                    Network
 
-<div>
+                </h4>
 
-<h4>
+                <p>
 
-Network
+                    EVOZ Mainnet
 
-</h4>
+                </p>
 
-<p>
+                <p>
 
-EVOZ Mainnet
+                    RPC
 
-</p>
+                </p>
 
-<p>
+                <p>
 
-RPC
+                    https://rpc.evozscan.com
 
-</p>
+                </p>
 
-<p>
+            </div>
 
-https://rpc.evozscan.com
+        </div>
 
-</p>
+        <div class="footer-bottom">
 
-</div>
+            © 2026 LaunchFuture
 
-</div>
+        </div>
 
-<div class="footer-bottom">
-
-© 2026 LaunchFuture
-
-</div>
-
-</div>
+    </div>
 
 </footer>
 
 <script
-type="module"
-src="./js/token.js">
+    type="module"
+    src="./js/token.js">
 </script>
 
 </body>
-
 </html>
