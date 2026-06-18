@@ -210,29 +210,23 @@ async function connect(){
 
 async function initialize(){
 
-  try {
-    await restoreConnection();
-  } catch(e){
-    console.error("restoreConnection:", e);
-  }
+await restoreConnection();
 
-  updateWalletButton();
+updateWalletButton();
 
-  try {
-    await loadFactoryInfo();
-  } catch(e){
-    console.error("loadFactoryInfo:", e);
-  }
+await loadFactoryInfo();
 
-  if(connectButton){
+if(connectButton){
 
-    connectButton.addEventListener(
-      "click",
-      connect
-    );
+connectButton.addEventListener(  
 
-    console.log("CONNECT LISTENER ATTACHED");
-  }
+  "click",  
+
+  connect  
+
+);
+
+}
 
 }
 
