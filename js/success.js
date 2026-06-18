@@ -44,20 +44,7 @@ function shortAddress(address) {
 
 function formatSupply(value) {
 
-    try {
-
-        return formatUnits(
-            BigInt(value),
-            18
-        );
-
-    }
-
-    catch {
-
-        return String(value);
-
-    }
+    return String(value);
 
 }
 
