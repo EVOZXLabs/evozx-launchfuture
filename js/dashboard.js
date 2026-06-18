@@ -332,29 +332,22 @@ async function loadWalletSummary() {
 
     try {
 
-    const evozx =
-        await getEVOZXContract();
-
     const balance =
-        await evozx.balanceOf(
+        await getEVOZXBalance(
             account
         );
 
     setText(
-
         "dashboardEVOZX",
-
         `${Number(
             formatUnits(
                 balance,
                 18
             )
         ).toLocaleString()} EVOZX`
-
     );
 
 }
-
 catch (error) {
 
     console.error(
@@ -366,8 +359,6 @@ catch (error) {
         "dashboardEVOZX",
         "-"
     );
-
-}
 
 }
 
