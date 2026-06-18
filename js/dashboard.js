@@ -376,30 +376,136 @@ async function loadPlatformStatistics() {
         const contract =
             await getEVOZXContract();
 
-        const burned =
+        const [
 
-            await contract.balanceOf(
+            burned,
+            totalSupply
+
+        ] = await Promise.all([
+
+            contract.balanceOf(
                 DEAD_ADDRESS
+            ),
+
+            contract.totalSupply()
+
+        ]);
+
+        const burnedValue =
+            Number(
+                formatUnits(
+                    burned,
+                    18
+                )
             );
+
+        const supplyValue =
+            Number(
+                formatUnits(
+                    totalSupply,
+                    18
+                )
+            );
+
+        const initialSupply =
+            burnedValue +
+            supplyValue;
+
+        const percentage =
+
+            initialSupply > 0
+
+                ? (
+                    burnedValue /
+                    initialSupply
+                ) * 100
+
+                : 0;
+
+        // ---------------------------------
+        // TOTAL BURNED
+        // ---------------------------------
 
         setText(
 
             "totalBurnedEVOZX",
 
-            formatToken(
-                burned
-            )
+            `${burnedValue.toLocaleString()} EVOZX`
 
         );
+
+        // ---------------------------------
+        // CURRENT SUPPLY
+        // ---------------------------------
+
+        setText(
+
+            "currentSupply",
+
+            `${supplyValue.toLocaleString()} EVOZX`
+
+        );
+
+        // ---------------------------------
+        // PERCENTAGE
+        // ---------------------------------
+
+        setText(
+
+            "burnPercentage",
+
+            `${percentage.toFixed(2)}%`
+
+        );
+
+        setText(
+
+            "burnPercentageText",
+
+            `${percentage.toFixed(2)}%`
+
+        );
+
+        // ---------------------------------
+        // PROGRESS BAR
+        // ---------------------------------
+
+        const progress =
+
+            document.getElementById(
+                "burnProgressBar"
+            );
+
+        if (progress) {
+
+            progress.style.width =
+                `${Math.min(
+                    percentage,
+                    100
+                )}%`;
+
+        }
 
     }
 
     catch (error) {
 
-        console.error(error);
+        console.error(
+            error
+        );
 
         setText(
             "totalBurnedEVOZX",
+            "-"
+        );
+
+        setText(
+            "currentSupply",
+            "-"
+        );
+
+        setText(
+            "burnPercentage",
             "-"
         );
 
