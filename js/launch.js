@@ -791,21 +791,39 @@ catch (error) {
 // =====================================================
 
 async function refreshPreview() {
+async function refreshPreview() {
+
+    console.log(
+        "REFRESH PREVIEW START"
+    );
 
     try {
 
         const form =
-    getFormData();
+            getFormData();
 
-const config =
-    await buildDeployment(
-        form
-    );
+        console.log(
+            "FORM OK"
+        );
 
-const fee =
-    await getDeploymentFee(
-        config
-    );
+        const config =
+            await buildDeployment(
+                form
+            );
+
+        console.log(
+            "CONFIG OK"
+        );
+
+        const fee =
+            await getDeploymentFee(
+                config
+            );
+
+        console.log(
+            "FEE OK",
+            fee.toString()
+        );
 
         setText(
 
@@ -854,19 +872,35 @@ const fee =
 
         const balance =
 
-            await getEVOZXBalance(
-                account
-            );
+    await getEVOZXBalance(
+        account
+    );
 
-        setText(
+console.log(
+    "BALANCE",
+    balance.toString()
+);
 
-            "evozxBalance",
+console.log(
+    "ELEMENT",
+    document.getElementById(
+        "evozxBalance"
+    )
+);
 
-            `${formatToken(
-                balance
-            )} EVOZX`
+setText(
 
-        );
+    "evozxBalance",
+
+    `${formatToken(
+        balance
+    )} EVOZX`
+
+);
+
+console.log(
+    "SET TEXT DONE"
+);
 
         // ---------------------------------
         // AGREEMENT:
