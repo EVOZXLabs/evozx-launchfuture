@@ -233,10 +233,10 @@
         </section>
 
         <!-- ========================================= -->
-        <!-- EVOZX DEFLATION ENGINE -->
-        <!-- ========================================= -->
+<!-- EVOZX DEFLATION ENGINE -->
+<!-- ========================================= -->
 
-        <section class="dashboard-section">
+<section class="dashboard-section">
 
     <div class="section-header">
 
@@ -254,31 +254,47 @@
 
     </div>
 
+    <!-- Supply -->
+
     <div class="stats-grid">
 
         <div class="stat-card">
 
-            <span>Current Supply</span>
+            <span class="stat-label">
+                Current Supply
+            </span>
 
-            <strong id="currentSupply">
+            <span
+                id="currentSupply"
+                class="stat-value">
+
                 -
-            </strong>
+
+            </span>
 
         </div>
 
         <div class="stat-card">
 
-            <span>Total Burned</span>
+            <span class="stat-label">
+                Total Burned
+            </span>
 
-            <strong id="totalBurnedEVOZX">
+            <span
+                id="totalBurnedEVOZX"
+                class="stat-value">
+
                 -
-            </strong>
+
+            </span>
 
         </div>
 
     </div>
 
-    <div class="progress-card">
+    <!-- Progress -->
+
+    <div class="dashboard-card">
 
         <div class="progress-header">
 
@@ -286,9 +302,9 @@
                 Deflation Progress
             </span>
 
-            <strong id="burnPercent">
-                -
-            </strong>
+            <span id="burnPercent">
+                0%
+            </span>
 
         </div>
 
@@ -302,33 +318,84 @@
 
         </div>
 
+        <div class="progress-detail">
+
+            <span id="totalBurnedDetail">
+                -
+            </span>
+
+            /
+
+            <span id="initialSupply">
+                -
+            </span>
+
+            EVOZX
+
+        </div>
+
     </div>
+
+    <!-- Burn Stats -->
 
     <div class="stats-grid">
 
         <div class="stat-card">
 
-            <span>Initial Supply</span>
+            <span class="stat-label">
+                Burn Events
+            </span>
 
-            <strong id="initialSupply">
+            <span
+                id="burnEvents"
+                class="stat-value">
+
                 -
-            </strong>
+
+            </span>
 
         </div>
 
         <div class="stat-card">
 
-            <span>Burn Events</span>
+            <span class="stat-label">
+                Last Burn
+            </span>
 
-            <strong id="burnEvents">
+            <span
+                id="lastBurn"
+                class="stat-value">
+
                 -
-            </strong>
+
+            </span>
 
         </div>
 
     </div>
 
-        </section>
+    <!-- Recent Activity -->
+
+    <div class="dashboard-card">
+
+        <h4>
+            Recent Deflation Activity
+        </h4>
+
+        <div
+            id="recentBurnActivity">
+
+            <div class="empty-state">
+
+                No burn activity found.
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
         
         <!-- ========================================= -->
         <!-- DEPLOYMENT HISTORY -->
