@@ -122,3 +122,13 @@ export function explorerTransaction(hash) {
     return `${NETWORK.explorer}/tx/${hash}`;
 
 }
+
+export function isZeroAddress(address) {
+
+    return (
+        !address ||
+        address.toLowerCase() ===
+        "0x0000000000000000000000000000000000000000"
+    );
+
+}
