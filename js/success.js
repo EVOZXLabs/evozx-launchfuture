@@ -1,10 +1,7 @@
-import {
-    formatUnits
-} from "https://esm.sh/ethers@6";
+import { formatUnits } from "https://esm.sh/ethers@6";
 
 import {
     STORAGE,
-    DOWNLOADS,
     explorerTransaction
 } from "./config.js";
 
@@ -16,27 +13,16 @@ import {
 // DOM
 // =====================================================
 
-function $(id) {
+const $ = selector =>
+    document.querySelector(selector);
 
-    return document.getElementById(id);
-
-}
-
-function setText(
-    id,
-    value
-) {
+function setText(id, value) {
 
     const element = $(id);
 
-    if (!element) {
+    if (!element) return;
 
-        return;
-
-    }
-
-    element.textContent =
-        value ?? "-";
+    element.textContent = value ?? "-";
 
 }
 
@@ -46,20 +32,12 @@ function setText(
 
 function shortAddress(address) {
 
-    if (!address) {
-
-        return "-";
-
-    }
+    if (!address) return "-";
 
     return (
-
         address.slice(0, 6) +
-
         "..." +
-
         address.slice(-4)
-
     );
 
 }
@@ -69,11 +47,8 @@ function formatSupply(value) {
     try {
 
         return formatUnits(
-
             BigInt(value),
-
             18
-
         );
 
     }
@@ -90,22 +65,17 @@ function formatSupply(value) {
 // STORAGE
 // =====================================================
 
-function getDeployment() {
+function getDeploymentData() {
 
     try {
 
         const raw =
-
             localStorage.getItem(
-
                 STORAGE.lastToken
-
             );
 
         if (!raw) {
-
             return null;
-
         }
 
         return JSON.parse(raw);
@@ -121,227 +91,180 @@ function getDeployment() {
 }
 
 // =====================================================
-// DOWNLOAD
+// RENDER
 // =====================================================
 
-function downloadStandardInput() {
+function renderDeployment(data) {
 
-    window.open(
+    setText(
+        "#tokenName",
+        data.name
+    );
 
-        DOWNLOADS.standardInput,
+    setText(
+        "#tokenSymbol",
+        data.symbol
+    );
 
-        "_blank"
+    setText(
+        "#tokenSupply",
+        formatSupply(
+            data.supply
+        )
+    );
 
+    setText(
+        "#tokenAddress",
+        data.token
+    );
+
+    setText(
+        "#creator",
+        shortAddress(
+            data.creator
+        )
+    );
+
+    setText(
+        "#chainId",
+        String(data.chainId)
+    );
+
+    setText(
+        "#txHash",
+        shortAddress(
+            data.hash
+        )
+    );
+
+    setText(
+        "#blockNumber",
+        String(
+            data.blockNumber ?? "-"
+        )
     );
 
 }
 
 // =====================================================
-// EXPLORER
+// BUTTONS
 // =====================================================
 
-function bindExplorer(deployment) {
+function bindExplorerButton(data) {
 
     const button =
+        $("#openExplorer");
 
-        $("explorerLink");
+    if (!button) return;
 
-    if (!button) {
+    button.addEventListener(
+        "click",
+        () => {
 
-        return;
+            window.open(
+                explorerTransaction(
+                    data.hash
+                ),
+                "_blank"
+            );
 
-    }
-
-    button.href =
-
-        explorerTransaction(
-
-            deployment.hash
-
-        );
-
-    button.target =
-        "_blank";
-
-    button.rel =
-        "noopener";
+        }
+    );
 
 }
 
-// =====================================================
-// VIEW TOKEN
-// =====================================================
+function bindTokenButton(data) {
 
-function bindViewToken(deployment) {
+    const button =
+        $("#openToken");
 
-    const link =
+    if (!button) return;
 
-        document.querySelector(
+    button.addEventListener(
+        "click",
+        () => {
 
-            'a[href="./token.html"]'
+            window.location.href =
+                `./token.html?address=${data.token}`;
 
-        );
-
-    if (!link) {
-
-        return;
-
-    }
-
-    link.href =
-
-        `./token.html?address=${deployment.token}`;
+        }
+    );
 
 }
 
-// =====================================================
-// COPY ADDRESS
-// =====================================================
-
-function bindCopy(deployment) {
+function bindCopyButton(data) {
 
     const button =
+        $("#copyAddress");
 
-        $("copyAddress");
+    if (!button) return;
 
-    if (!button) {
-
-        return;
-
-    }
-
-    button.onclick =
+    button.addEventListener(
+        "click",
         async () => {
 
-            const success =
-
+            const copied =
                 await copyToClipboard(
-
-                    deployment.token
-
+                    data.token
                 );
 
-            if (!success) {
-
-                return;
-
-            }
+            if (!copied) return;
 
             const original =
-
                 button.textContent;
 
             button.textContent =
                 "Copied";
 
             setTimeout(
-
                 () => {
 
                     button.textContent =
                         original;
 
                 },
-
                 1500
-
             );
 
-        };
+        }
+    );
 
 }
 
-// =====================================================
-// DOWNLOAD BUTTON
-// =====================================================
-
-function bindDownload() {
+function bindDownloadButton() {
 
     const button =
+        $("#downloadVerification");
 
-        $("downloadStandardInput");
+    if (!button) return;
 
-    if (!button) {
+    button.addEventListener(
+        "click",
+        () => {
 
-        return;
+            window.open(
+                "./docs/standard-input.json",
+                "_blank"
+            );
 
-    }
-
-    button.onclick =
-        downloadStandardInput;
-
-}
-
-// =====================================================
-// RENDER
-// =====================================================
-
-function renderDeployment(
-    deployment
-) {
-
-    setText(
-        "tokenName",
-        deployment.name
-    );
-
-    setText(
-        "tokenSymbol",
-        deployment.symbol
-    );
-
-    setText(
-        "tokenSupply",
-        formatSupply(
-            deployment.supply
-        )
-    );
-
-    setText(
-        "tokenAddress",
-        shortAddress(
-            deployment.token
-        )
-    );
-
-    setText(
-        "creator",
-        shortAddress(
-            deployment.creator
-        )
-    );
-
-    setText(
-        "chainId",
-        deployment.chainId
-    );
-
-    setText(
-        "txHash",
-        shortAddress(
-            deployment.hash
-        )
+        }
     );
 
 }
 
 // =====================================================
-// SUCCESS PAGE
+// SUCCESS
 // =====================================================
 
-function renderSuccess() {
+function renderSuccessPage() {
 
     const deployment =
-
-        getDeployment();
+        getDeploymentData();
 
     if (!deployment) {
 
-        window.location.replace(
-
-            "./launch.html"
-
-        );
+        window.location.href =
+            "./launch.html";
 
         return;
 
@@ -351,19 +274,19 @@ function renderSuccess() {
         deployment
     );
 
-    bindExplorer(
+    bindExplorerButton(
         deployment
     );
 
-    bindViewToken(
+    bindTokenButton(
         deployment
     );
 
-    bindCopy(
+    bindCopyButton(
         deployment
     );
 
-    bindDownload();
+    bindDownloadButton();
 
 }
 
@@ -371,18 +294,15 @@ function renderSuccess() {
 // INIT
 // =====================================================
 
-function initializeSuccess() {
+function initialize() {
 
-    renderSuccess();
+    renderSuccessPage();
 
 }
 
 document.addEventListener(
-
     "DOMContentLoaded",
-
-    initializeSuccess
-
+    initialize
 );
 
 // =====================================================
@@ -390,8 +310,6 @@ document.addEventListener(
 // =====================================================
 
 export {
-
-    initializeSuccess,
-    renderSuccess
-
+    initialize,
+    renderSuccessPage
 };
