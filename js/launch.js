@@ -722,7 +722,6 @@ async function updateWalletPreview() {
     }
 
     catch (error) {
-catch (error) {
 
     console.log(
         "PREVIEW MESSAGE:",
