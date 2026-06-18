@@ -791,7 +791,6 @@ catch (error) {
 // =====================================================
 
 async function refreshPreview() {
-async function refreshPreview() {
 
     console.log(
         "REFRESH PREVIEW START"
