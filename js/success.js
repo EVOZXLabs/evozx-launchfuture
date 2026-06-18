@@ -3,9 +3,8 @@ import {
 } from "https://esm.sh/ethers@6";
 
 import {
-    STORAGE_KEYS,
+    STORAGE,
     DOWNLOADS,
-    explorerAddress,
     explorerTransaction
 } from "./config.js";
 
@@ -14,7 +13,7 @@ import {
 } from "./utils.js";
 
 // =====================================================
-// DOM HELPERS
+// DOM
 // =====================================================
 
 function $(id) {
@@ -23,7 +22,10 @@ function $(id) {
 
 }
 
-function setText(id, value) {
+function setText(
+    id,
+    value
+) {
 
     const element = $(id);
 
@@ -33,12 +35,13 @@ function setText(id, value) {
 
     }
 
-    element.textContent = value;
+    element.textContent =
+        value ?? "-";
 
 }
 
 // =====================================================
-// FORMAT HELPERS
+// FORMAT
 // =====================================================
 
 function shortAddress(address) {
@@ -66,8 +69,11 @@ function formatSupply(value) {
     try {
 
         return formatUnits(
+
             BigInt(value),
+
             18
+
         );
 
     }
@@ -84,20 +90,23 @@ function formatSupply(value) {
 // STORAGE
 // =====================================================
 
-function getLastDeployment() {
-
-    const raw =
-        localStorage.getItem(
-            STORAGE_KEYS.lastDeployment
-        );
-
-    if (!raw) {
-
-        return null;
-
-    }
+function getDeployment() {
 
     try {
+
+        const raw =
+
+            localStorage.getItem(
+
+                STORAGE.lastToken
+
+            );
+
+        if (!raw) {
+
+            return null;
+
+        }
 
         return JSON.parse(raw);
 
@@ -118,9 +127,148 @@ function getLastDeployment() {
 function downloadStandardInput() {
 
     window.open(
+
         DOWNLOADS.standardInput,
+
         "_blank"
+
     );
+
+}
+
+// =====================================================
+// EXPLORER
+// =====================================================
+
+function bindExplorer(deployment) {
+
+    const button =
+
+        $("explorerLink");
+
+    if (!button) {
+
+        return;
+
+    }
+
+    button.href =
+
+        explorerTransaction(
+
+            deployment.hash
+
+        );
+
+    button.target =
+        "_blank";
+
+    button.rel =
+        "noopener";
+
+}
+
+// =====================================================
+// VIEW TOKEN
+// =====================================================
+
+function bindViewToken(deployment) {
+
+    const link =
+
+        document.querySelector(
+
+            'a[href="./token.html"]'
+
+        );
+
+    if (!link) {
+
+        return;
+
+    }
+
+    link.href =
+
+        `./token.html?address=${deployment.token}`;
+
+}
+
+// =====================================================
+// COPY ADDRESS
+// =====================================================
+
+function bindCopy(deployment) {
+
+    const button =
+
+        $("copyAddress");
+
+    if (!button) {
+
+        return;
+
+    }
+
+    button.onclick =
+        async () => {
+
+            const success =
+
+                await copyToClipboard(
+
+                    deployment.token
+
+                );
+
+            if (!success) {
+
+                return;
+
+            }
+
+            const original =
+
+                button.textContent;
+
+            button.textContent =
+                "Copied";
+
+            setTimeout(
+
+                () => {
+
+                    button.textContent =
+                        original;
+
+                },
+
+                1500
+
+            );
+
+        };
+
+}
+
+// =====================================================
+// DOWNLOAD BUTTON
+// =====================================================
+
+function bindDownload() {
+
+    const button =
+
+        $("downloadStandardInput");
+
+    if (!button) {
+
+        return;
+
+    }
+
+    button.onclick =
+        downloadStandardInput;
 
 }
 
@@ -128,19 +276,9 @@ function downloadStandardInput() {
 // RENDER
 // =====================================================
 
-function renderSuccess() {
-
-    const deployment =
-        getLastDeployment();
-
-    if (!deployment) {
-
-        window.location.href =
-            "./launch.html";
-
-        return;
-
-    }
+function renderDeployment(
+    deployment
+) {
 
     setText(
         "tokenName",
@@ -175,9 +313,7 @@ function renderSuccess() {
 
     setText(
         "chainId",
-        String(
-            deployment.chainId
-        )
+        deployment.chainId
     );
 
     setText(
@@ -187,100 +323,52 @@ function renderSuccess() {
         )
     );
 
-// ==========================================
-    // EXPLORER
-    // ==========================================
+}
 
-    const explorer =
-        $("explorerLink");
+// =====================================================
+// SUCCESS PAGE
+// =====================================================
 
-    if (explorer) {
+function renderSuccess() {
 
-        explorer.href =
-            explorerTransaction(
-                deployment.hash
-            );
+    const deployment =
 
-        explorer.target =
-            "_blank";
+        getDeployment();
 
-    }
+    if (!deployment) {
 
-    // ==========================================
-    // VIEW TOKEN
-    // ==========================================
+        window.location.replace(
 
-    const viewToken =
-        $("viewToken");
+            "./launch.html"
 
-    if (viewToken) {
+        );
 
-        viewToken.href =
-            `./token.html?address=${deployment.token}`;
+        return;
 
     }
 
-    // ==========================================
-    // COPY ADDRESS
-    // ==========================================
+    renderDeployment(
+        deployment
+    );
 
-    const copyButton =
-        $("copyAddress");
+    bindExplorer(
+        deployment
+    );
 
-    if (copyButton) {
+    bindViewToken(
+        deployment
+    );
 
-        copyButton.onclick =
-            async () => {
+    bindCopy(
+        deployment
+    );
 
-                const copied =
-                    await copyToClipboard(
-                        deployment.token
-                    );
-
-                if (!copied) {
-
-                    return;
-
-                }
-
-                copyButton.textContent =
-                    "Copied";
-
-                setTimeout(
-
-                    () => {
-
-                        copyButton.textContent =
-                            "Copy Address";
-
-                    },
-
-                    1500
-
-                );
-
-            };
-
-    }
-
-    // ==========================================
-    // DOWNLOAD STANDARD INPUT
-    // ==========================================
-
-    const download =
-        $("downloadStandardInput");
-
-    if (download) {
-
-        download.onclick =
-            downloadStandardInput;
-
-    }
+    bindDownload();
 
 }
 
 // =====================================================
-// INITIALIZE
+// INIT
 // =====================================================
 
 function initializeSuccess() {
