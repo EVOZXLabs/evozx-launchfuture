@@ -1,14 +1,10 @@
-import{
-
-  connectWallet,
-
-  restoreConnection,
-
-  getAccount,
-
-  shortAddress
-
-}from"./wallet.js";
+import {
+    connectWallet,
+    restoreConnection,
+    getAccount,
+    shortAddress,
+    initializeWallet
+} from "./wallet.js";
 
 import{
 
@@ -212,23 +208,21 @@ async function connect(){
 // INITIALIZATION
 // =====================================================
 
-async function initialize(){
+async function connect(){
 
-  await restoreConnection();
+  console.log("CONNECT BUTTON CLICKED");
 
-  updateWalletButton();
+  try{
 
-  await loadFactoryInfo();
+    await connectWallet();
 
-  if(connectButton){
+    updateWalletButton();
 
-    connectButton.addEventListener(
+  }
 
-      "click",
+  catch(error){
 
-      connect
-
-    );
+    console.error(error);
 
   }
 
