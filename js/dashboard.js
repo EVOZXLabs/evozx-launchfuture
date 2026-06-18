@@ -414,14 +414,64 @@ async function loadPlatformStatistics() {
         );
 
         setText(
+    "totalBurnedDetail",
+    formatToken(
+        burned
+    )
+);
+
+        setText(
             "burnPercent",
             `${percent.toFixed(6)}%`
         );
+
+        let history = [];
+
+try {
+
+    history = JSON.parse(
+        localStorage.getItem(
+            STORAGE.deployHistory
+        ) || "[]"
+    );
+
+}
+    
+catch {
+
+    history = [];
+
+}
+
+setText(
+    "burnEvents",
+    history.length
+);
 
         const bar =
             document.getElementById(
                 "burnProgressBar"
             );
+
+        const lastDeployment =
+    history[0];
+
+if (lastDeployment) {
+
+    setText(
+        "lastBurn",
+        "15 EVOZX"
+    );
+
+}
+else {
+
+    setText(
+        "lastBurn",
+        "-"
+    );
+
+}
 
         if (bar) {
 
@@ -947,6 +997,78 @@ function loadHistory() {
 
 }
 
+function loadRecentBurnActivity() {
+
+    const container =
+        $("recentBurnActivity");
+
+    if (!container) {
+
+        return;
+
+    }
+
+    let history = [];
+
+    try {
+
+        history = JSON.parse(
+            localStorage.getItem(
+                STORAGE.deployHistory
+            ) || "[]"
+        );
+
+    }
+
+    catch {
+
+        history = [];
+
+    }
+
+    if (!history.length) {
+
+        container.innerHTML =
+
+            `<div class="empty-state">
+
+                No burn activity found.
+
+            </div>`;
+
+        return;
+
+    }
+
+    container.innerHTML =
+
+        history
+            .slice(0, 5)
+            .map(item => `
+
+<div class="activity-item">
+
+    <div class="activity-token">
+
+        ${item.name}
+
+        (${item.symbol})
+
+    </div>
+
+    <div class="activity-burn">
+
+        15 EVOZX
+
+    </div>
+
+</div>
+
+`)
+            .join("");
+
+}
+
 // =====================================================
 // QUICK ACTIONS
 // =====================================================
@@ -1020,6 +1142,8 @@ async function loadDashboard() {
     await loadPlatformStatistics();
 
     loadHistory();
+
+    loadRecentBurnActivity();
 
 }
 
