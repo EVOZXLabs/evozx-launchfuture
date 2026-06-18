@@ -11,9 +11,13 @@
 
 <title>
 
-    LaunchFuture • Deploy Token
+LaunchFuture • Deploy Token
 
 </title>
+
+<meta
+    name="description"
+    content="Deploy verified EVOZ20 tokens using LaunchFuture.">
 
 <link
     rel="icon"
@@ -53,7 +57,7 @@
 
                 <p>
 
-                    Official EVOZ20 Launchpad
+                    Official Token Launchpad
 
                 </p>
 
@@ -91,7 +95,7 @@
 
             <p>
 
-                Configure your EVOZ20 token and deploy it directly through the official LaunchFuture Factory.
+                Configure your token and deploy it directly through the LaunchFuture Factory.
 
             </p>
 
@@ -101,9 +105,9 @@
 
             <section class="launch-form">
 
-                <!-- ===================================== -->
+                <!-- ================================================= -->
                 <!-- BASIC INFORMATION -->
-                <!-- ===================================== -->
+                <!-- ================================================= -->
 
                 <div class="accordion open">
 
@@ -154,6 +158,7 @@
                                 <div
                                     id="symbolStatus"
                                     class="badge">
+
                                 </div>
 
                             </div>
@@ -180,9 +185,9 @@
 
                 </div>
 
-                <!-- ===================================== -->
+                <!-- ================================================= -->
                 <!-- CORE FEATURES -->
-                <!-- ===================================== -->
+                <!-- ================================================= -->
 
                 <div class="accordion">
 
@@ -229,7 +234,7 @@
                         <label class="checkbox-row">
 
                             <input
-                                id="ownership"
+                                id="ownershipEnabled"
                                 type="checkbox"
                                 checked>
 
@@ -245,9 +250,9 @@
 
                 </div>
 
-                <!-- ===================================== -->
+                <!-- ================================================= -->
                 <!-- SECURITY -->
-                <!-- ===================================== -->
+                <!-- ================================================= -->
 
                 <div class="accordion">
 
@@ -277,12 +282,16 @@
 
                         </label>
 
-                        <input
-                            id="maxWalletPercent"
-                            type="number"
-                            min="1"
-                            max="100"
-                            placeholder="Max Wallet %">
+                        <div class="form-group">
+
+                            <input
+                                id="maxWalletPercent"
+                                type="number"
+                                min="1"
+                                max="100"
+                                placeholder="Max Wallet %">
+
+                        </div>
 
                         <label class="checkbox-row">
 
@@ -298,20 +307,24 @@
 
                         </label>
 
-                        <input
-                            id="maxTxPercent"
-                            type="number"
-                            min="1"
-                            max="100"
-                            placeholder="Max Transaction %">
+                        <div class="form-group">
+
+                            <input
+                                id="maxTxPercent"
+                                type="number"
+                                min="1"
+                                max="100"
+                                placeholder="Max Transaction %">
+
+                        </div>
 
                     </div>
 
                 </div>
 
-                <!-- ===================================== -->
+                <!-- ================================================= -->
                 <!-- TRADING -->
-                <!-- ===================================== -->
+                <!-- ================================================= -->
 
                 <div class="accordion">
 
@@ -357,11 +370,11 @@
 
                     </div>
 
-                </div>
+    </div>
 
-                <!-- ===================================== -->
+                <!-- ================================================= -->
                 <!-- TAX SYSTEM -->
-                <!-- ===================================== -->
+                <!-- ================================================= -->
 
                 <div class="accordion">
 
@@ -391,12 +404,16 @@
 
                         </label>
 
-                        <input
-                            id="buyTax"
-                            type="number"
-                            min="0"
-                            max="25"
-                            placeholder="Buy Tax %">
+                        <div class="form-group">
+
+                            <input
+                                id="buyTax"
+                                type="number"
+                                min="0"
+                                max="25"
+                                placeholder="Buy Tax %">
+
+                        </div>
 
                         <label class="checkbox-row">
 
@@ -412,12 +429,16 @@
 
                         </label>
 
-                        <input
-                            id="sellTax"
-                            type="number"
-                            min="0"
-                            max="25"
-                            placeholder="Sell Tax %">
+                        <div class="form-group">
+
+                            <input
+                                id="sellTax"
+                                type="number"
+                                min="0"
+                                max="25"
+                                placeholder="Sell Tax %">
+
+                        </div>
 
                         <div class="form-group">
 
@@ -440,9 +461,9 @@
 
                 </div>
 
-                <!-- ===================================== -->
-                <!-- WALLET DISTRIBUTION -->
-                <!-- ===================================== -->
+                <!-- ================================================= -->
+                <!-- DISTRIBUTION WALLETS -->
+                <!-- ================================================= -->
 
                 <div class="accordion">
 
@@ -450,7 +471,7 @@
 
                         <h3>
 
-                            Wallet Distribution
+                            Distribution Wallets
 
                         </h3>
 
@@ -492,9 +513,9 @@
 
                 </div>
 
-                <!-- ===================================== -->
-                <!-- PROJECT METADATA -->
-                <!-- ===================================== -->
+                <!-- ================================================= -->
+                <!-- PROJECT LINKS -->
+                <!-- ================================================= -->
 
                 <div class="accordion">
 
@@ -502,7 +523,7 @@
 
                         <h3>
 
-                            Project Metadata
+                            Project Links
 
                         </h3>
 
@@ -521,7 +542,7 @@
                             <input
                                 id="website"
                                 type="url"
-                                placeholder="https://yourproject.com">
+                                placeholder="https://">
 
                         </div>
 
@@ -536,7 +557,7 @@
                             <input
                                 id="telegram"
                                 type="url"
-                                placeholder="https://t.me/project">
+                                placeholder="https://t.me/...">
 
                         </div>
 
@@ -551,7 +572,7 @@
                             <input
                                 id="twitter"
                                 type="url"
-                                placeholder="https://x.com/project">
+                                placeholder="https://x.com/...">
 
                         </div>
 
@@ -566,7 +587,7 @@
                             <input
                                 id="logoURI"
                                 type="url"
-                                placeholder="https://domain.com/logo.png">
+                                placeholder="https://...">
 
                         </div>
 
@@ -574,9 +595,9 @@
 
                 </div>
 
-                <!-- ===================================== -->
+                <!-- ================================================= -->
                 <!-- DEPLOYMENT -->
-                <!-- ===================================== -->
+                <!-- ================================================= -->
 
                 <div class="accordion open">
 
@@ -584,7 +605,7 @@
 
                         <h3>
 
-                            Deployment
+                            Deployment Preview
 
                         </h3>
 
@@ -602,8 +623,7 @@
 
                                 </span>
 
-                                <strong
-                                    id="deploymentFee">
+                                <strong id="deploymentFee">
 
                                     -
 
@@ -615,12 +635,27 @@
 
                                 <span>
 
-                                    Wallet Balance
+                                    EVOZX Balance
 
                                 </span>
 
-                                <strong
-                                    id="walletBalance">
+                                <strong id="evozxBalance">
+
+                                    -
+
+                                </strong>
+
+                            </div>
+
+                            <div class="preview-row">
+
+                                <span>
+
+                                    Required EVOZ
+
+                                </span>
+
+                                <strong id="requiredEVOZ">
 
                                     -
 
@@ -636,8 +671,7 @@
 
                                 </span>
 
-                                <strong
-                                    id="readyStatus">
+                                <strong id="readyStatus">
 
                                     Waiting...
 
@@ -665,13 +699,67 @@
 
                 </div>
 
-                            </section>
+            </section>
 
-            <!-- ===================================== -->
+            <!-- ================================================= -->
             <!-- SIDEBAR -->
-            <!-- ===================================== -->
+            <!-- ================================================= -->
 
             <aside class="launch-sidebar">
+
+                <div class="balance-card">
+
+                    <h4>
+
+                        Wallet
+
+                    </h4>
+
+                    <div
+                        id="walletAddress"
+                        class="balance-value">
+
+                        Not Connected
+
+                    </div>
+
+                    <div class="summary-list mt-2">
+
+                        <div class="summary-item">
+
+                            <span>
+
+                                EVOZ
+
+                            </span>
+
+                            <strong id="walletEVOZBalance">
+
+                                -
+
+                            </strong>
+
+                        </div>
+
+                        <div class="summary-item">
+
+                            <span>
+
+                                EVOZX
+
+                            </span>
+
+                            <strong id="walletEVOZXBalance">
+
+                                -
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
 
                 <div class="info-card">
 
@@ -735,24 +823,6 @@
 
                 </div>
 
-                <div class="balance-card">
-
-                    <h4>
-
-                        Connected Wallet
-
-                    </h4>
-
-                    <div
-                        id="walletAddress"
-                        class="balance-value">
-
-                        Not Connected
-
-                    </div>
-
-                </div>
-
                 <div class="help-box">
 
                     <h4>
@@ -771,25 +841,19 @@
 
                         <li>
 
-                            Fill in token information.
+                            Complete token information.
 
                         </li>
 
                         <li>
 
-                            Configure optional features.
+                            Review deployment fee.
 
                         </li>
 
                         <li>
 
-                            Review deployment details.
-
-                        </li>
-
-                        <li>
-
-                            Click Deploy Token.
+                            Confirm deployment.
 
                         </li>
 
@@ -820,7 +884,8 @@
 
                 <p>
 
-                    LaunchFuture is the official launchpad interface for deploying verified EVOZ20 tokens.
+                    LaunchFuture is the official launchpad interface
+                    for deploying verified EVOZ20 tokens.
 
                 </p>
 
@@ -846,12 +911,6 @@
 
                 </a>
 
-                <a href="./launch.html">
-
-                    Deploy Token
-
-                </a>
-
             </div>
 
             <div>
@@ -864,19 +923,19 @@
 
                 <p>
 
-                    Documentation
+                    LaunchFuture Factory
 
                 </p>
 
                 <p>
 
-                    Dashboard
+                    EVOZ20 Standard
 
                 </p>
 
                 <p>
 
-                    Explorer
+                    On-Chain Deployment
 
                 </p>
 
@@ -901,4 +960,4 @@
 
 </body>
 
-</html>
+    </html>
