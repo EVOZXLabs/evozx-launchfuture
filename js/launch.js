@@ -1238,7 +1238,7 @@ async function loadInitialState() {
 // INITIALIZE
 // =====================================================
 
-export async function initialize() {
+async function initialize() {
 
     if (initialized) {
 
