@@ -3,6 +3,7 @@ import {
 } from "https://esm.sh/ethers@6";
 
 import {
+    NETWORK,
     STORAGE
 } from "./config.js";
 
@@ -20,7 +21,8 @@ import {
     getEVOZXBalance,
     getEVOZXAllowance,
     approveEVOZX,
-    createToken
+    createToken,
+    getLaunchKitVersion
 } from "./factory.js";
 
 import {
@@ -28,28 +30,75 @@ import {
 } from "./exchange.js";
 
 // =====================================================
-// BUILD DEPLOYMENT
+// HELPERS
 // =====================================================
 
-export function buildDeployment(form) {
+function normalizeString(
+    value
+) {
+
+    return String(
+        value ?? ""
+    ).trim();
+
+}
+
+function normalizeNumber(
+    value
+) {
+
+    const number =
+        Number(value);
+
+    return Number.isFinite(
+        number
+    )
+        ? number
+        : 0;
+
+}
+
+// =====================================================
+// BUILD CONFIG
+// =====================================================
+
+export async function buildDeployment(
+    form
+) {
+
+    const account =
+        getAccount();
+
+    if (!account) {
+
+        throw new Error(
+            "Wallet not connected."
+        );
+
+    }
+
+    const launchKitVersion =
+
+        await getLaunchKitVersion();
 
     return {
 
         // BASIC
 
         name:
-            String(
-                form.name ?? ""
-            ).trim(),
+
+            normalizeString(
+                form.name
+            ),
 
         symbol:
-            String(
-                form.symbol ?? ""
-            )
-                .trim()
-                .toUpperCase(),
+
+            normalizeString(
+                form.symbol
+            ).toUpperCase(),
 
         supply:
+
             BigInt(
                 form.supply || 0
             ),
@@ -57,13 +106,15 @@ export function buildDeployment(form) {
         // SYSTEM
 
         owner:
-            ZeroAddress,
+            account,
 
         chainId:
-            0,
+            NETWORK.chainId,
 
         launchKitVersion:
-            0,
+            Number(
+                launchKitVersion
+            ),
 
         // FEATURES
 
@@ -85,28 +136,33 @@ export function buildDeployment(form) {
         // METADATA
 
         website:
-            String(
-                form.website ?? ""
-            ).trim(),
+
+            normalizeString(
+                form.website
+            ),
 
         telegram:
-            String(
-                form.telegram ?? ""
-            ).trim(),
+
+            normalizeString(
+                form.telegram
+            ),
 
         twitter:
-            String(
-                form.twitter ?? ""
-            ).trim(),
+
+            normalizeString(
+                form.twitter
+            ),
 
         logoURI:
-            String(
-                form.logoURI ?? ""
-            ).trim(),
+
+            normalizeString(
+                form.logoURI
+            ),
 
         // SECURITY
 
         maxWalletEnabled:
+
             Boolean(
                 form.maxWalletEnabled
             ),
@@ -115,13 +171,14 @@ export function buildDeployment(form) {
 
             form.maxWalletEnabled
 
-                ? Number(
-                    form.maxWalletPercent || 0
+                ? normalizeNumber(
+                    form.maxWalletPercent
                 )
 
                 : 0,
 
         maxTxEnabled:
+
             Boolean(
                 form.maxTxEnabled
             ),
@@ -130,8 +187,8 @@ export function buildDeployment(form) {
 
             form.maxTxEnabled
 
-                ? Number(
-                    form.maxTxPercent || 0
+                ? normalizeNumber(
+                    form.maxTxPercent
                 )
 
                 : 0,
@@ -139,11 +196,13 @@ export function buildDeployment(form) {
         // TRADING
 
         tradingControlEnabled:
+
             Boolean(
                 form.tradingControlEnabled
             ),
 
         tradingEnabled:
+
             Boolean(
                 form.tradingEnabled
             ),
@@ -151,6 +210,7 @@ export function buildDeployment(form) {
         // TAX
 
         buyTaxEnabled:
+
             Boolean(
                 form.buyTaxEnabled
             ),
@@ -159,13 +219,14 @@ export function buildDeployment(form) {
 
             form.buyTaxEnabled
 
-                ? Number(
-                    form.buyTax || 0
+                ? normalizeNumber(
+                    form.buyTax
                 )
 
                 : 0,
 
         sellTaxEnabled:
+
             Boolean(
                 form.sellTaxEnabled
             ),
@@ -174,8 +235,8 @@ export function buildDeployment(form) {
 
             form.sellTaxEnabled
 
-                ? Number(
-                    form.sellTax || 0
+                ? normalizeNumber(
+                    form.sellTax
                 )
 
                 : 0,
@@ -187,21 +248,25 @@ export function buildDeployment(form) {
                 form.sellTaxEnabled
             )
 
-                ? Number(
-                    form.burnTaxShare || 0
+                ? normalizeNumber(
+                    form.burnTaxShare
                 )
 
                 : 0,
 
         marketingWallet:
 
-            form.marketingWallet ||
+            normalizeString(
+                form.marketingWallet
+            ) ||
 
             ZeroAddress,
 
         developmentWallet:
 
-            form.developmentWallet ||
+            normalizeString(
+                form.developmentWallet
+            ) ||
 
             ZeroAddress
 
@@ -213,7 +278,9 @@ export function buildDeployment(form) {
 // PREVIEW
 // =====================================================
 
-export async function getDeploymentPreview(form) {
+export async function getDeploymentPreview(
+    form
+) {
 
     const account =
         getAccount();
@@ -227,9 +294,13 @@ export async function getDeploymentPreview(form) {
     }
 
     const config =
-        buildDeployment(form);
+
+        await buildDeployment(
+            form
+        );
 
     const validationError =
+
         validateConfig(
             config
         );
@@ -243,16 +314,19 @@ export async function getDeploymentPreview(form) {
     }
 
     const fee =
+
         await getDeploymentFee(
             config
         );
 
     const balance =
+
         await getEVOZXBalance(
             account
         );
 
     const allowance =
+
         await getEVOZXAllowance(
             account
         );
@@ -260,6 +334,8 @@ export async function getDeploymentPreview(form) {
     return {
 
         account,
+
+        config,
 
         fee,
 
@@ -278,12 +354,13 @@ export async function getDeploymentPreview(form) {
     };
 
 }
-
 // =====================================================
 // APPROVAL
 // =====================================================
 
-export async function approveFactory(config) {
+export async function approveFactory(
+    config
+) {
 
     const account =
         getAccount();
@@ -297,11 +374,13 @@ export async function approveFactory(config) {
     }
 
     const fee =
+
         await getDeploymentFee(
             config
         );
 
     const allowance =
+
         await getEVOZXAllowance(
             account
         );
@@ -312,25 +391,25 @@ export async function approveFactory(config) {
 
     }
 
-    const tx =
-        await approveEVOZX(
-            fee
-        );
-
-    await tx.wait();
+    await approveEVOZX(
+        fee
+    );
 
     return fee;
 
 }
+
 // =====================================================
 // STORAGE
 // =====================================================
 
-function saveLastDeployment(deployment) {
+export function saveLastDeployment(
+    deployment
+) {
 
     localStorage.setItem(
 
-        STORAGE.lastDeployment,
+        STORAGE.lastToken,
 
         JSON.stringify(
             deployment
@@ -340,7 +419,9 @@ function saveLastDeployment(deployment) {
 
 }
 
-function saveDeploymentHistory(deployment) {
+export function saveDeploymentHistory(
+    deployment
+) {
 
     let history = [];
 
@@ -349,12 +430,18 @@ function saveDeploymentHistory(deployment) {
         history = JSON.parse(
 
             localStorage.getItem(
+
                 STORAGE.deployHistory
+
             ) || "[]"
 
         );
 
-        if (!Array.isArray(history)) {
+        if (
+            !Array.isArray(
+                history
+            )
+        ) {
 
             history = [];
 
@@ -388,7 +475,9 @@ function saveDeploymentHistory(deployment) {
 // DEPLOY
 // =====================================================
 
-export async function deployToken(form) {
+export async function deployToken(
+    form
+) {
 
     const account =
         getAccount();
@@ -402,9 +491,13 @@ export async function deployToken(form) {
     }
 
     const config =
-        buildDeployment(form);
+
+        await buildDeployment(
+            form
+        );
 
     const validationError =
+
         validateConfig(
             config
         );
@@ -418,6 +511,7 @@ export async function deployToken(form) {
     }
 
     const exists =
+
         await symbolExists(
             config.symbol
         );
@@ -431,11 +525,13 @@ export async function deployToken(form) {
     }
 
     const fee =
+
         await getDeploymentFee(
             config
         );
 
     const balance =
+
         await getEVOZXBalance(
             account
         );
@@ -453,6 +549,7 @@ export async function deployToken(form) {
     );
 
     const result =
+
         await createToken(
             config
         );
@@ -500,11 +597,73 @@ export async function deployToken(form) {
 }
 
 // =====================================================
+// UTILITIES
+// =====================================================
+
+export async function canDeploy(
+    form
+) {
+
+    try {
+
+        const preview =
+
+            await getDeploymentPreview(
+                form
+            );
+
+        return (
+
+            preview.enoughBalance
+
+        );
+
+    }
+
+    catch {
+
+        return false;
+
+    }
+
+}
+
+export async function estimateDeployment(
+    form
+) {
+
+    const preview =
+
+        await getDeploymentPreview(
+            form
+        );
+
+    return {
+
+        fee:
+            preview.fee,
+
+        balance:
+            preview.balance,
+
+        allowance:
+            preview.allowance,
+
+        approved:
+            preview.approved,
+
+        enoughBalance:
+            preview.enoughBalance
+
+    };
+
+}
+
+// =====================================================
 // EXPORTS
 // =====================================================
 
 export {
 
-    saveLastDeployment,
-    saveDeploymentHistory
+    buildDeployment
 };
