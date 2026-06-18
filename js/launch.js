@@ -955,23 +955,17 @@ async function refreshPreview() {
 
     catch (error) {
 
-        console.error(error);
+    console.error("PREVIEW ERROR:", error);
 
-        setText(
+    setText(
+        "deploymentFee",
+        error?.message || "ERROR"
+    );
 
-            "deploymentFee",
-
-            "-"
-
-        );
-
-        setText(
-
-            "readyStatus",
-
-            "Preview Error"
-
-        );
+    setText(
+        "readyStatus",
+        error?.message || "Preview Error"
+    );
 
     }
 
