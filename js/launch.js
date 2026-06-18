@@ -722,47 +722,34 @@ async function updateWalletPreview() {
     }
 
     catch (error) {
+catch (error) {
 
-        console.error(error);
+    console.log(
+        "PREVIEW MESSAGE:",
+        error?.message
+    );
 
-        setText(
-            "walletEVOZBalance",
-            "-"
-        );
+    console.log(
+        "PREVIEW STACK:",
+        error?.stack
+    );
 
-    }
+    console.log(
+        "PREVIEW ERROR:",
+        error
+    );
 
-    try {
+    setText(
+        "deploymentFee",
+        "-"
+    );
 
-        const evozxBalance =
-
-            await getEVOZXBalance(
-                account
-            );
-
-        setText(
-
-            "walletEVOZXBalance",
-
-            formatToken(
-                evozxBalance
-            )
-
-        );
-
-    }
-
-    catch (error) {
-
-        console.error(error);
-
-        setText(
-            "walletEVOZXBalance",
-            "-"
-        );
+    setText(
+        "readyStatus",
+        error?.message || "Preview Error"
+    );
 
     }
-
 }
 
 // =====================================================
