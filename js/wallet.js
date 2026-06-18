@@ -70,13 +70,9 @@ export function shortAddress(address) {
     }
 
     return (
-
         address.slice(0, 6) +
-
         "..." +
-
         address.slice(-4)
-
     );
 
 }
@@ -162,7 +158,6 @@ export async function checkNetwork() {
     }
 
     const currentChainId =
-
         await window.ethereum.request({
 
             method: "eth_chainId"
@@ -172,7 +167,6 @@ export async function checkNetwork() {
     return (
 
         currentChainId.toLowerCase() ===
-
         NETWORK.chainIdHex.toLowerCase()
 
     );
@@ -184,9 +178,7 @@ export async function switchNetwork() {
     if (!hasWallet()) {
 
         throw new Error(
-
             "Wallet not detected."
-
         );
 
     }
@@ -201,10 +193,8 @@ export async function switchNetwork() {
             params: [
 
                 {
-
                     chainId:
                         NETWORK.chainIdHex
-
                 }
 
             ]
@@ -278,9 +268,7 @@ export async function switchNetwork() {
 export function updateWalletUI() {
 
     document
-
         .querySelectorAll("#connectWallet")
-
         .forEach(button => {
 
             button.textContent =
@@ -294,11 +282,8 @@ export function updateWalletUI() {
         });
 
     const walletAddress =
-
         document.getElementById(
-
             "walletAddress"
-
         );
 
     if (walletAddress) {
@@ -314,11 +299,8 @@ export function updateWalletUI() {
     }
 
     const dashboardWallet =
-
         document.getElementById(
-
             "dashboardWallet"
-
         );
 
     if (dashboardWallet) {
@@ -334,7 +316,6 @@ export function updateWalletUI() {
     }
 
 }
-
 // =====================================================
 // INTERNAL
 // =====================================================
@@ -342,58 +323,33 @@ export function updateWalletUI() {
 async function hydrateWallet(address) {
 
     provider =
-
         new BrowserProvider(
-
             window.ethereum
-
         );
 
     signer =
-
         await provider.getSigner();
 
-    account = address;
+    account =
+        address;
 
     const network =
-
         await provider.getNetwork();
 
     chainId =
-
-        Number(network.chainId);
+        Number(
+            network.chainId
+        );
 
     updateWalletUI();
 
-    emitAccountChanged(account);
-
-    emitChainChanged(chainId);
-
-}
-
-// =====================================================
-// DISCONNECT
-// =====================================================
-
-export function disconnectWallet() {
-
-    provider = null;
-
-    signer = null;
-
-    account = null;
-
-    chainId = null;
-
-    localStorage.removeItem(
-
-        STORAGE.wallet
-
+    emitAccountChanged(
+        account
     );
 
-    updateWalletUI();
-
-    emitAccountChanged(null);
+    emitChainChanged(
+        chainId
+    );
 
 }
 
@@ -406,15 +362,12 @@ export async function connectWallet() {
     if (!hasWallet()) {
 
         throw new Error(
-
             "Wallet not detected."
-
         );
 
     }
 
     const accounts =
-
         await window.ethereum.request({
 
             method:
@@ -425,18 +378,10 @@ export async function connectWallet() {
     if (!accounts.length) {
 
         throw new Error(
-
             "No account selected."
-
         );
 
     }
-
-    await hydrateWallet(
-
-        accounts[0]
-
-    );
 
     if (!(await checkNetwork())) {
 
@@ -444,12 +389,13 @@ export async function connectWallet() {
 
     }
 
+    await hydrateWallet(
+        accounts[0]
+    );
+
     localStorage.setItem(
-
         STORAGE.wallet,
-
         "connected"
-
     );
 
     return account;
@@ -463,27 +409,21 @@ export async function restoreConnection() {
         updateWalletUI();
 
         return;
-
     }
 
-    if (
-
+    const remember =
         localStorage.getItem(
-
             STORAGE.wallet
+        );
 
-        ) !== "connected"
-
-    ) {
+    if (remember !== "connected") {
 
         updateWalletUI();
 
         return;
-
     }
 
     const accounts =
-
         await window.ethereum.request({
 
             method:
@@ -494,21 +434,43 @@ export async function restoreConnection() {
     if (!accounts.length) {
 
         localStorage.removeItem(
-
             STORAGE.wallet
-
         );
 
         updateWalletUI();
 
         return;
-
     }
 
     await hydrateWallet(
-
         accounts[0]
+    );
 
+}
+
+// =====================================================
+// RESET
+// =====================================================
+
+function clearWalletState() {
+
+    provider = null;
+    signer = null;
+    account = null;
+    chainId = null;
+
+    localStorage.removeItem(
+        STORAGE.wallet
+    );
+
+    updateWalletUI();
+
+    emitAccountChanged(
+        null
+    );
+
+    emitChainChanged(
+        null
     );
 
 }
@@ -522,7 +484,6 @@ function bindWalletEvents() {
     if (!hasWallet()) {
 
         return;
-
     }
 
     window.ethereum.on(
@@ -531,19 +492,26 @@ function bindWalletEvents() {
 
         async accounts => {
 
-            if (!accounts.length) {
+            try {
 
-                disconnectWallet();
+                if (!accounts.length) {
 
-                return;
+                    clearWalletState();
+
+                    return;
+                }
+
+                await hydrateWallet(
+                    accounts[0]
+                );
 
             }
 
-            await hydrateWallet(
+            catch (error) {
 
-                accounts[0]
+                console.error(error);
 
-            );
+            }
 
         }
 
@@ -557,33 +525,20 @@ function bindWalletEvents() {
 
             try {
 
-                provider =
+                if (!account) {
 
-                    new BrowserProvider(
+                    return;
+                }
 
-                        window.ethereum
-
-                    );
-
-                const network =
-
-                    await provider.getNetwork();
-
-                chainId =
-
-                    Number(network.chainId);
-
-                emitChainChanged(
-
-                    chainId
-
+                await hydrateWallet(
+                    account
                 );
 
             }
 
-            catch {
+            catch (error) {
 
-                chainId = null;
+                console.error(error);
 
             }
 
@@ -593,49 +548,50 @@ function bindWalletEvents() {
 
 }
 
-// =====================================================
-// BUTTONS
-// =====================================================
-
 function bindConnectButtons() {
 
     document
 
         .querySelectorAll(
-
             "#connectWallet"
-
         )
 
         .forEach(button => {
 
-            button.onclick = async () => {
+            button.addEventListener(
 
-                if (account) {
+                "click",
 
-                    return;
+                async () => {
+
+                    if (account) {
+
+                        return;
+                    }
+
+                    try {
+
+                        await connectWallet();
+
+                    }
+
+                    catch (error) {
+
+                        console.error(error);
+
+                        alert(
+
+                            error.message ||
+
+                            "Unable to connect wallet."
+
+                        );
+
+                    }
 
                 }
 
-                try {
-
-                    await connectWallet();
-
-                }
-
-                catch (error) {
-
-                    alert(
-
-                        error.message ||
-
-                        "Wallet connection failed."
-
-                    );
-
-                }
-
-            };
+            );
 
         });
 
@@ -650,7 +606,6 @@ export async function initializeWallet() {
     if (initialized) {
 
         return;
-
     }
 
     initialized = true;
@@ -661,4 +616,33 @@ export async function initializeWallet() {
 
     await restoreConnection();
 
+}
+
+// =====================================================
+// AUTO START
+// =====================================================
+
+document.addEventListener(
+
+    "DOMContentLoaded",
+
+    () => {
+
+        initializeWallet()
+            .catch(
+                console.error
+            );
+
     }
+
+);
+
+// =====================================================
+// EXPORTS
+// =====================================================
+
+export {
+
+    initializeWallet
+
+};
