@@ -357,11 +357,10 @@ catch (error) {
 
     setText(
         "dashboardEVOZX",
-        "-"
+        error?.message || "ERROR"
     );
 
 }
-
 // =====================================================
 // PLATFORM STATISTICS
 // =====================================================
