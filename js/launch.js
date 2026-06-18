@@ -750,6 +750,40 @@ async function updateWalletPreview() {
     );
 
     }
+
+    try {
+
+    const evozxBalance =
+        await getEVOZXBalance(
+            account
+        );
+
+    setText(
+
+        "walletEVOZXBalance",
+
+        `${formatToken(
+            evozxBalance
+        )} EVOZX`
+
+    );
+
+}
+
+catch (error) {
+
+    console.error(
+        "EVOZX PREVIEW ERROR:",
+        error
+    );
+
+    setText(
+        "walletEVOZXBalance",
+        "-"
+    );
+
+}
+    
 }
 
 // =====================================================
