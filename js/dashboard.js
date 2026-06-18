@@ -376,115 +376,66 @@ async function loadPlatformStatistics() {
         const contract =
             await getEVOZXContract();
 
-        const [
-
-            burned,
-            totalSupply
-
-        ] = await Promise.all([
-
-            contract.balanceOf(
-                DEAD_ADDRESS
-            ),
-
-            contract.totalSupply()
-
-        ]);
-
-        const burnedValue =
-            Number(
-                formatUnits(
-                    burned,
-                    18
-                )
-            );
-
-        const supplyValue =
-            Number(
-                formatUnits(
-                    totalSupply,
-                    18
-                )
-            );
-
         const initialSupply =
-            burnedValue +
-            supplyValue;
+            await contract.INITIAL_SUPPLY();
 
-        const percentage =
+        const currentSupply =
+            await contract.totalSupply();
 
-            initialSupply > 0
+        const burned =
+            initialSupply -
+            currentSupply;
 
-                ? (
-                    burnedValue /
-                    initialSupply
-                ) * 100
-
-                : 0;
-
-        // ---------------------------------
-        // TOTAL BURNED
-        // ---------------------------------
+        const percent =
+            Number(burned) *
+            100 /
+            Number(initialSupply);
 
         setText(
-
-            "totalBurnedEVOZX",
-
-            `${burnedValue.toLocaleString()} EVOZX`
-
+            "initialSupply",
+            formatToken(
+                initialSupply
+            )
         );
 
-        // ---------------------------------
-        // CURRENT SUPPLY
-        // ---------------------------------
-
         setText(
-
             "currentSupply",
-
-            `${supplyValue.toLocaleString()} EVOZX`
-
-        );
-
-        // ---------------------------------
-        // PERCENTAGE
-        // ---------------------------------
-
-        setText(
-
-            "burnPercentage",
-
-            `${percentage.toFixed(2)}%`
-
+            formatToken(
+                currentSupply
+            )
         );
 
         setText(
-
-            "burnPercentageText",
-
-            `${percentage.toFixed(2)}%`
-
+            "totalBurnedEVOZX",
+            formatToken(
+                burned
+            )
         );
 
-        // ---------------------------------
-        // PROGRESS BAR
-        // ---------------------------------
+        setText(
+            "burnPercent",
+            `${percent.toFixed(6)}%`
+        );
 
-        const progress =
-
+        const bar =
             document.getElementById(
                 "burnProgressBar"
             );
 
-        if (progress) {
+        if (bar) {
 
-            progress.style.width =
+            bar.style.width =
                 `${Math.min(
-                    percentage,
+                    percent,
                     100
                 )}%`;
 
         }
+
+        setText(
+            "burnEvents",
+            "-"
+        );
 
     }
 
@@ -492,21 +443,6 @@ async function loadPlatformStatistics() {
 
         console.error(
             error
-        );
-
-        setText(
-            "totalBurnedEVOZX",
-            "-"
-        );
-
-        setText(
-            "currentSupply",
-            "-"
-        );
-
-        setText(
-            "burnPercentage",
-            "-"
         );
 
     }
