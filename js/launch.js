@@ -18,26 +18,45 @@ import {
 
 import {
     getAccount,
-    onAccountChanged,
-    restoreConnection
+    restoreConnection,
+    onAccountChanged
 } from "./wallet.js";
+
+// =====================================================
+// STATE
+// =====================================================
+
+let deployRunning = false;
+
+let symbolTimer = null;
+
+let initialized = false;
 
 // =====================================================
 // DOM
 // =====================================================
 
-const $ = id =>
-    document.getElementById(id);
+function $(id) {
 
-function setText(id, value) {
+    return document.getElementById(id);
+
+}
+
+function setText(
+    id,
+    value
+) {
 
     const element = $(id);
 
     if (!element) {
+
         return;
+
     }
 
-    element.textContent = value;
+    element.textContent =
+        value ?? "";
 
 }
 
@@ -46,7 +65,9 @@ function getValue(id) {
     const element = $(id);
 
     if (!element) {
+
         return "";
+
     }
 
     return element.value.trim();
@@ -56,7 +77,9 @@ function getValue(id) {
 function getNumber(id) {
 
     const value =
-        Number(getValue(id));
+        Number(
+            getValue(id)
+        );
 
     return Number.isFinite(value)
         ? value
@@ -68,31 +91,33 @@ function isChecked(id) {
 
     const element = $(id);
 
-    return element
-        ? element.checked
-        : false;
+    if (!element) {
+
+        return false;
+
+    }
+
+    return element.checked;
 
 }
 
-function enable(id, state) {
+function enable(
+    id,
+    state = true
+) {
 
     const element = $(id);
 
     if (!element) {
+
         return;
+
     }
 
-    element.disabled = !state;
+    element.disabled =
+        !state;
 
 }
-
-// =====================================================
-// STATE
-// =====================================================
-
-let deployRunning = false;
-
-let symbolTimer = null;
 
 // =====================================================
 // STATUS
@@ -100,10 +125,17 @@ let symbolTimer = null;
 
 function setStatus(message = "") {
 
-    setText(
-        "statusText",
-        message
-    );
+    const panel =
+        $("statusText");
+
+    if (!panel) {
+
+        return;
+
+    }
+
+    panel.textContent =
+        message;
 
 }
 
@@ -114,13 +146,15 @@ function clearStatus() {
 }
 
 // =====================================================
-// HELPERS
+// FORMAT
 // =====================================================
 
 function shortAddress(address) {
 
     if (!address) {
+
         return "-";
+
     }
 
     return (
@@ -139,10 +173,14 @@ function formatToken(value) {
 
     try {
 
-        return formatUnits(
-            value,
-            18
-        );
+        return Number(
+
+            formatUnits(
+                value,
+                18
+            )
+
+        ).toLocaleString();
 
     }
 
@@ -158,9 +196,11 @@ function formatToken(value) {
 // FORM DATA
 // =====================================================
 
-function getFormData() {
+export function getFormData() {
 
     return {
+
+        // BASIC
 
         name:
             getValue("name"),
@@ -170,6 +210,8 @@ function getFormData() {
 
         supply:
             getNumber("supply"),
+
+        // FEATURES
 
         burnable:
             isChecked("burnable"),
@@ -181,6 +223,8 @@ function getFormData() {
             isChecked(
                 "ownershipEnabled"
             ),
+
+        // SECURITY
 
         maxWalletEnabled:
             isChecked(
@@ -202,6 +246,8 @@ function getFormData() {
                 "maxTxPercent"
             ),
 
+        // TRADING
+
         tradingControlEnabled:
             isChecked(
                 "tradingControlEnabled"
@@ -211,6 +257,8 @@ function getFormData() {
             isChecked(
                 "tradingEnabled"
             ),
+
+        // TAX
 
         buyTaxEnabled:
             isChecked(
@@ -237,6 +285,8 @@ function getFormData() {
                 "burnTaxShare"
             ),
 
+        // WALLETS
+
         marketingWallet:
             getValue(
                 "marketingWallet"
@@ -247,22 +297,31 @@ function getFormData() {
                 "developmentWallet"
             ),
 
+        // LINKS
+
         website:
-            getValue("website"),
+            getValue(
+                "website"
+            ),
 
         telegram:
-            getValue("telegram"),
+            getValue(
+                "telegram"
+            ),
 
         twitter:
-            getValue("twitter"),
+            getValue(
+                "twitter"
+            ),
 
         logoURI:
-            getValue("logoURI")
+            getValue(
+                "logoURI"
+            )
 
     };
 
 }
-
 // =====================================================
 // ACCORDION
 // =====================================================
@@ -285,11 +344,15 @@ function initializeAccordion() {
                 );
 
             if (!header) {
+
                 return;
+
             }
 
             header.addEventListener(
+
                 "click",
+
                 () => {
 
                     accordion.classList.toggle(
@@ -297,9 +360,11 @@ function initializeAccordion() {
                     );
 
                 }
+
             );
 
         }
+
     );
 
 }
@@ -310,43 +375,31 @@ function initializeAccordion() {
 
 function updateFeatureState() {
 
-    enable(
-
-        "maxWalletPercent",
+    const maxWalletEnabled =
 
         isChecked(
             "maxWalletEnabled"
-        )
+        );
 
-    );
-
-    enable(
-
-        "maxTxPercent",
+    const maxTxEnabled =
 
         isChecked(
             "maxTxEnabled"
-        )
+        );
 
-    );
-
-    enable(
-
-        "tradingEnabled",
+    const tradingControlEnabled =
 
         isChecked(
             "tradingControlEnabled"
-        )
+        );
 
-    );
-
-    const buyEnabled =
+    const buyTaxEnabled =
 
         isChecked(
             "buyTaxEnabled"
         );
 
-    const sellEnabled =
+    const sellTaxEnabled =
 
         isChecked(
             "sellTaxEnabled"
@@ -354,18 +407,32 @@ function updateFeatureState() {
 
     const taxEnabled =
 
-        buyEnabled ||
+        buyTaxEnabled ||
+        sellTaxEnabled;
 
-        sellEnabled;
+    enable(
+        "maxWalletPercent",
+        maxWalletEnabled
+    );
+
+    enable(
+        "maxTxPercent",
+        maxTxEnabled
+    );
+
+    enable(
+        "tradingEnabled",
+        tradingControlEnabled
+    );
 
     enable(
         "buyTax",
-        buyEnabled
+        buyTaxEnabled
     );
 
     enable(
         "sellTax",
-        sellEnabled
+        sellTaxEnabled
     );
 
     enable(
@@ -386,7 +453,7 @@ function updateFeatureState() {
 }
 
 // =====================================================
-// SYMBOL CHECK
+// SYMBOL STATUS
 // =====================================================
 
 async function updateSymbolStatus() {
@@ -395,7 +462,9 @@ async function updateSymbolStatus() {
         $("symbolStatus");
 
     if (!badge) {
+
         return;
+
     }
 
     const symbol =
@@ -419,7 +488,7 @@ async function updateSymbolStatus() {
                 symbol
             );
 
-        if (result.exists) {
+        if (result?.exists) {
 
             badge.textContent =
                 "Already Used";
@@ -439,9 +508,12 @@ async function updateSymbolStatus() {
 
     }
 
-    catch {
+    catch (error) {
 
-        badge.textContent = "";
+        console.error(error);
+
+        badge.textContent =
+            "";
 
         badge.className =
             "badge";
@@ -458,9 +530,13 @@ function scheduleSymbolCheck() {
 
     symbolTimer = setTimeout(
 
-        updateSymbolStatus,
+        async () => {
 
-        500
+            await updateSymbolStatus();
+
+        },
+
+        400
 
     );
 
@@ -472,28 +548,101 @@ function scheduleSymbolCheck() {
 
 function validateForm() {
 
-    const config =
-        getFormData();
+    try {
 
-    const error =
-        validateConfig(
-            config
+        const form =
+            getFormData();
+
+        const error =
+            validateConfig(
+                form
+            );
+
+        if (error) {
+
+            setStatus(error);
+
+            return false;
+
+        }
+
+        clearStatus();
+
+        return true;
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        setStatus(
+
+            error.message ||
+
+            "Validation failed."
+
         );
-
-    if (error) {
-
-        setStatus(error);
 
         return false;
 
     }
 
-    clearStatus();
-
-    return true;
-
 }
 
+// =====================================================
+// FORM EVENTS
+// =====================================================
+
+function bindFormInputs() {
+
+    document
+
+        .querySelectorAll(
+            "input, textarea"
+        )
+
+        .forEach(element => {
+
+            element.addEventListener(
+
+                "input",
+
+                async () => {
+
+                    updateFeatureState();
+
+                    validateForm();
+
+                    scheduleSymbolCheck();
+
+                    await refreshPreview();
+
+                }
+
+            );
+
+            element.addEventListener(
+
+                "change",
+
+                async () => {
+
+                    updateFeatureState();
+
+                    validateForm();
+
+                    scheduleSymbolCheck();
+
+                    await refreshPreview();
+
+                }
+
+            );
+
+        });
+
+}
 // =====================================================
 // WALLET PREVIEW
 // =====================================================
@@ -526,7 +675,9 @@ async function updateWalletPreview() {
 
     setText(
         "walletAddress",
-        shortAddress(account)
+        shortAddress(
+            account
+        )
     );
 
     try {
@@ -552,19 +703,27 @@ async function updateWalletPreview() {
 
             "walletEVOZBalance",
 
-            formatUnits(
+            Number(
 
-                BigInt(nativeBalance),
+                formatUnits(
 
-                18
+                    BigInt(
+                        nativeBalance
+                    ),
 
-            )
+                    18
+
+                )
+
+            ).toLocaleString()
 
         );
 
     }
 
-    catch {
+    catch (error) {
+
+        console.error(error);
 
         setText(
             "walletEVOZBalance",
@@ -593,7 +752,9 @@ async function updateWalletPreview() {
 
     }
 
-    catch {
+    catch (error) {
+
+        console.error(error);
 
         setText(
             "walletEVOZXBalance",
@@ -615,6 +776,10 @@ async function refreshPreview() {
         const form =
             getFormData();
 
+        // ---------------------------------
+        // DEPLOYMENT FEE
+        // ---------------------------------
+
         const fee =
             await getDeploymentFee(
                 form
@@ -624,9 +789,15 @@ async function refreshPreview() {
 
             "deploymentFee",
 
-            `${formatToken(fee)} EVOZX`
+            `${formatToken(
+                fee
+            )} EVOZX`
 
         );
+
+        // ---------------------------------
+        // WALLET CHECK
+        // ---------------------------------
 
         const account =
             getAccount();
@@ -655,6 +826,10 @@ async function refreshPreview() {
 
         }
 
+        // ---------------------------------
+        // EVOZX BALANCE
+        // ---------------------------------
+
         const balance =
 
             await getEVOZXBalance(
@@ -665,14 +840,27 @@ async function refreshPreview() {
 
             "evozxBalance",
 
-            `${formatToken(balance)} EVOZX`
+            `${formatToken(
+                balance
+            )} EVOZX`
 
         );
+
+        // ---------------------------------
+        // AGREEMENT:
+        // NO BUY PAGE
+        // NO SWAP PAGE
+        // AUTO TOPUP INTERNAL
+        // ---------------------------------
 
         setText(
             "requiredEVOZ",
-            "-"
+            "Auto"
         );
+
+        // ---------------------------------
+        // VALIDATION
+        // ---------------------------------
 
         if (!validateForm()) {
 
@@ -688,19 +876,72 @@ async function refreshPreview() {
 
         }
 
+        // ---------------------------------
+        // SYMBOL CHECK
+        // ---------------------------------
+
+        const symbol =
+            getValue("symbol");
+
+        if (symbol) {
+
+            try {
+
+                const result =
+
+                    await checkSymbol(
+                        symbol
+                    );
+
+                if (
+                    result?.exists
+                ) {
+
+                    setText(
+
+                        "readyStatus",
+
+                        "Symbol Already Used"
+
+                    );
+
+                    return;
+
+                }
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    error
+                );
+
+            }
+
+        }
+
+        // ---------------------------------
+        // BALANCE STATUS
+        // ---------------------------------
+
         if (balance < fee) {
 
             setText(
 
                 "readyStatus",
 
-                "Insufficient EVOZX"
+                "Auto EVOZX Topup Required"
 
             );
 
             return;
 
         }
+
+        // ---------------------------------
+        // READY
+        // ---------------------------------
 
         setText(
 
@@ -716,11 +957,19 @@ async function refreshPreview() {
 
         console.error(error);
 
-        setStatus(
+        setText(
 
-            error.message ||
+            "deploymentFee",
 
-            "Unable to load preview."
+            "-"
+
+        );
+
+        setText(
+
+            "readyStatus",
+
+            "Preview Error"
 
         );
 
@@ -728,6 +977,25 @@ async function refreshPreview() {
 
 }
 
+// =====================================================
+// WALLET LISTENERS
+// =====================================================
+
+function bindWalletListeners() {
+
+    onAccountChanged(
+
+        async () => {
+
+            await updateWalletPreview();
+
+            await refreshPreview();
+
+        }
+
+    );
+
+}
 // =====================================================
 // DEPLOY BUTTON
 // =====================================================
@@ -740,18 +1008,17 @@ function setDeployLoading(state) {
         $("deployButton");
 
     if (!button) {
+
         return;
+
     }
 
     button.disabled =
         state;
 
     button.classList.toggle(
-
         "loading",
-
         state
-
     );
 
     button.textContent =
@@ -768,10 +1035,12 @@ function setDeployLoading(state) {
 // DEPLOY
 // =====================================================
 
-async function onDeploy() {
+export async function onDeploy() {
 
     if (deployRunning) {
+
         return;
+
     }
 
     const account =
@@ -780,9 +1049,7 @@ async function onDeploy() {
     if (!account) {
 
         setStatus(
-
-            "Connect wallet first."
-
+            "Please connect your wallet first."
         );
 
         return;
@@ -790,7 +1057,9 @@ async function onDeploy() {
     }
 
     if (!validateForm()) {
+
         return;
+
     }
 
     try {
@@ -798,6 +1067,36 @@ async function onDeploy() {
         setDeployLoading(
             true
         );
+
+        setStatus(
+
+            "Preparing deployment..."
+
+        );
+
+        const symbol =
+            getValue(
+                "symbol"
+            );
+
+        if (symbol) {
+
+            const result =
+                await checkSymbol(
+                    symbol
+                );
+
+            if (
+                result?.exists
+            ) {
+
+                throw new Error(
+                    "Symbol already exists."
+                );
+
+            }
+
+        }
 
         setStatus(
 
@@ -815,11 +1114,13 @@ async function onDeploy() {
 
     catch (error) {
 
-        console.error(error);
+        console.error(
+            error
+        );
 
         setStatus(
 
-            error.message ||
+            error?.message ||
 
             "Deployment failed."
 
@@ -835,59 +1136,11 @@ async function onDeploy() {
 
     }
 
-                }
+}
 
 // =====================================================
 // EVENTS
 // =====================================================
-
-function bindInputs() {
-
-    document
-
-        .querySelectorAll(
-
-            "input, textarea"
-
-        )
-
-        .forEach(element => {
-
-            element.addEventListener(
-
-                "input",
-
-                async () => {
-
-                    updateFeatureState();
-
-                    scheduleSymbolCheck();
-
-                    await refreshPreview();
-
-                }
-
-            );
-
-            element.addEventListener(
-
-                "change",
-
-                async () => {
-
-                    updateFeatureState();
-
-                    scheduleSymbolCheck();
-
-                    await refreshPreview();
-
-                }
-
-            );
-
-        });
-
-}
 
 function bindDeployButton() {
 
@@ -895,7 +1148,9 @@ function bindDeployButton() {
         $("deployButton");
 
     if (!button) {
+
         return;
+
     }
 
     button.addEventListener(
@@ -909,26 +1164,6 @@ function bindDeployButton() {
 }
 
 // =====================================================
-// WALLET EVENTS
-// =====================================================
-
-function bindWalletEvents() {
-
-    onAccountChanged(
-
-        async () => {
-
-            await updateWalletPreview();
-
-            await refreshPreview();
-
-        }
-
-    );
-
-}
-
-// =====================================================
 // INITIAL LOAD
 // =====================================================
 
@@ -936,9 +1171,9 @@ async function loadInitialState() {
 
     updateFeatureState();
 
-    await updateSymbolStatus();
-
     await updateWalletPreview();
+
+    await updateSymbolStatus();
 
     await refreshPreview();
 
@@ -948,7 +1183,15 @@ async function loadInitialState() {
 // INITIALIZE
 // =====================================================
 
-async function initialize() {
+export async function initialize() {
+
+    if (initialized) {
+
+        return;
+
+    }
+
+    initialized = true;
 
     try {
 
@@ -956,11 +1199,11 @@ async function initialize() {
 
         initializeAccordion();
 
-        bindInputs();
+        bindFormInputs();
 
         bindDeployButton();
 
-        bindWalletEvents();
+        bindWalletListeners();
 
         await loadInitialState();
 
@@ -968,13 +1211,15 @@ async function initialize() {
 
     catch (error) {
 
-        console.error(error);
+        console.error(
+            error
+        );
 
         setStatus(
 
-            error.message ||
+            error?.message ||
 
-            "Unable to initialize launch page."
+            "Launch page initialization failed."
 
         );
 
@@ -1000,12 +1245,5 @@ document.addEventListener(
 
 export {
 
-    initialize,
-
-    onDeploy,
-
-    refreshPreview,
-
-    getFormData
-
+    refreshPreview
 };
