@@ -1017,15 +1017,3 @@ document.addEventListener(
     initialize
 
 );
-
-// =====================================================
-// EXPORTS
-// =====================================================
-
-export {
-
-    initialize,
-    loadTokens,
-    loadHistory
-
-};
