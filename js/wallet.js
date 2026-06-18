@@ -68,13 +68,9 @@ export function shortAddress(address) {
     }
 
     return (
-
         address.slice(0, 6) +
-
         "..." +
-
         address.slice(-4)
-
     );
 
 }
@@ -85,25 +81,35 @@ export function shortAddress(address) {
 
 export function onAccountChanged(callback) {
 
-    if (typeof callback !== "function") {
+    if (
+        typeof callback !==
+        "function"
+    ) {
 
         return;
 
     }
 
-    accountListeners.push(callback);
+    accountListeners.push(
+        callback
+    );
 
 }
 
 export function onChainChanged(callback) {
 
-    if (typeof callback !== "function") {
+    if (
+        typeof callback !==
+        "function"
+    ) {
 
         return;
 
     }
 
-    chainListeners.push(callback);
+    chainListeners.push(
+        callback
+    );
 
 }
 
@@ -163,7 +169,8 @@ export async function checkNetwork() {
 
         await window.ethereum.request({
 
-            method: "eth_chainId"
+            method:
+                "eth_chainId"
 
         });
 
@@ -272,6 +279,87 @@ export async function switchNetwork() {
 }
 
 // =====================================================
+// UI
+// =====================================================
+
+export function updateWalletButtons() {
+
+    document
+
+        .querySelectorAll(
+            "#connectWallet"
+        )
+
+        .forEach(button => {
+
+            if (account) {
+
+                button.textContent =
+
+                    shortAddress(
+                        account
+                    );
+
+                button.dataset.connected =
+                    "true";
+
+            }
+
+            else {
+
+                button.textContent =
+                    "Connect Wallet";
+
+                button.dataset.connected =
+                    "false";
+
+            }
+
+        });
+
+    const dashboardWallet =
+
+        document.getElementById(
+            "dashboardWallet"
+        );
+
+    if (dashboardWallet) {
+
+        dashboardWallet.textContent =
+
+            account
+
+                ? shortAddress(
+                    account
+                )
+
+                : "-";
+
+    }
+
+    const walletAddress =
+
+        document.getElementById(
+            "walletAddress"
+        );
+
+    if (walletAddress) {
+
+        walletAddress.textContent =
+
+            account
+
+                ? shortAddress(
+                    account
+                )
+
+                : "Not Connected";
+
+    }
+
+}
+
+// =====================================================
 // CONNECTION
 // =====================================================
 
@@ -309,9 +397,7 @@ export async function connectWallet() {
     provider =
 
         new BrowserProvider(
-
             window.ethereum
-
         );
 
     signer =
@@ -328,7 +414,9 @@ export async function connectWallet() {
 
     chainId =
 
-        Number(network.chainId);
+        Number(
+            network.chainId
+        );
 
     if (!(await checkNetwork())) {
 
@@ -346,9 +434,13 @@ export async function connectWallet() {
 
     updateWalletButtons();
 
-    emitAccountChanged(account);
+    emitAccountChanged(
+        account
+    );
 
-    emitChainChanged(chainId);
+    emitChainChanged(
+        chainId
+    );
 
     return account;
 
@@ -389,7 +481,11 @@ export async function restoreConnection() {
 
     if (!accounts.length) {
 
-        disconnectWallet();
+        localStorage.removeItem(
+            STORAGE.wallet
+        );
+
+        updateWalletButtons();
 
         return;
 
@@ -398,9 +494,7 @@ export async function restoreConnection() {
     provider =
 
         new BrowserProvider(
-
             window.ethereum
-
         );
 
     signer =
@@ -408,7 +502,6 @@ export async function restoreConnection() {
         await provider.getSigner();
 
     account =
-
         accounts[0];
 
     const network =
@@ -417,13 +510,19 @@ export async function restoreConnection() {
 
     chainId =
 
-        Number(network.chainId);
+        Number(
+            network.chainId
+        );
 
     updateWalletButtons();
 
-    emitAccountChanged(account);
+    emitAccountChanged(
+        account
+    );
 
-    emitChainChanged(chainId);
+    emitChainChanged(
+        chainId
+    );
 
 }
 
@@ -445,62 +544,14 @@ export function disconnectWallet() {
 
     updateWalletButtons();
 
-    emitAccountChanged(null);
+    emitAccountChanged(
+        null
+    );
 
 }
 
 // =====================================================
-// UI
-// =====================================================
-
-export function updateWalletButtons() {
-
-    document
-
-        .querySelectorAll(
-
-            "#connectWallet"
-
-        )
-
-        .forEach(button => {
-
-            if (!button) {
-
-                return;
-
-            }
-
-            if (account) {
-
-                button.textContent =
-
-                    shortAddress(account);
-
-                button.dataset.connected =
-
-                    "true";
-
-            }
-
-            else {
-
-                button.textContent =
-
-                    "Connect Wallet";
-
-                button.dataset.connected =
-
-                    "false";
-
-            }
-
-        });
-
-}
-
-// =====================================================
-// CONNECT BUTTON
+// BUTTONS
 // =====================================================
 
 function bindConnectButtons() {
@@ -508,9 +559,7 @@ function bindConnectButtons() {
     document
 
         .querySelectorAll(
-
             "#connectWallet"
-
         )
 
         .forEach(button => {
@@ -525,8 +574,6 @@ function bindConnectButtons() {
 
                         if (account) {
 
-                            disconnectWallet();
-
                             return;
 
                         }
@@ -537,7 +584,9 @@ function bindConnectButtons() {
 
                     catch (error) {
 
-                        console.error(error);
+                        console.error(
+                            error
+                        );
 
                         alert(
 
@@ -586,9 +635,7 @@ function bindWalletEvents() {
             provider =
 
                 new BrowserProvider(
-
                     window.ethereum
-
                 );
 
             signer =
@@ -596,12 +643,13 @@ function bindWalletEvents() {
                 await provider.getSigner();
 
             account =
-
                 accounts[0];
 
             updateWalletButtons();
 
-            emitAccountChanged(account);
+            emitAccountChanged(
+                account
+            );
 
         }
 
@@ -618,9 +666,7 @@ function bindWalletEvents() {
                 provider =
 
                     new BrowserProvider(
-
                         window.ethereum
-
                     );
 
                 const network =
@@ -629,7 +675,9 @@ function bindWalletEvents() {
 
                 chainId =
 
-                    Number(network.chainId);
+                    Number(
+                        network.chainId
+                    );
 
             }
 
@@ -639,7 +687,9 @@ function bindWalletEvents() {
 
             }
 
-            emitChainChanged(chainId);
+            emitChainChanged(
+                chainId
+            );
 
         }
 
