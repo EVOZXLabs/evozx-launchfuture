@@ -1090,7 +1090,7 @@ function setDeployLoading(state) {
 // DEPLOY
 // =====================================================
 
-export async function onDeploy() {
+async function onDeploy() {
 
     if (deployRunning) {
 
