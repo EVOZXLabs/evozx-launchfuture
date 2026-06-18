@@ -1,557 +1,844 @@
 import {
-
-  Contract,
-
-  JsonRpcProvider,
-
-  Interface
-
+    Contract,
+    JsonRpcProvider,
+    Interface
 } from "https://esm.sh/ethers@6";
 
 import {
-
-  CONTRACTS,
-
-  NETWORK,
-
-  ABI
-
+    CONTRACTS,
+    NETWORK,
+    ABI
 } from "./config.js";
 
 import {
-
-  getSigner
-
+    getSigner
 } from "./wallet.js";
 
-let factoryAbi;
+// =====================================================
+// STATE
+// =====================================================
 
-let evozxAbi;
+let factoryAbi = null;
 
-let factoryInterface;
+let evozxAbi = null;
 
-let readProvider;
+let factoryInterface = null;
 
-let factoryRead;
+let provider = null;
 
-let factoryWrite;
+let factoryRead = null;
 
-let evozxRead;
+let factoryWrite = null;
 
-let evozxWrite;
+let evozxRead = null;
 
-async function loadAbi(path){
+let evozxWrite = null;
 
-  const response = await fetch(path);
+// =====================================================
+// ABI
+// =====================================================
 
-  if(!response.ok){
+async function loadAbi(path) {
 
-    throw new Error(`Unable to load ABI: ${path}`);
+    const response =
+        await fetch(path);
 
-  }
+    if (!response.ok) {
 
-  return await response.json();
+        throw new Error(
+            `Unable to load ABI: ${path}`
+        );
+
+    }
+
+    return await response.json();
 
 }
 
-export async function loadFactoryAbi(){
+export async function loadFactoryAbi() {
 
-  if(factoryAbi){
+    if (factoryAbi) {
+
+        return factoryAbi;
+
+    }
+
+    factoryAbi =
+        await loadAbi(
+            ABI.factory
+        );
+
+    factoryInterface =
+        new Interface(
+            factoryAbi
+        );
 
     return factoryAbi;
 
-  }
-
-  factoryAbi = await loadAbi(ABI.factory);
-
-  factoryInterface = new Interface(factoryAbi);
-
-  return factoryAbi;
-
 }
 
-export async function loadEVOZXAbi(){
+export async function loadEVOZXAbi() {
 
-  if(evozxAbi){
+    if (evozxAbi) {
+
+        return evozxAbi;
+
+    }
+
+    evozxAbi =
+        await loadAbi(
+            ABI.evozx
+        );
 
     return evozxAbi;
 
-  }
+}
 
-  evozxAbi = await loadAbi(ABI.evozx);
+// =====================================================
+// PROVIDER
+// =====================================================
 
-  return evozxAbi;
+export function getReadProvider() {
+
+    if (provider) {
+
+        return provider;
+
+    }
+
+    provider =
+        new JsonRpcProvider(
+            NETWORK.rpcUrl
+        );
+
+    return provider;
 
 }
 
-export function getReadProvider(){
+// =====================================================
+// CONTRACTS
+// =====================================================
 
-  if(readProvider){
+export async function getFactoryRead() {
 
-    return readProvider;
+    if (factoryRead) {
 
-  }
+        return factoryRead;
 
-  readProvider = new JsonRpcProvider(
+    }
 
-    NETWORK.rpcUrl
+    factoryRead =
+        new Contract(
 
-  );
+            CONTRACTS.factory,
 
-  return readProvider;
+            await loadFactoryAbi(),
 
-}
+            getReadProvider()
 
-export async function getFactoryRead(){
-
-  if(factoryRead){
+        );
 
     return factoryRead;
 
-  }
+}
 
-  const abi = await loadFactoryAbi();
+export async function getFactoryWrite() {
 
-  factoryRead = new Contract(
+    const signer =
+        getSigner();
 
-    CONTRACTS.factory,
+    if (!signer) {
 
-    abi,
+        throw new Error(
+            "Wallet not connected."
+        );
 
-    getReadProvider()
+    }
 
-  );
+    factoryWrite =
+        new Contract(
 
-  return factoryRead;
+            CONTRACTS.factory,
+
+            await loadFactoryAbi(),
+
+            signer
+
+        );
+
+    return factoryWrite;
 
 }
 
-export async function getEVOZXRead(){
+export async function getEVOZXRead() {
 
-  if(evozxRead){
+    if (evozxRead) {
+
+        return evozxRead;
+
+    }
+
+    evozxRead =
+        new Contract(
+
+            CONTRACTS.evozx,
+
+            await loadEVOZXAbi(),
+
+            getReadProvider()
+
+        );
 
     return evozxRead;
 
-  }
+}
 
-  const abi = await loadEVOZXAbi();
+export async function getEVOZXWrite() {
 
-  evozxRead = new Contract(
+    const signer =
+        getSigner();
 
-    CONTRACTS.evozx,
+    if (!signer) {
 
-    abi,
+        throw new Error(
+            "Wallet not connected."
+        );
 
-    getReadProvider()
+    }
 
-  );
+    evozxWrite =
+        new Contract(
 
-  return evozxRead;
+            CONTRACTS.evozx,
+
+            await loadEVOZXAbi(),
+
+            signer
+
+        );
+
+    return evozxWrite;
 
 }
 
-export async function getFactoryWrite(){
+export const getFactoryForWrite =
+    getFactoryWrite;
 
-  const signer = getSigner();
+// =====================================================
+// EVENT PARSER
+// =====================================================
 
-  if(!signer){
+async function parseTokenCreated(
+    receipt
+) {
 
-    throw new Error("Wallet not connected.");
+    await loadFactoryAbi();
 
-  }
+    for (const log of receipt.logs) {
 
-  const abi = await loadFactoryAbi();
+        try {
 
-  factoryWrite = new Contract(
+            const parsed =
+                factoryInterface.parseLog(
+                    log
+                );
 
-    CONTRACTS.factory,
+            if (
+                parsed?.name ===
+                "TokenCreated"
+            ) {
 
-    abi,
+                return {
 
-    signer
+                    token:
+                        parsed.args.token,
 
-  );
+                    creator:
+                        parsed.args.creator,
 
-  return factoryWrite;
+                    name:
+                        parsed.args.name,
 
-}
+                    symbol:
+                        parsed.args.symbol,
 
-export const getFactoryForWrite = getFactoryWrite;
+                    supply:
+                        parsed.args.supply,
 
-export async function getEVOZXWrite(){
+                    chainId:
+                        parsed.args.chainId
 
-  const signer = getSigner();
+                };
 
-  if(!signer){
+            }
 
-    throw new Error("Wallet not connected.");
+        }
 
-  }
+        catch {
 
-  const abi = await loadEVOZXAbi();
+            continue;
 
-  evozxWrite = new Contract(
+        }
 
-    CONTRACTS.evozx,
-
-    abi,
-
-    signer
-
-  );
-
-  return evozxWrite;
-
-}
-
-function parseTokenCreated(receipt){
-
-  if(!receipt){
+    }
 
     return null;
 
-  }
+}
 
-  for(const log of receipt.logs){
+// =====================================================
+// FACTORY INFO
+// =====================================================
 
-    try{
+export async function getFactoryName() {
 
-      const parsed = factoryInterface.parseLog(log);
+    return (
+        await getFactoryRead()
+    ).FACTORY_NAME();
 
-      if(parsed?.name === "TokenCreated"){
+}
 
-        return {
+export async function getVersion() {
 
-          token: parsed.args.token,
+    return (
+        await getFactoryRead()
+    ).VERSION();
 
-          creator: parsed.args.creator,
+}
 
-          name: parsed.args.name,
+export async function getLaunchKitVersion() {
 
-          symbol: parsed.args.symbol,
+    return (
+        await getFactoryRead()
+    ).LAUNCHKIT_VERSION();
 
-          supply: parsed.args.supply,
+}
 
-          chainId: parsed.args.chainId
+export async function getOwner() {
 
-        };
+    return (
+        await getFactoryRead()
+    ).owner();
 
-      }
+}
+
+export async function getTreasury() {
+
+    return (
+        await getFactoryRead()
+    ).treasury();
+
+}
+
+export async function getFeeMultiplier() {
+
+    return (
+        await getFactoryRead()
+    ).feeMultiplier();
+
+}
+
+// =====================================================
+// TOKEN REGISTRY
+// =====================================================
+
+export async function getTotalTokens() {
+
+    return Number(
+
+        await (
+
+            await getFactoryRead()
+
+        ).totalTokens()
+
+    );
+
+}
+
+export async function getAllTokens() {
+
+    return (
+
+        await getFactoryRead()
+
+    ).getAllTokens();
+
+}
+
+export async function getToken(index) {
+
+    return (
+
+        await getFactoryRead()
+
+    ).getToken(index);
+
+}
+
+export async function getTokensByCreator(
+    creator
+) {
+
+    if (!creator) {
+
+        return [];
 
     }
 
-    catch{
+    return (
 
-      // Ignore logs from other contracts.
+        await getFactoryRead()
+
+    ).getTokensByCreator(
+
+        creator
+
+    );
+
+}
+
+export async function isFactoryToken(
+    address
+) {
+
+    if (!address) {
+
+        return false;
 
     }
 
-  }
+    return (
 
-  return null;
+        await getFactoryRead()
 
-}
+    ).isTokenFromFactory(
 
-// ================= FACTORY INFO =================
+        address
 
-// ================= FACTORY INFO =================
-
-export async function getFactoryName(){
-
-  return (await getFactoryRead()).FACTORY_NAME();
+    );
 
 }
 
-export async function getVersion(){
+// =====================================================
+// SYMBOL
+// =====================================================
 
-  return (await getFactoryRead()).VERSION();
-
-}
-
-export async function getLaunchKitVersion(){
-
-  return (await getFactoryRead()).LAUNCHKIT_VERSION();
-
-}
-
-export async function getOwner(){
-
-  return (await getFactoryRead()).owner();
-
-}
-
-export async function getTreasury(){
-
-  return (await getFactoryRead()).treasury();
-
-}
-
-export async function getFeeMultiplier(){
-
-  return (await getFactoryRead()).feeMultiplier();
-
-}
-
-// ================= TOKEN DATA =================
-
-export async function getTotalTokens(){
-
-  return Number(
-
-    await (await getFactoryRead()).totalTokens()
-
-  );
-
-}
-
-export async function getAllTokens(){
-
-  return (await getFactoryRead()).getAllTokens();
-
-}
-
-export async function getToken(index){
-
-  return (await getFactoryRead()).getToken(index);
-
-}
-
-export async function getTokensByCreator(address){
-
-  if(!address){
-
-    return [];
-
-  }
-
-  return (await getFactoryRead()).getTokensByCreator(
-
-    address
-
-  );
-
-}
-
-export async function isFactoryToken(address){
-
-  if(!address){
-
-    return false;
-
-  }
-
-  return (await getFactoryRead()).isTokenFromFactory(
-
-    address
-
-  );
-
-}
-
-// ================= SYMBOL =================
-
-export async function symbolExists(symbol){
-
-  if(!symbol){
-
-    return false;
-
-  }
-
-  return (await getFactoryRead()).symbolExists(
-
+export async function symbolExists(
     symbol
+) {
 
-      .trim()
+    if (!symbol) {
 
-      .toUpperCase()
+        return false;
 
-  );
+    }
+
+    return (
+
+        await getFactoryRead()
+
+    ).symbolExists(
+
+        symbol
+
+            .trim()
+
+            .toUpperCase()
+
+    );
 
 }
 
-// ================= DEPLOYMENT =================
+// =====================================================
+// DEPLOYMENT FEE
+// =====================================================
 
-export async function getDeploymentFee(config){
-
-  return (await getFactoryRead()).getDeploymentFee(
-
+export async function getDeploymentFee(
     config
+) {
 
-  );
+    return (
+
+        await getFactoryRead()
+
+    ).getDeploymentFee(
+
+        config
+
+    );
 
 }
 
-// ================= EVOZX =================
+// =====================================================
+// EVOZX BALANCE
+// =====================================================
 
-export async function getEVOZXBalance(address){
-
-  if(!address){
-
-    return 0n;
-
-  }
-
-  return (await getEVOZXRead()).balanceOf(
-
+export async function getEVOZXBalance(
     address
+) {
 
-  );
+    if (!address) {
 
-}
+        return 0n;
 
-export async function getEVOZXAllowance(address){
+    }
 
-  if(!address){
+    return (
 
-    return 0n;
+        await getEVOZXRead()
 
-  }
+    ).balanceOf(
 
-  return (await getEVOZXRead()).allowance(
+        address
 
-    address,
-
-    CONTRACTS.factory
-
-  );
+    );
 
 }
 
-// ================= APPROVE EVOZX =================
+// =====================================================
+// EVOZX ALLOWANCE
+// =====================================================
 
-export async function approveEVOZX(amount){
+export async function getEVOZXAllowance(
+    owner
+) {
 
-  if(!amount || amount <= 0n){
+    if (!owner) {
 
-    throw new Error("Invalid approval amount.");
+        return 0n;
 
-  }
+    }
 
-  const token = await getEVOZXWrite();
+    return (
 
-  const tx = await token.approve(
+        await getEVOZXRead()
 
-    CONTRACTS.factory,
+    ).allowance(
 
+        owner,
+
+        CONTRACTS.factory
+
+    );
+
+}
+
+// =====================================================
+// APPROVAL
+// =====================================================
+
+export async function approveEVOZX(
     amount
+) {
 
-  );
+    if (
 
-  await tx.wait();
+        !amount ||
 
-  return tx;
+        amount <= 0n
 
-}
+    ) {
 
-// ================= CREATE TOKEN =================
+        throw new Error(
 
-export async function createToken(config){
+            "Invalid approval amount."
 
-  const factory = await getFactoryWrite();
+        );
 
-  const tx = await factory.createToken(config);
+    }
 
-  const receipt = await tx.wait();
+    const token =
 
-  const event = parseTokenCreated(receipt);
+        await getEVOZXWrite();
 
-  if(!event){
+    const tx =
 
-    throw new Error("TokenCreated event not found.");
+        await token.approve(
 
-  }
+            CONTRACTS.factory,
 
-  return {
+            amount
 
-    hash: tx.hash,
+        );
 
-    blockNumber: receipt.blockNumber,
+    await tx.wait();
 
-    token: event.token,
-
-    creator: event.creator,
-
-    name: event.name,
-
-    symbol: event.symbol,
-
-    supply: event.supply,
-
-    chainId: event.chainId
-
-  };
+    return tx;
 
 }
 
-// ================= HELPERS =================
+// =====================================================
+// CREATE TOKEN
+// =====================================================
 
-export async function ensureApproval(owner, amount){
+export async function createToken(
+    config
+) {
 
-  const allowance = await getEVOZXAllowance(owner);
+    const factory =
 
-  if(allowance >= amount){
+        await getFactoryWrite();
 
-    return false;
+    const tx =
 
-  }
+        await factory.createToken(
 
-  await approveEVOZX(amount);
+            config
 
-  return true;
+        );
+
+    const receipt =
+
+        await tx.wait();
+
+    const event =
+
+        await parseTokenCreated(
+
+            receipt
+
+        );
+
+    if (!event) {
+
+        throw new Error(
+
+            "TokenCreated event not found."
+
+        );
+
+    }
+
+    return {
+
+        hash:
+
+            tx.hash,
+
+        blockNumber:
+
+            receipt.blockNumber,
+
+        token:
+
+            event.token,
+
+        creator:
+
+            event.creator,
+
+        name:
+
+            event.name,
+
+        symbol:
+
+            event.symbol,
+
+        supply:
+
+            event.supply,
+
+        chainId:
+
+            event.chainId
+
+    };
 
 }
 
-export async function hasEnoughEVOZX(owner, amount){
+// =====================================================
+// APPROVAL CHECK
+// =====================================================
 
-  const balance = await getEVOZXBalance(owner);
+export async function ensureApproval(
+    owner,
+    amount
+) {
 
-  return balance >= amount;
+    const allowance =
 
-}
+        await getEVOZXAllowance(
 
-export async function getDeploymentPreview(config, owner){
+            owner
 
-  const fee = await getDeploymentFee(config);
+        );
 
-  const balance = await getEVOZXBalance(owner);
+    if (
 
-  const allowance = await getEVOZXAllowance(owner);
+        allowance >= amount
 
-  return {
+    ) {
 
-    fee,
+        return false;
 
-    balance,
+    }
 
-    allowance,
+    await approveEVOZX(
 
-    enoughBalance: balance >= fee,
+        amount
 
-    approved: allowance >= fee
+    );
 
-  };
-
-}
-
-// ================= FORMAT =================
-
-export function toBigInt(value){
-
-  return BigInt(value);
+    return true;
 
 }
 
-export function isZeroAddress(address){
+// =====================================================
+// BALANCE CHECK
+// =====================================================
 
-  return (
+export async function hasEnoughEVOZX(
+    owner,
+    amount
+) {
 
-    !address ||
+    const balance =
 
-    address ===
+        await getEVOZXBalance(
 
-    "0x0000000000000000000000000000000000000000"
+            owner
 
-  );
+        );
+
+    return (
+
+        balance >= amount
+
+    );
+
+}
+
+// =====================================================
+// DEPLOYMENT PREVIEW
+// =====================================================
+
+export async function getDeploymentPreview(
+    config,
+    owner
+) {
+
+    const fee =
+
+        await getDeploymentFee(
+
+            config
+
+        );
+
+    const balance =
+
+        await getEVOZXBalance(
+
+            owner
+
+        );
+
+    const allowance =
+
+        await getEVOZXAllowance(
+
+            owner
+
+        );
+
+    return {
+
+        fee,
+
+        balance,
+
+        allowance,
+
+        enoughBalance:
+
+            balance >= fee,
+
+        approved:
+
+            allowance >= fee
+
+    };
+
+}
+
+// =====================================================
+// HELPERS
+// =====================================================
+
+export function toBigInt(
+    value
+) {
+
+    try {
+
+        return BigInt(value);
+
+    }
+
+    catch {
+
+        return 0n;
+
+    }
+
+}
+
+export function isZeroAddress(
+    address
+) {
+
+    return (
+
+        !address ||
+
+        address ===
+
+        "0x0000000000000000000000000000000000000000"
+
+    );
+
+}
+
+// =====================================================
+// FACTORY SUMMARY
+// =====================================================
+
+export async function getFactoryInfo() {
+
+    const [
+
+        name,
+        version,
+        launchKitVersion,
+        owner,
+        treasury,
+        feeMultiplier,
+        totalTokens
+
+    ] = await Promise.all([
+
+        getFactoryName(),
+        getVersion(),
+        getLaunchKitVersion(),
+        getOwner(),
+        getTreasury(),
+        getFeeMultiplier(),
+        getTotalTokens()
+
+    ]);
+
+    return {
+
+        name,
+        version,
+        launchKitVersion,
+        owner,
+        treasury,
+        feeMultiplier,
+        totalTokens
+
+    };
 
 }
