@@ -271,6 +271,11 @@ async function loadWalletSummary() {
         );
 
         setText(
+            "dashboardEVOZX",
+            "-"
+        );
+
+        setText(
             "dashboardTotalTokens",
             0
         );
@@ -284,50 +289,80 @@ async function loadWalletSummary() {
         shortAddress(account)
     );
 
+    // =====================================
+    // EVOZ BALANCE
+    // =====================================
+
     try {
 
-    console.log(
-        "ACCOUNT:",
-        account
-    );
+        const provider =
+            getReadProvider();
 
-    const balance =
-        await getEVOZXBalance(
-            account
+        const evozBalance =
+            await provider.getBalance(
+                account
+            );
+
+        setText(
+            "dashboardEVOZ",
+            `${Number(
+                formatUnits(
+                    evozBalance,
+                    18
+                )
+            ).toLocaleString()} EVOZ`
         );
 
-    console.log(
-        "RAW EVOZX:",
-        balance
-    );
+    }
 
-    console.log(
-        "RAW EVOZX STRING:",
-        balance.toString()
-    );
+    catch (error) {
 
-    setText(
-        "dashboardEVOZX",
-        `${formatToken(
-            balance
-        )} EVOZX`
-    );
+        console.error(
+            "EVOZ BALANCE ERROR:",
+            error
+        );
 
-}
-catch (error) {
+        setText(
+            "dashboardEVOZ",
+            "-"
+        );
 
-    console.error(
-        "EVOZX BALANCE ERROR:",
-        error
-    );
+    }
 
-    setText(
-        "dashboardEVOZX",
-        "ERROR"
-    );
+    // =====================================
+    // EVOZX BALANCE
+    // =====================================
 
-}
-    
+    try {
+
+        const balance =
+            await getEVOZXBalance(
+                account
+            );
+
+        setText(
+            "dashboardEVOZX",
+            `${formatToken(
+                balance
+            )} EVOZX`
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "EVOZX BALANCE ERROR:",
+            error
+        );
+
+        setText(
+            "dashboardEVOZX",
+            "-"
+        );
+
+    }
+
 }
 
 // =====================================================
