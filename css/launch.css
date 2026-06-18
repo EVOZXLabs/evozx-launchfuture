@@ -2,24 +2,33 @@
 LAUNCH PAGE
 ========================================================== */
 
-.launch-page{
+.launch-page {
 
-padding-bottom:80px;
+    padding: 40px 0 80px;
 
 }
 
-.launch-container{
+.launch-layout {
 
-display:grid;
+    display: grid;
 
-grid-template-columns:
+    grid-template-columns:
+        minmax(0, 1fr)
+        340px;
 
-2fr
-380px;
+    gap: 32px;
 
-gap:32px;
+    align-items: start;
 
-align-items:start;
+}
+
+.launch-form {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 20px;
 
 }
 
@@ -27,53 +36,23 @@ align-items:start;
 PAGE HEADER
 ========================================================== */
 
-.page-header{
+.page-header {
 
-margin-bottom:40px;
-
-}
-
-.page-header h2{
-
-margin-bottom:16px;
+    margin-bottom: 32px;
 
 }
 
-.page-header p{
+.page-header h2 {
 
-max-width:760px;
-
-font-size:1.05rem;
+    margin-bottom: 12px;
 
 }
 
-/* ==========================================================
-FORM CARD
-========================================================== */
+.page-header p {
 
-.launch-card{
+    max-width: 720px;
 
-background:
-
-rgba(255,255,255,.03);
-
-border:
-
-1px solid var(--border);
-
-border-radius:
-
-var(--radius-xl);
-
-backdrop-filter:
-
-blur(16px);
-
-padding:32px;
-
-box-shadow:
-
-var(--shadow);
+    color: var(--muted);
 
 }
 
@@ -81,43 +60,81 @@ var(--shadow);
 ACCORDION
 ========================================================== */
 
-.launch-card .accordion{
+.accordion {
 
-margin-bottom:24px;
+    border: 1px solid var(--border);
 
-}
+    border-radius: var(--radius-xl);
 
-.launch-card .accordion:last-child{
+    background: rgba(255,255,255,.03);
 
-margin-bottom:0;
+    overflow: hidden;
 
-}
-
-.launch-card .accordion-header{
-
-min-height:72px;
-
-font-size:1rem;
-
-font-weight:600;
+    backdrop-filter: blur(12px);
 
 }
 
-.launch-card .accordion-header span{
+.accordion-header {
 
-color:var(--muted);
+    display: flex;
 
-font-size:.9rem;
+    align-items: center;
 
-font-weight:400;
+    justify-content: space-between;
 
-margin-left:8px;
+    min-height: 68px;
+
+    padding: 0 24px;
+
+    cursor: pointer;
+
+    user-select: none;
 
 }
 
-.launch-card .accordion-content{
+.accordion-header h3 {
 
-padding:28px;
+    margin: 0;
+
+    font-size: 1rem;
+
+}
+
+.accordion-body {
+
+    display: none;
+
+    padding: 24px;
+
+    border-top: 1px solid var(--border);
+
+}
+
+.accordion.open .accordion-body {
+
+    display: block;
+
+    animation: accordionFade .2s ease;
+
+}
+
+@keyframes accordionFade {
+
+    from {
+
+        opacity: 0;
+
+        transform: translateY(-4px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform: translateY(0);
+
+    }
 
 }
 
@@ -125,100 +142,44 @@ padding:28px;
 FORM GRID
 ========================================================== */
 
-.form-grid{
+.form-grid {
 
-display:grid;
+    display: grid;
 
-grid-template-columns:
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
 
-repeat(
-2,
-1fr
-);
-
-gap:24px;
+    gap: 20px;
 
 }
 
-.form-group{
+.form-group {
 
-display:flex;
+    display: flex;
 
-flex-direction:column;
+    flex-direction: column;
 
-gap:8px;
-
-}
-
-.form-group.full{
-
-grid-column:
-
-1 / -1;
+    gap: 8px;
 
 }
 
-.form-group small{
+.form-group label {
 
-font-size:.85rem;
+    font-weight: 600;
 
-color:var(--muted);
-
-line-height:1.5;
+    color: var(--white);
 
 }
 
-/* ==========================================================
-INPUT STATES
-========================================================== */
+.form-group input {
 
-.input-success{
-
-border-color:
-
-#2ECC71 !important;
+    width: 100%;
 
 }
 
-.input-error{
+.form-group.full {
 
-border-color:
-
-#E74C3C !important;
-
-}
-
-.input-warning{
-
-border-color:
-
-#F39C12 !important;
-
-}
-
-.validation-message{
-
-margin-top:6px;
-
-font-size:.85rem;
-
-}
-
-.validation-success{
-
-color:#2ECC71;
-
-}
-
-.validation-error{
-
-color:#E74C3C;
-
-}
-
-.validation-warning{
-
-color:#F39C12;
+    grid-column: 1 / -1;
 
 }
 
@@ -226,327 +187,157 @@ color:#F39C12;
 CHECKBOX
 ========================================================== */
 
-.checkbox-group{
+.checkbox-row {
 
-display:flex;
+    display: flex;
 
-align-items:flex-start;
+    align-items: center;
 
-gap:12px;
+    gap: 12px;
 
-margin-top:8px;
+    min-height: 44px;
 
-}
+    cursor: pointer;
 
-.checkbox-group input{
-
-width:18px;
-
-height:18px;
-
-margin-top:2px;
-
-flex-shrink:0;
+    margin-bottom: 12px;
 
 }
 
-.checkbox-group label{
+.checkbox-row:last-child {
 
-margin:0;
-
-font-weight:500;
-
-cursor:pointer;
+    margin-bottom: 0;
 
 }
 
-/* ==========================================================
-SIDEBAR
-========================================================== */
+.checkbox-row input[type="checkbox"] {
 
-.launch-sidebar{
+    width: 18px;
 
-position:sticky;
+    height: 18px;
 
-top:110px;
+    margin: 0;
 
-display:flex;
+    flex-shrink: 0;
 
-flex-direction:column;
+    cursor: pointer;
 
-gap:24px;
+}
+
+.checkbox-row span {
+
+    font-size: .95rem;
+
+    color: var(--white);
 
 }
 
 /* ==========================================================
-INFO CARD
+BADGE
 ========================================================== */
 
-.info-card{
+.badge {
 
-padding:24px;
+    display: inline-flex;
 
-background:
+    align-items: center;
 
-rgba(255,255,255,.03);
+    justify-content: center;
 
-border:
+    min-height: 28px;
 
-1px solid var(--border);
+    padding: 0 10px;
 
-border-radius:
+    border-radius: 999px;
 
-var(--radius-xl);
+    font-size: .8rem;
 
-backdrop-filter:
+    font-weight: 600;
 
-blur(16px);
-
-box-shadow:
-
-var(--shadow);
+    margin-top: 8px;
 
 }
 
-.info-card h3{
+.badge-green {
 
-margin-bottom:20px;
+    background: rgba(46,204,113,.15);
 
-}
+    border: 1px solid rgba(46,204,113,.30);
 
-.info-card p{
-
-margin-bottom:12px;
+    color: #2ECC71;
 
 }
 
-.info-card p:last-child{
+.badge-red {
 
-margin-bottom:0;
+    background: rgba(231,76,60,.15);
+
+    border: 1px solid rgba(231,76,60,.30);
+
+    color: #E74C3C;
 
 }
 
 /* ==========================================================
-SUMMARY
+PREVIEW CARD
 ========================================================== */
 
-.summary-list{
+.preview-card {
 
-display:flex;
+    display: flex;
 
-flex-direction:column;
+    flex-direction: column;
 
-gap:16px;
+    gap: 16px;
 
-}
+    padding: 24px;
 
-.summary-item{
+    border-radius: var(--radius-lg);
 
-display:flex;
+    background: rgba(255,255,255,.03);
 
-justify-content:space-between;
-
-align-items:center;
-
-gap:16px;
-
-padding-bottom:14px;
-
-border-bottom:
-
-1px solid var(--border);
+    border: 1px solid var(--border);
 
 }
 
-.summary-item:last-child{
+.preview-row {
 
-border-bottom:none;
+    display: flex;
 
-padding-bottom:0;
+    justify-content: space-between;
 
-}
+    align-items: center;
 
-.summary-label{
-
-color:var(--muted);
-
-font-size:.92rem;
+    gap: 16px;
 
 }
 
-.summary-value{
+.preview-row span {
 
-font-weight:700;
+    color: var(--muted);
 
-color:var(--white);
+}
 
-text-align:right;
+.preview-row strong {
 
-word-break:break-word;
+    color: var(--white);
+
+    font-weight: 700;
 
 }
 
 /* ==========================================================
-DEPLOYMENT PREVIEW
+STATUS PANEL
 ========================================================== */
 
-.preview-card{
+.status-panel {
 
-display:flex;
+    margin-top: 16px;
 
-flex-direction:column;
+    min-height: 24px;
 
-gap:18px;
+    color: var(--gold);
 
-padding:24px;
-
-border-radius:
-
-var(--radius-lg);
-
-background:
-
-rgba(77,163,255,.05);
-
-border:
-
-1px solid rgba(77,163,255,.18);
-
-}
-
-.preview-title{
-
-font-size:1rem;
-
-font-weight:700;
-
-color:var(--white);
-
-}
-
-.preview-row{
-
-display:flex;
-
-justify-content:space-between;
-
-align-items:center;
-
-gap:16px;
-
-}
-
-.preview-row strong{
-
-color:var(--gold);
-
-font-size:1.05rem;
-
-}
-
-/* ==========================================================
-BALANCE
-========================================================== */
-
-.balance-card{
-
-padding:24px;
-
-border-radius:
-
-var(--radius-lg);
-
-background:
-
-rgba(255,255,255,.03);
-
-border:
-
-1px solid var(--border);
-
-}
-
-.balance-card h4{
-
-margin-bottom:18px;
-
-}
-
-.balance-value{
-
-font-size:1.8rem;
-
-font-weight:700;
-
-color:var(--white);
-
-margin-bottom:6px;
-
-}
-
-.balance-label{
-
-font-size:.9rem;
-
-color:var(--muted);
-
-}
-
-/* ==========================================================
-AUTO CONVERSION
-========================================================== */
-
-.conversion-card{
-
-padding:24px;
-
-border-radius:
-
-var(--radius-lg);
-
-background:
-
-rgba(217,164,65,.08);
-
-border:
-
-1px solid rgba(217,164,65,.20);
-
-}
-
-.conversion-card h4{
-
-margin-bottom:16px;
-
-}
-
-.conversion-card p{
-
-margin-bottom:14px;
-
-}
-
-.conversion-rate{
-
-display:flex;
-
-justify-content:space-between;
-
-align-items:center;
-
-padding:14px 16px;
-
-border-radius:
-
-var(--radius-md);
-
-background:
-
-rgba(0,0,0,.18);
-
-font-weight:700;
-
-color:var(--gold);
+    font-size: .92rem;
 
 }
 
@@ -554,153 +345,171 @@ color:var(--gold);
 DEPLOY BUTTON
 ========================================================== */
 
-.deploy-button{
+.deploy-button {
 
-width:100%;
+    width: 100%;
 
-min-height:58px;
+    min-height: 58px;
 
-font-size:1rem;
+    margin-top: 20px;
 
-font-weight:700;
+    font-size: 1rem;
 
-margin-top:12px;
-
-}
-
-.deploy-button:disabled{
-
-opacity:.55;
-
-cursor:not-allowed;
-
-transform:none;
-
-box-shadow:none;
+    font-weight: 700;
 
 }
 
-/* ==========================================================
-FEE BREAKDOWN
-========================================================== */
+.deploy-button.loading {
 
-.fee-breakdown{
+    opacity: .7;
 
-display:flex;
-
-flex-direction:column;
-
-gap:12px;
-
-margin-top:20px;
-
-padding-top:20px;
-
-border-top:
-
-1px solid var(--border);
+    pointer-events: none;
 
 }
 
-.fee-row{
+.deploy-button:disabled {
 
-display:flex;
+    opacity: .6;
 
-justify-content:space-between;
-
-align-items:center;
-
-gap:16px;
-
-}
-
-.fee-row span{
-
-color:var(--muted);
-
-}
-
-.fee-row strong{
-
-color:var(--white);
-
-font-weight:700;
-
-}
-
-.fee-row.total{
-
-padding-top:12px;
-
-border-top:
-
-1px solid var(--border);
-
-font-size:1.05rem;
-
-}
-
-.fee-row.total strong{
-
-color:var(--gold);
+    cursor: not-allowed;
 
 }
 
 /* ==========================================================
-PROGRESS
+INPUT DISABLED
 ========================================================== */
 
-.progress{
+input:disabled {
 
-display:flex;
+    opacity: .5;
 
-align-items:center;
-
-justify-content:space-between;
-
-gap:12px;
-
-margin-bottom:32px;
+    cursor: not-allowed;
 
 }
 
-.progress-step{
+/* ==========================================================
+WALLET ADDRESS CARD
+========================================================== */
 
-flex:1;
+.balance-card {
 
-height:6px;
+    padding: 24px;
 
-border-radius:999px;
+    border-radius: var(--radius-xl);
 
-background:
+    border: 1px solid var(--border);
 
-rgba(255,255,255,.08);
-
-overflow:hidden;
-
-position:relative;
+    background: rgba(255,255,255,.03);
 
 }
 
-.progress-step.active{
+.balance-card h4 {
 
-background:
-
-rgba(217,164,65,.18);
+    margin-bottom: 16px;
 
 }
 
-.progress-step.active::after{
+.balance-value {
 
-content:"";
+    font-size: 1rem;
 
-position:absolute;
+    font-weight: 700;
 
-inset:0;
+    word-break: break-word;
 
-background:
+}
 
-var(--gold);
+/* ==========================================================
+SIDEBAR
+========================================================== */
+
+.launch-sidebar {
+
+    position: sticky;
+
+    top: 24px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 20px;
+
+}
+
+.info-card,
+.balance-card,
+.help-box {
+
+    padding: 24px;
+
+    border-radius: var(--radius-xl);
+
+    border: 1px solid var(--border);
+
+    background: rgba(255,255,255,.03);
+
+    backdrop-filter: blur(12px);
+
+}
+
+.info-card h3,
+.balance-card h4,
+.help-box h4 {
+
+    margin-bottom: 16px;
+
+}
+
+/* ==========================================================
+SUMMARY
+========================================================== */
+
+.summary-list {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 14px;
+
+}
+
+.summary-item {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding-bottom: 12px;
+
+    border-bottom: 1px solid var(--border);
+
+}
+
+.summary-item:last-child {
+
+    border-bottom: none;
+
+    padding-bottom: 0;
+
+}
+
+.summary-item span {
+
+    color: var(--muted);
+
+}
+
+.summary-item strong {
+
+    color: var(--white);
+
+    text-align: right;
 
 }
 
@@ -708,185 +517,164 @@ var(--gold);
 HELP BOX
 ========================================================== */
 
-.help-box{
+.help-box ul {
 
-margin-top:20px;
+    padding-left: 18px;
 
-padding:18px;
-
-border-radius:
-
-var(--radius-md);
-
-background:
-
-rgba(77,163,255,.05);
-
-border:
-
-1px solid rgba(77,163,255,.18);
+    margin: 0;
 
 }
 
-.help-box h4{
+.help-box li {
 
-margin-bottom:10px;
+    margin-bottom: 8px;
 
-}
-
-.help-box ul{
-
-padding-left:18px;
-
-color:var(--muted);
+    color: var(--muted);
 
 }
 
-.help-box li{
+.help-box li:last-child {
 
-margin-bottom:8px;
+    margin-bottom: 0;
 
 }
 
 /* ==========================================================
-ANIMATION
+MOBILE TABLET
 ========================================================== */
 
-.accordion-content{
+@media (max-width: 1100px) {
 
-animation:
+    .launch-layout {
 
-fadeAccordion .25s ease;
-
-}
-
-@keyframes fadeAccordion{
-
-from{
-
-opacity:0;
-
-transform:
-
-translateY(-6px);
-
-}
-
-to{
-
-opacity:1;
-
-transform:
-
-translateY(0);
-
-}
-
-}
-
-/* ==========================================================
-RESPONSIVE
-========================================================== */
-
-@media (max-width:1100px){
-
-.launch-container{
-
-grid-template-columns:1fr;
-
-}
-
-.launch-sidebar{
-
-position:static;
-
-}
-
-}
-
-@media (max-width:768px){
-
-.form-grid{
-
-grid-template-columns:1fr;
-
-}
-
-.launch-card{
-
-padding:24px;
-
-}
-
-.launch-card .accordion-content{
-
-padding:20px;
-
-}
-
-.preview-row,
-.summary-item,
-.fee-row,
-.conversion-rate{
-
-flex-direction:column;
-
-align-items:flex-start;
-
-gap:8px;
-
-}
-
-.deploy-button{
-
-width:100%;
-
-}
-
-.progress{
-
-flex-direction:column;
-
-}
-
-.progress-step{
-
-width:100%;
-
-}
-
-}
-
-@media (max-width:480px){
-
-.page-header{
-
-text-align:center;
-
-}
-
-.launch-card{
-
-padding:18px;
-
-}
-
-.info-card{
-
-padding:18px;
-
-}
-
-.balance-value{
-
-font-size:1.5rem;
-
-}
-
-.launch-card .accordion-header{
-
-padding:18px;
-
-}
+        grid-template-columns: 1fr;
 
     }
+
+    .launch-sidebar {
+
+        position: static;
+
+    }
+
+}
+
+/* ==========================================================
+MOBILE
+========================================================== */
+
+@media (max-width: 768px) {
+
+    .form-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+    .accordion-header {
+
+        min-height: 60px;
+
+        padding: 0 18px;
+
+    }
+
+    .accordion-body {
+
+        padding: 18px;
+
+    }
+
+    .preview-row {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 6px;
+
+    }
+
+    .summary-item {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+    }
+
+    .deploy-button {
+
+        position: sticky;
+
+        bottom: 12px;
+
+        z-index: 20;
+
+    }
+
+}
+
+/* ==========================================================
+SMALL MOBILE
+========================================================== */
+
+@media (max-width: 480px) {
+
+    .launch-page {
+
+        padding-top: 24px;
+
+    }
+
+    .page-header {
+
+        text-align: center;
+
+    }
+
+    .page-header p {
+
+        margin: 0 auto;
+
+    }
+
+    .accordion-header h3 {
+
+        font-size: .95rem;
+
+    }
+
+    .info-card,
+    .balance-card,
+    .help-box {
+
+        padding: 18px;
+
+    }
+
+    .deploy-button {
+
+        min-height: 54px;
+
+        font-size: .95rem;
+
+    }
+
+}
+
+/* ==========================================================
+UTILITY
+========================================================== */
+
+.hidden {
+
+    display: none !important;
+
+}
+
+.w-100 {
+
+    width: 100%;
+
+}
