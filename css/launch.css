@@ -1,5 +1,5 @@
 /* ==========================================================
-LAUNCH PAGE
+   LAUNCH PAGE
 ========================================================== */
 
 .launch-page {
@@ -33,7 +33,7 @@ LAUNCH PAGE
 }
 
 /* ==========================================================
-PAGE HEADER
+   PAGE HEADER
 ========================================================== */
 
 .page-header {
@@ -57,7 +57,7 @@ PAGE HEADER
 }
 
 /* ==========================================================
-ACCORDION
+   ACCORDION
 ========================================================== */
 
 .accordion {
@@ -68,9 +68,9 @@ ACCORDION
 
     background: rgba(255,255,255,.03);
 
-    overflow: hidden;
-
     backdrop-filter: blur(12px);
+
+    overflow: hidden;
 
 }
 
@@ -89,6 +89,14 @@ ACCORDION
     cursor: pointer;
 
     user-select: none;
+
+    transition: .2s;
+
+}
+
+.accordion-header:hover {
+
+    background: rgba(255,255,255,.03);
 
 }
 
@@ -139,7 +147,7 @@ ACCORDION
 }
 
 /* ==========================================================
-FORM GRID
+   FORM GRID
 ========================================================== */
 
 .form-grid {
@@ -147,7 +155,7 @@ FORM GRID
     display: grid;
 
     grid-template-columns:
-        repeat(2, minmax(0, 1fr));
+        repeat(2, minmax(0,1fr));
 
     gap: 20px;
 
@@ -163,11 +171,15 @@ FORM GRID
 
 }
 
+.form-group.full {
+
+    grid-column: 1 / -1;
+
+}
+
 .form-group label {
 
     font-weight: 600;
-
-    color: var(--white);
 
 }
 
@@ -177,14 +189,8 @@ FORM GRID
 
 }
 
-.form-group.full {
-
-    grid-column: 1 / -1;
-
-}
-
 /* ==========================================================
-CHECKBOX
+   CHECKBOX
 ========================================================== */
 
 .checkbox-row {
@@ -197,9 +203,9 @@ CHECKBOX
 
     min-height: 44px;
 
-    cursor: pointer;
-
     margin-bottom: 12px;
+
+    cursor: pointer;
 
 }
 
@@ -225,14 +231,14 @@ CHECKBOX
 
 .checkbox-row span {
 
-    font-size: .95rem;
-
     color: var(--white);
+
+    font-size: .95rem;
 
 }
 
 /* ==========================================================
-BADGE
+   BADGE
 ========================================================== */
 
 .badge {
@@ -249,11 +255,11 @@ BADGE
 
     border-radius: 999px;
 
+    margin-top: 8px;
+
     font-size: .8rem;
 
     font-weight: 600;
-
-    margin-top: 8px;
 
 }
 
@@ -278,7 +284,7 @@ BADGE
 }
 
 /* ==========================================================
-PREVIEW CARD
+   PREVIEW CARD
 ========================================================== */
 
 .preview-card {
@@ -326,14 +332,14 @@ PREVIEW CARD
 }
 
 /* ==========================================================
-STATUS PANEL
+   STATUS PANEL
 ========================================================== */
 
 .status-panel {
 
-    margin-top: 16px;
-
     min-height: 24px;
+
+    margin-top: 16px;
 
     color: var(--gold);
 
@@ -342,7 +348,7 @@ STATUS PANEL
 }
 
 /* ==========================================================
-DEPLOY BUTTON
+   DEPLOY BUTTON
 ========================================================== */
 
 .deploy-button {
@@ -376,7 +382,7 @@ DEPLOY BUTTON
 }
 
 /* ==========================================================
-INPUT DISABLED
+   INPUT DISABLED
 ========================================================== */
 
 input:disabled {
@@ -388,39 +394,7 @@ input:disabled {
 }
 
 /* ==========================================================
-WALLET ADDRESS CARD
-========================================================== */
-
-.balance-card {
-
-    padding: 24px;
-
-    border-radius: var(--radius-xl);
-
-    border: 1px solid var(--border);
-
-    background: rgba(255,255,255,.03);
-
-}
-
-.balance-card h4 {
-
-    margin-bottom: 16px;
-
-}
-
-.balance-value {
-
-    font-size: 1rem;
-
-    font-weight: 700;
-
-    word-break: break-word;
-
-}
-
-/* ==========================================================
-SIDEBAR
+   SIDEBAR
 ========================================================== */
 
 .launch-sidebar {
@@ -462,7 +436,21 @@ SIDEBAR
 }
 
 /* ==========================================================
-SUMMARY
+   WALLET CARD
+========================================================== */
+
+.balance-value {
+
+    font-size: 1rem;
+
+    font-weight: 700;
+
+    word-break: break-word;
+
+}
+
+/* ==========================================================
+   SUMMARY
 ========================================================== */
 
 .summary-list {
@@ -514,14 +502,14 @@ SUMMARY
 }
 
 /* ==========================================================
-HELP BOX
+   HELP BOX
 ========================================================== */
 
 .help-box ul {
 
-    padding-left: 18px;
-
     margin: 0;
+
+    padding-left: 18px;
 
 }
 
@@ -540,7 +528,7 @@ HELP BOX
 }
 
 /* ==========================================================
-MOBILE TABLET
+   TABLET
 ========================================================== */
 
 @media (max-width: 1100px) {
@@ -560,7 +548,7 @@ MOBILE TABLET
 }
 
 /* ==========================================================
-MOBILE
+   MOBILE
 ========================================================== */
 
 @media (max-width: 768px) {
@@ -609,14 +597,14 @@ MOBILE
 
         bottom: 12px;
 
-        z-index: 20;
+        z-index: 50;
 
     }
 
 }
 
 /* ==========================================================
-SMALL MOBILE
+   SMALL MOBILE
 ========================================================== */
 
 @media (max-width: 480px) {
@@ -664,7 +652,7 @@ SMALL MOBILE
 }
 
 /* ==========================================================
-UTILITY
+   UTILITIES
 ========================================================== */
 
 .hidden {
@@ -677,4 +665,4 @@ UTILITY
 
     width: 100%;
 
-}
+                           }
