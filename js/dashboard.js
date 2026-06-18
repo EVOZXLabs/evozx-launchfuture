@@ -17,7 +17,8 @@ import {
 import {
     getAccount,
     onAccountChanged,
-    initializeWallet
+    initializeWallet,
+    restoreConnection
 } from "./wallet.js";
 
 // =====================================================
@@ -906,7 +907,7 @@ async function initialize() {
 
     try {
 
-        await restoreConnection();
+        await initializeWallet();
 
         bindWalletListeners();
 
