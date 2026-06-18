@@ -23,7 +23,7 @@ import {
 // DOM
 // =====================================================
 
-const $ = (id) =>
+const $ = id =>
     document.getElementById(id);
 
 function setText(id, value) {
@@ -82,8 +82,6 @@ let deployRunning = false;
 
 let symbolTimer = null;
 
-let deploymentFee = 0n;
-
 // =====================================================
 // FORM DATA
 // =====================================================
@@ -114,9 +112,7 @@ function getFormData() {
             isChecked("mintable"),
 
         ownershipEnabled:
-            isChecked(
-                "ownershipEnabled"
-            ),
+            isChecked("ownership"),
 
         // SECURITY
 
@@ -249,7 +245,6 @@ function initializeAccordion() {
         .forEach(accordion => {
 
             const header =
-
                 accordion.querySelector(
                     ".accordion-header"
                 );
@@ -276,7 +271,7 @@ function initializeAccordion() {
 
         });
 
-}
+                    }
 
 // =====================================================
 // FEATURE STATE
@@ -360,7 +355,7 @@ function updateFeatureState() {
 }
 
 // =====================================================
-// SYMBOL STATUS
+// SYMBOL CHECK
 // =====================================================
 
 async function updateSymbolStatus() {
@@ -479,6 +474,98 @@ function validateForm() {
 }
 
 // =====================================================
+// PREVIEW
+// =====================================================
+
+async function refreshPreview() {
+
+    try {
+
+        if (!validateForm()) {
+
+            return;
+
+        }
+
+        const form =
+            getFormData();
+
+        const fee =
+            await getDeploymentFee(
+                form
+            );
+
+        setText(
+
+            "deploymentFee",
+
+            formatUnits(
+                fee,
+                18
+            ) + " EVOZX"
+
+        );
+
+        const account =
+            getAccount();
+
+        if (!account) {
+
+            setText(
+
+                "walletAddress",
+
+                "Not Connected"
+
+            );
+
+            setText(
+
+                "readyStatus",
+
+                "Connect Wallet"
+
+            );
+
+            return;
+
+        }
+
+        setText(
+
+            "walletAddress",
+
+            account
+
+        );
+
+        setText(
+
+            "readyStatus",
+
+            "Ready To Deploy"
+
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        setStatus(
+
+            error.message ||
+
+            "Unable to load deployment preview."
+
+        );
+
+    }
+
+        }
+
+// =====================================================
 // DEPLOY BUTTON
 // =====================================================
 
@@ -527,7 +614,7 @@ function bindEvents() {
 
         .querySelectorAll(
 
-            "input, textarea, select"
+            "input, textarea"
 
         )
 
@@ -574,101 +661,6 @@ function bindEvents() {
 }
 
 // =====================================================
-// PREVIEW
-// =====================================================
-
-async function refreshPreview() {
-
-    try {
-
-        if (!validateForm()) {
-
-            return;
-
-        }
-
-        const form =
-            getFormData();
-
-        const fee =
-            await getDeploymentFee(
-                form
-            );
-
-        deploymentFee =
-            fee;
-
-        setText(
-
-            "deploymentFee",
-
-            formatUnits(
-                fee,
-                18
-            ) + " EVOZX"
-
-        );
-
-        const account =
-            getAccount();
-
-        if (!account) {
-
-            setText(
-
-                "walletBalance",
-
-                "Not Connected"
-
-            );
-
-            setText(
-
-                "readyStatus",
-
-                "Connect Wallet"
-
-            );
-
-            return;
-
-        }
-
-        setText(
-
-            "walletBalance",
-
-            "Connected"
-
-        );
-
-        setText(
-
-            "readyStatus",
-
-            "Ready To Deploy"
-
-        );
-
-    }
-
-    catch (error) {
-
-        console.error(error);
-
-        setStatus(
-
-            error.message ||
-
-            "Unable to calculate deployment fee."
-
-        );
-
-    }
-
-}
-
-// =====================================================
 // DEPLOY
 // =====================================================
 
@@ -682,10 +674,15 @@ async function onDeploy() {
 
     try {
 
-        if (!getAccount()) {
+        const account =
+            getAccount();
+
+        if (!account) {
 
             throw new Error(
-                "Please connect your wallet."
+
+                "Please connect your wallet first."
+
             );
 
         }
@@ -700,6 +697,12 @@ async function onDeploy() {
             true
         );
 
+        setStatus(
+
+            "Waiting for wallet confirmation..."
+
+        );
+
         await deployToken(
 
             getFormData()
@@ -710,7 +713,9 @@ async function onDeploy() {
 
     catch (error) {
 
-        console.error(error);
+        console.error(
+            error
+        );
 
         setStatus(
 
@@ -749,7 +754,6 @@ async function initialize() {
     await refreshPreview();
 
     const deployButton =
-
         $("deployButton");
 
     if (deployButton) {
@@ -785,6 +789,7 @@ document.addEventListener(
 export {
 
     refreshPreview,
-    onDeploy
+    onDeploy,
+    initialize
 
 };
