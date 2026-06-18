@@ -1,29 +1,31 @@
 import {
     Contract,
-    formatUnits,
-    parseUnits
+    formatUnits
 } from "https://esm.sh/ethers@6";
 
 import {
     CONTRACTS,
     ABI,
-    STORAGE,
-    explorerToken,
-    explorerTransaction
+    STORAGE
 } from "./config.js";
 
 import {
     getReadProvider,
-    getTokensByCreator,
-    getEVOZXBalance
+    getTokensByCreator
 } from "./factory.js";
 
 import {
     getAccount,
-    getSigner,
-    restoreConnection,
-    onAccountChanged
+    onAccountChanged,
+    initializeWallet
 } from "./wallet.js";
+
+// =====================================================
+// CONSTANTS
+// =====================================================
+
+const DEAD_ADDRESS =
+    "0x000000000000000000000000000000000000dEaD";
 
 // =====================================================
 // STATE
@@ -38,98 +40,110 @@ let tokenCache = [];
 // DOM
 // =====================================================
 
-const tokenList =
-    document.getElementById(
-        "tokenList"
-    );
-
-const loadingState =
-    document.getElementById(
-        "loadingState"
-    );
-
-const emptyState =
-    document.getElementById(
-        "emptyState"
-    );
-
-const template =
-    document.getElementById(
-        "tokenCardTemplate"
-    );
+const $ = id =>
+    document.getElementById(id);
 
 // =====================================================
 // HELPERS
 // =====================================================
-
-function $(id) {
-
-    return document.getElementById(
-        id
-    );
-
-}
 
 function setText(id, value) {
 
     const element = $(id);
 
     if (!element) {
+
         return;
+
     }
 
     element.textContent =
-        String(value);
+        value ?? "-";
 
 }
 
 function shortAddress(address) {
 
     if (!address) {
+
         return "-";
+
     }
 
     return (
-
         address.slice(0, 6) +
-
         "..." +
-
         address.slice(-4)
-
     );
+
+}
+
+function clearContainer(id) {
+
+    const element = $(id);
+
+    if (!element) {
+
+        return;
+
+    }
+
+    element.innerHTML = "";
+
+}
+
+function formatToken(value) {
+
+    try {
+
+        return Number(
+
+            formatUnits(
+                value,
+                18
+            )
+
+        ).toLocaleString();
+
+    }
+
+    catch {
+
+        return "0";
+
+    }
 
 }
 
 function showLoading(state) {
 
-    if (!loadingState) {
+    const element =
+        $("loadingState");
+
+    if (!element) {
+
         return;
+
     }
 
-    loadingState.hidden =
+    element.hidden =
         !state;
 
 }
 
 function showEmpty(state) {
 
-    if (!emptyState) {
+    const element =
+        $("emptyState");
+
+    if (!element) {
+
         return;
+
     }
 
-    emptyState.hidden =
+    element.hidden =
         !state;
-
-}
-
-function clearTokens() {
-
-    if (!tokenList) {
-        return;
-    }
-
-    tokenList.innerHTML = "";
 
 }
 
@@ -140,7 +154,9 @@ function clearTokens() {
 async function loadTokenAbi() {
 
     if (tokenAbi) {
+
         return tokenAbi;
+
     }
 
     const response =
@@ -166,7 +182,9 @@ async function loadTokenAbi() {
 async function loadEVOZXAbi() {
 
     if (evozxAbi) {
+
         return evozxAbi;
+
     }
 
     const response =
@@ -217,24 +235,13 @@ async function getEVOZXContract() {
     const abi =
         await loadEVOZXAbi();
 
-    const signer =
-        getSigner();
-
-    if (!signer) {
-
-        throw new Error(
-            "Wallet not connected."
-        );
-
-    }
-
     return new Contract(
 
         CONTRACTS.evozx,
 
         abi,
 
-        signer
+        getReadProvider()
 
     );
 
@@ -257,13 +264,8 @@ async function loadWalletSummary() {
         );
 
         setText(
-            "dashboardEVOZ",
-            "-"
-        );
-
-        setText(
-            "dashboardEVOZX",
-            "-"
+            "dashboardTotalTokens",
+            0
         );
 
         return;
@@ -280,80 +282,42 @@ async function loadWalletSummary() {
 
     );
 
-    try {
+}
+// =====================================================
+// PLATFORM STATISTICS
+// =====================================================
 
-        const nativeBalance =
-            await window.ethereum.request({
-
-                method:
-                    "eth_getBalance",
-
-                params: [
-
-                    account,
-
-                    "latest"
-
-                ]
-
-            });
-
-        setText(
-
-            "dashboardEVOZ",
-
-            Number(
-
-                formatUnits(
-                    BigInt(
-                        nativeBalance
-                    ),
-                    18
-                )
-
-            ).toLocaleString()
-
-        );
-
-    }
-
-    catch {
-
-        setText(
-            "dashboardEVOZ",
-            "-"
-        );
-
-    }
+async function loadPlatformStatistics() {
 
     try {
 
-        const evozx =
-            await getEVOZXBalance(
-                account
+        const contract =
+            await getEVOZXContract();
+
+        const burned =
+
+            await contract.balanceOf(
+                DEAD_ADDRESS
             );
 
         setText(
 
-            "dashboardEVOZX",
+            "totalBurnedEVOZX",
 
-            Number(
-
-                formatUnits(
-                    evozx,
-                    18
-                )
-
-            ).toLocaleString()
+            formatToken(
+                burned
+            )
 
         );
 
     }
 
-    catch {
+    catch (error) {
+
+        console.error(error);
 
         setText(
-            "dashboardEVOZX",
+            "totalBurnedEVOZX",
             "-"
         );
 
@@ -412,7 +376,20 @@ function createTokenCard(
     token
 ) {
 
+    const template =
+
+        document.getElementById(
+            "tokenCardTemplate"
+        );
+
+    if (!template) {
+
+        return document.createDocumentFragment();
+
+    }
+
     const fragment =
+
         template.content.cloneNode(
             true
         );
@@ -453,109 +430,111 @@ function createTokenCard(
         )
 
         .textContent =
-        Number(
-
-            formatUnits(
-                token.supply,
-                18
-            )
-
-        ).toLocaleString();
+        formatToken(
+            token.supply
+        );
 
     const copyButton =
+
         fragment.querySelector(
             ".token-copy"
         );
 
-    copyButton.onclick =
-        async () => {
+    if (copyButton) {
 
-            try {
+        copyButton.onclick =
+            async () => {
 
-                await navigator
-                    .clipboard
-                    .writeText(
-                        token.address
+                try {
+
+                    await navigator
+                        .clipboard
+                        .writeText(
+                            token.address
+                        );
+
+                    const original =
+
+                        copyButton.textContent;
+
+                    copyButton.textContent =
+                        "Copied";
+
+                    setTimeout(
+
+                        () => {
+
+                            copyButton.textContent =
+                                original;
+
+                        },
+
+                        1500
+
                     );
 
-                copyButton.textContent =
-                    "Copied";
+                }
 
-                setTimeout(
+                catch (error) {
 
-                    () => {
+                    console.error(
+                        error
+                    );
 
-                        copyButton.textContent =
-                            "Copy";
+                }
 
-                    },
+            };
 
-                    1500
-
-                );
-
-            }
-
-            catch (
-                error
-            ) {
-
-                console.error(
-                    error
-                );
-
-            }
-
-        };
+    }
 
     const explorerButton =
+
         fragment.querySelector(
             ".token-explorer"
         );
 
-    explorerButton.onclick =
-        () => {
+    if (explorerButton) {
 
-            window.open(
+        explorerButton.onclick =
+            () => {
 
-                explorerToken(
-                    token.address
-                ),
+                window.open(
 
-                "_blank"
+                    `${CONTRACTS.explorer}/token/${token.address}`,
 
-            );
+                    "_blank"
 
-        };
+                );
+
+            };
+
+    }
 
     const detailsButton =
+
         fragment.querySelector(
             ".token-details"
         );
 
-    detailsButton.onclick =
-        () => {
+    if (detailsButton) {
 
-            sessionStorage.setItem(
+        detailsButton.onclick =
+            () => {
 
-                "selectedToken",
+                location.href =
 
-                token.address
+                    `./token.html?address=${token.address}`;
 
-            );
+            };
 
-            location.href =
-
-                `./token.html?address=${token.address}`;
-
-        };
+    }
 
     return fragment;
 
 }
 
 // =====================================================
-// LOAD TOKENS
+// MY TOKENS
 // =====================================================
 
 async function loadTokens() {
@@ -563,7 +542,9 @@ async function loadTokens() {
     const account =
         getAccount();
 
-    clearTokens();
+    clearContainer(
+        "tokenList"
+    );
 
     showEmpty(false);
 
@@ -585,6 +566,7 @@ async function loadTokens() {
         showLoading(true);
 
         const addresses =
+
             await getTokensByCreator(
                 account
             );
@@ -592,8 +574,11 @@ async function loadTokens() {
         tokenCache = [];
 
         if (
+
             !addresses ||
+
             addresses.length === 0
+
         ) {
 
             setText(
@@ -617,6 +602,7 @@ async function loadTokens() {
             try {
 
                 const token =
+
                     await loadTokenInfo(
                         address
                     );
@@ -627,16 +613,11 @@ async function loadTokens() {
 
             }
 
-            catch (
-                error
-            ) {
+            catch (error) {
 
                 console.error(
-
                     address,
-
                     error
-
                 );
 
             }
@@ -653,14 +634,15 @@ async function loadTokens() {
 
         );
 
-        clearTokens();
+        const container =
+            $("tokenList");
 
         for (
             const token
             of tokenCache
         ) {
 
-            tokenList.appendChild(
+            container.appendChild(
 
                 createTokenCard(
                     token
@@ -682,13 +664,9 @@ async function loadTokens() {
 
     }
 
-    catch (
-        error
-    ) {
+    catch (error) {
 
-        console.error(
-            error
-        );
+        console.error(error);
 
         showLoading(false);
 
@@ -696,25 +674,33 @@ async function loadTokens() {
 
     }
 
-        }
-
+            }
 // =====================================================
 // DEPLOYMENT HISTORY
 // =====================================================
 
 function loadHistory() {
 
-    const raw =
-        localStorage.getItem(
-            STORAGE.deployHistory
-        ) ?? "[]";
+    const container =
+        $("historyList");
+
+    if (!container) {
+
+        return;
+
+    }
 
     let history = [];
 
     try {
 
-        history =
-            JSON.parse(raw);
+        history = JSON.parse(
+
+            localStorage.getItem(
+                STORAGE.deployHistory
+            ) || "[]"
+
+        );
 
     }
 
@@ -729,26 +715,23 @@ function loadHistory() {
         history.length
     );
 
-    const container =
-        $("historyList");
-
-    if (!container) {
-        return;
-    }
-
     if (!history.length) {
 
         container.innerHTML = `
 
 <div class="empty-state">
 
-<h3>No Deployment History</h3>
+    <h3>
 
-<p>
+        No Deployment History
 
-No deployment records found.
+    </h3>
 
-</p>
+    <p>
+
+        No deployment records found.
+
+    </p>
 
 </div>
 
@@ -764,7 +747,7 @@ No deployment records found.
 
 <div class="history-item">
 
-    <div class="history-item-header">
+    <div class="history-header">
 
         <strong>
 
@@ -774,7 +757,7 @@ No deployment records found.
 
         </strong>
 
-        <span class="history-item-date">
+        <span>
 
             ${new Date(
                 item.deployedAt
@@ -784,13 +767,13 @@ No deployment records found.
 
     </div>
 
-    <div class="history-item-body">
+    <div class="history-body">
 
         <div>
 
             <span>
 
-                Token
+                Address
 
             </span>
 
@@ -798,24 +781,6 @@ No deployment records found.
 
                 ${shortAddress(
                     item.token
-                )}
-
-            </strong>
-
-        </div>
-
-        <div>
-
-            <span>
-
-                Creator
-
-            </span>
-
-            <strong>
-
-                ${shortAddress(
-                    item.creator
                 )}
 
             </strong>
@@ -836,7 +801,8 @@ No deployment records found.
                     href="${explorerTransaction(
                         item.hash
                     )}"
-                    target="_blank">
+                    target="_blank"
+                    rel="noopener">
 
                     ${shortAddress(
                         item.hash
@@ -857,123 +823,42 @@ No deployment records found.
 }
 
 // =====================================================
-// BURN EVOZX
+// QUICK ACTIONS
 // =====================================================
 
-async function burnEVOZX() {
+function bindQuickActions() {
 
-    const account =
-        getAccount();
+    const launchButton =
 
-    if (!account) {
+        $("launchTokenButton");
 
-        throw new Error(
-            "Wallet not connected."
-        );
+    if (launchButton) {
 
-    }
+        launchButton.onclick =
+            () => {
 
-    const input =
-        $("burnAmount");
+                location.href =
+                    "./launch.html";
 
-    if (!input) {
-        return;
-    }
-
-    const amount =
-        input.value.trim();
-
-    if (!amount) {
-
-        throw new Error(
-            "Enter EVOZX amount."
-        );
+            };
 
     }
 
-    const contract =
-        await getEVOZXContract();
+    const homeButton =
 
-    const tx =
-        await contract.burn(
+        $("homeButton");
 
-            parseUnits(
-                amount,
-                18
-            )
+    if (homeButton) {
 
-        );
+        homeButton.onclick =
+            () => {
 
-    setText(
-        "burnStatus",
-        "Waiting confirmation..."
-    );
+                location.href =
+                    "./index.html";
 
-    await tx.wait();
+            };
 
-    setText(
-        "burnStatus",
-        "EVOZX burned successfully."
-    );
-
-    input.value = "";
-
-    await loadWalletSummary();
-
-}
-
-function bindBurnButton() {
-
-    const button =
-        $("burnButton");
-
-    if (!button) {
-        return;
     }
-
-    button.addEventListener(
-
-        "click",
-
-        async () => {
-
-            try {
-
-                button.disabled =
-                    true;
-
-                await burnEVOZX();
-
-            }
-
-            catch (error) {
-
-                console.error(
-                    error
-                );
-
-                setText(
-
-                    "burnStatus",
-
-                    error.message ||
-
-                    "Burn failed."
-
-                );
-
-            }
-
-            finally {
-
-                button.disabled =
-                    false;
-
-            }
-
-        }
-
-    );
 
 }
 
@@ -998,6 +883,22 @@ function bindWalletListeners() {
 }
 
 // =====================================================
+// INITIAL LOAD
+// =====================================================
+
+async function loadDashboard() {
+
+    await loadWalletSummary();
+
+    await loadTokens();
+
+    await loadPlatformStatistics();
+
+    loadHistory();
+
+}
+
+// =====================================================
 // INITIALIZE
 // =====================================================
 
@@ -1007,23 +908,17 @@ async function initialize() {
 
         await restoreConnection();
 
-        await loadWalletSummary();
-
-        await loadTokens();
-
-        loadHistory();
-
-        bindBurnButton();
-
         bindWalletListeners();
+
+        bindQuickActions();
+
+        await loadDashboard();
 
     }
 
     catch (error) {
 
-        console.error(
-            error
-        );
+        console.error(error);
 
         showLoading(false);
 
