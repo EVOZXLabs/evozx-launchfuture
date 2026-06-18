@@ -414,11 +414,13 @@ async function loadPlatformStatistics() {
         );
 
         setText(
-    "totalBurnedDetail",
-    formatToken(
-        burned
-    )
-);
+            "totalBurnedDetail",
+            `${formatToken(
+                burned
+            )} / ${formatToken(
+                initialSupply
+            )} EVOZX`
+        );
 
         setText(
             "burnPercent",
@@ -427,51 +429,52 @@ async function loadPlatformStatistics() {
 
         let history = [];
 
-try {
+        try {
 
-    history = JSON.parse(
-        localStorage.getItem(
-            STORAGE.deployHistory
-        ) || "[]"
-    );
+            history = JSON.parse(
+                localStorage.getItem(
+                    STORAGE.deployHistory
+                ) || "[]"
+            );
 
-}
-    
-catch {
+        }
 
-    history = [];
+        catch {
 
-}
+            history = [];
 
-setText(
-    "burnEvents",
-    history.length
-);
+        }
+
+        setText(
+            "burnEvents",
+            history.length
+        );
+
+        const lastDeployment =
+            history[0];
+
+        if (lastDeployment) {
+
+            setText(
+                "lastBurn",
+                "15 EVOZX"
+            );
+
+        }
+
+        else {
+
+            setText(
+                "lastBurn",
+                "-"
+            );
+
+        }
 
         const bar =
             document.getElementById(
                 "burnProgressBar"
             );
-
-        const lastDeployment =
-    history[0];
-
-if (lastDeployment) {
-
-    setText(
-        "lastBurn",
-        "15 EVOZX"
-    );
-
-}
-else {
-
-    setText(
-        "lastBurn",
-        "-"
-    );
-
-}
 
         if (bar) {
 
@@ -482,29 +485,6 @@ else {
                 )}%`;
 
         }
-
-        let deploymentHistory = [];
-
-try {
-
-    deploymentHistory =
-        JSON.parse(
-            localStorage.getItem(
-                STORAGE.deployHistory
-            ) || "[]"
-        );
-
-}
-catch {
-
-    deploymentHistory = [];
-
-}
-
-setText(
-    "burnEvents",
-    deploymentHistory.length
-);
 
     }
 
@@ -759,7 +739,6 @@ async function loadTokens() {
         showLoading(true);
 
         const addresses =
-
             await getTokensByCreator(
                 account
             );
@@ -767,11 +746,8 @@ async function loadTokens() {
         tokenCache = [];
 
         if (
-
             !addresses ||
-
             addresses.length === 0
-
         ) {
 
             setText(
@@ -795,7 +771,6 @@ async function loadTokens() {
             try {
 
                 const token =
-
                     await loadTokenInfo(
                         address
                     );
@@ -859,7 +834,9 @@ async function loadTokens() {
 
     catch (error) {
 
-        console.error(error);
+        console.error(
+            error
+        );
 
         showLoading(false);
 
@@ -867,7 +844,8 @@ async function loadTokens() {
 
     }
 
-            }
+}
+
 // =====================================================
 // DEPLOYMENT HISTORY
 // =====================================================
