@@ -1,208 +1,211 @@
 import {
-
-  ZeroAddress
-
+    ZeroAddress
 } from "https://esm.sh/ethers@6";
 
 import {
-
-  STORAGE
-
+    STORAGE
 } from "./config.js";
 
 import {
-
-  getAccount
-
+    getAccount
 } from "./wallet.js";
 
 import {
-
-  validateConfig
-
+    validateConfig
 } from "./validation.js";
 
 import {
-
-  symbolExists,
-
-  getDeploymentFee,
-
-  getEVOZXBalance,
-
-  getEVOZXAllowance,
-
-  approveEVOZX,
-
-  createToken
-
+    symbolExists,
+    getDeploymentFee,
+    getEVOZXBalance,
+    getEVOZXAllowance,
+    approveEVOZX,
+    createToken
 } from "./factory.js";
 
 import {
-
-  autoTopupEVOZX
-
+    autoTopupEVOZX
 } from "./exchange.js";
 
 // =====================================================
-// CONFIG
+// BUILD DEPLOYMENT
 // =====================================================
 
-export function buildDeployment(form){
+export function buildDeployment(form) {
 
-  return{
+    return {
 
-    name:
+        // BASIC
 
-      form.name.trim(),
+        name:
+            String(
+                form.name ?? ""
+            ).trim(),
 
-    symbol:
+        symbol:
+            String(
+                form.symbol ?? ""
+            )
+                .trim()
+                .toUpperCase(),
 
-      form.symbol
+        supply:
+            BigInt(
+                form.supply || 0
+            ),
 
-        .trim()
+        // SYSTEM
 
-        .toUpperCase(),
+        owner:
+            ZeroAddress,
 
-    supply:
+        chainId:
+            0,
 
-      BigInt(form.supply),
+        launchKitVersion:
+            0,
 
-    owner:
+        // FEATURES
 
-      ZeroAddress,
+        burnable:
+            Boolean(
+                form.burnable
+            ),
 
-    chainId:0,
+        mintable:
+            Boolean(
+                form.mintable
+            ),
 
-    launchKitVersion:0,
+        ownershipEnabled:
+            Boolean(
+                form.ownershipEnabled
+            ),
 
-    burnable:
+        // METADATA
 
-      !!form.burnable,
+        website:
+            String(
+                form.website ?? ""
+            ).trim(),
 
-    mintable:
+        telegram:
+            String(
+                form.telegram ?? ""
+            ).trim(),
 
-      !!form.mintable,
+        twitter:
+            String(
+                form.twitter ?? ""
+            ).trim(),
 
-    ownershipEnabled:
+        logoURI:
+            String(
+                form.logoURI ?? ""
+            ).trim(),
 
-      !!form.ownershipEnabled,
+        // SECURITY
 
-    website:
+        maxWalletEnabled:
+            Boolean(
+                form.maxWalletEnabled
+            ),
 
-      form.website?.trim() ?? "",
+        maxWalletPercent:
 
-    telegram:
+            form.maxWalletEnabled
 
-      form.telegram?.trim() ?? "",
+                ? Number(
+                    form.maxWalletPercent || 0
+                )
 
-    twitter:
+                : 0,
 
-      form.twitter?.trim() ?? "",
+        maxTxEnabled:
+            Boolean(
+                form.maxTxEnabled
+            ),
 
-    logoURI:
+        maxTxPercent:
 
-      form.logoURI?.trim() ?? "",
+            form.maxTxEnabled
 
-    maxWalletEnabled:
+                ? Number(
+                    form.maxTxPercent || 0
+                )
 
-      !!form.maxWalletEnabled,
+                : 0,
 
-    maxWalletPercent:
+        // TRADING
 
-      Number(
+        tradingControlEnabled:
+            Boolean(
+                form.tradingControlEnabled
+            ),
 
-        form.maxWalletEnabled
+        tradingEnabled:
+            Boolean(
+                form.tradingEnabled
+            ),
 
-          ? form.maxWalletPercent
+        // TAX
 
-          : 0
+        buyTaxEnabled:
+            Boolean(
+                form.buyTaxEnabled
+            ),
 
-      ),
+        buyTax:
 
-    maxTxEnabled:
+            form.buyTaxEnabled
 
-      !!form.maxTxEnabled,
+                ? Number(
+                    form.buyTax || 0
+                )
 
-    maxTxPercent:
+                : 0,
 
-      Number(
+        sellTaxEnabled:
+            Boolean(
+                form.sellTaxEnabled
+            ),
 
-        form.maxTxEnabled
+        sellTax:
 
-          ? form.maxTxPercent
+            form.sellTaxEnabled
 
-          : 0
+                ? Number(
+                    form.sellTax || 0
+                )
 
-      ),
+                : 0,
 
-    tradingControlEnabled:
+        burnTaxShare:
 
-      !!form.tradingControlEnabled,
+            (
+                form.buyTaxEnabled ||
+                form.sellTaxEnabled
+            )
 
-    tradingEnabled:
+                ? Number(
+                    form.burnTaxShare || 0
+                )
 
-      !!form.tradingEnabled,
+                : 0,
 
-    buyTaxEnabled:
+        marketingWallet:
 
-      !!form.buyTaxEnabled,
+            form.marketingWallet ||
 
-    buyTax:
+            ZeroAddress,
 
-      Number(
+        developmentWallet:
 
-        form.buyTaxEnabled
+            form.developmentWallet ||
 
-          ? form.buyTax
+            ZeroAddress
 
-          : 0
-
-      ),
-
-    sellTaxEnabled:
-
-      !!form.sellTaxEnabled,
-
-    sellTax:
-
-      Number(
-
-        form.sellTaxEnabled
-
-          ? form.sellTax
-
-          : 0
-
-      ),
-
-    burnTaxShare:
-
-      Number(
-
-        form.buyTaxEnabled ||
-
-        form.sellTaxEnabled
-
-          ? form.burnTaxShare
-
-          : 0
-
-      ),
-
-    marketingWallet:
-
-      form.marketingWallet ||
-
-      ZeroAddress,
-
-    developmentWallet:
-
-      form.developmentWallet ||
-
-      ZeroAddress
-
-  };
+    };
 
 }
 
@@ -210,73 +213,69 @@ export function buildDeployment(form){
 // PREVIEW
 // =====================================================
 
-export async function getDeploymentPreview(form){
+export async function getDeploymentPreview(form) {
 
-  const account=
+    const account =
+        getAccount();
 
-    await getAccount();
+    if (!account) {
 
-  if(!account){
+        throw new Error(
+            "Wallet not connected."
+        );
 
-    throw new Error(
+    }
 
-      "Wallet not connected."
+    const config =
+        buildDeployment(form);
 
-    );
+    const validationError =
+        validateConfig(
+            config
+        );
 
-  }
+    if (validationError) {
 
-  const config=
+        throw new Error(
+            validationError
+        );
 
-    buildDeployment(form);
+    }
 
-  const error=
+    const fee =
+        await getDeploymentFee(
+            config
+        );
 
-    validateConfig(config);
+    const balance =
+        await getEVOZXBalance(
+            account
+        );
 
-  if(error){
+    const allowance =
+        await getEVOZXAllowance(
+            account
+        );
 
-    throw new Error(error);
+    return {
 
-  }
+        account,
 
-  const fee=
+        fee,
 
-    await getDeploymentFee(config);
+        balance,
 
-  const balance=
+        allowance,
 
-    await getEVOZXBalance(
+        enoughBalance:
 
-      account
+            balance >= fee,
 
-    );
+        approved:
 
-  const allowance=
+            allowance >= fee
 
-    await getEVOZXAllowance(
-
-      account
-
-    );
-
-  return{
-
-    fee,
-
-    balance,
-
-    allowance,
-
-    enoughBalance:
-
-      balance>=fee,
-
-    approved:
-
-      allowance>=fee
-
-  };
+    };
 
 }
 
@@ -284,51 +283,104 @@ export async function getDeploymentPreview(form){
 // APPROVAL
 // =====================================================
 
-export async function approveFactory(config){
+export async function approveFactory(config) {
 
-  const account=
+    const account =
+        getAccount();
 
-    await getAccount();
+    if (!account) {
 
-  if(!account){
+        throw new Error(
+            "Wallet not connected."
+        );
 
-    throw new Error(
+    }
 
-      "Wallet not connected."
+    const fee =
+        await getDeploymentFee(
+            config
+        );
 
-    );
+    const allowance =
+        await getEVOZXAllowance(
+            account
+        );
 
-  }
+    if (allowance >= fee) {
 
-  const fee=
+        return fee;
 
-    await getDeploymentFee(config);
+    }
 
-  const allowance=
+    const tx =
+        await approveEVOZX(
+            fee
+        );
 
-    await getEVOZXAllowance(
-
-      account
-
-    );
-
-  if(
-
-    allowance>=fee
-
-  ){
+    await tx.wait();
 
     return fee;
 
-  }
+}
+// =====================================================
+// STORAGE
+// =====================================================
 
-  const tx=
+function saveLastDeployment(deployment) {
 
-    await approveEVOZX(fee);
+    localStorage.setItem(
 
-  await tx.wait();
+        STORAGE.lastDeployment,
 
-  return fee;
+        JSON.stringify(
+            deployment
+        )
+
+    );
+
+}
+
+function saveDeploymentHistory(deployment) {
+
+    let history = [];
+
+    try {
+
+        history = JSON.parse(
+
+            localStorage.getItem(
+                STORAGE.deployHistory
+            ) || "[]"
+
+        );
+
+        if (!Array.isArray(history)) {
+
+            history = [];
+
+        }
+
+    }
+
+    catch {
+
+        history = [];
+
+    }
+
+    history.unshift(
+        deployment
+    );
+
+    localStorage.setItem(
+
+        STORAGE.deployHistory,
+
+        JSON.stringify(
+            history
+        )
+
+    );
 
 }
 
@@ -336,170 +388,123 @@ export async function approveFactory(config){
 // DEPLOY
 // =====================================================
 
-export async function deployToken(form){
+export async function deployToken(form) {
 
-  const account = await getAccount();
+    const account =
+        getAccount();
 
-  if(!account){
+    if (!account) {
 
-    throw new Error(
+        throw new Error(
+            "Wallet not connected."
+        );
 
-      "Wallet not connected."
+    }
 
+    const config =
+        buildDeployment(form);
+
+    const validationError =
+        validateConfig(
+            config
+        );
+
+    if (validationError) {
+
+        throw new Error(
+            validationError
+        );
+
+    }
+
+    const exists =
+        await symbolExists(
+            config.symbol
+        );
+
+    if (exists) {
+
+        throw new Error(
+            "Symbol already exists."
+        );
+
+    }
+
+    const fee =
+        await getDeploymentFee(
+            config
+        );
+
+    const balance =
+        await getEVOZXBalance(
+            account
+        );
+
+    if (balance < fee) {
+
+        await autoTopupEVOZX(
+            fee
+        );
+
+    }
+
+    await approveFactory(
+        config
     );
 
-  }
+    const result =
+        await createToken(
+            config
+        );
 
-  const config =
+    const deployment = {
 
-    buildDeployment(form);
+        name:
+            result.name,
 
-  const error =
+        symbol:
+            result.symbol,
 
-    validateConfig(config);
+        token:
+            result.token,
 
-  if(error){
+        creator:
+            result.creator,
 
-    throw new Error(error);
+        supply:
+            result.supply.toString(),
 
-  }
+        chainId:
+            result.chainId.toString(),
 
-  if(
+        hash:
+            result.hash,
 
-    await symbolExists(
+        deployedAt:
+            Date.now()
 
-      config.symbol
+    };
 
-    )
-
-  ){
-
-    throw new Error(
-
-      "Symbol already exists."
-
+    saveLastDeployment(
+        deployment
     );
 
-  }
-
-  const fee =
-
-    await getDeploymentFee(
-
-      config
-
+    saveDeploymentHistory(
+        deployment
     );
 
-  const balance =
+    window.location.href =
 
-    await getEVOZXBalance(
+        `./success.html?token=${result.token}`;
 
-      account
+}
 
-    );
+// =====================================================
+// EXPORTS
+// =====================================================
 
-  if(balance < fee){
+export {
 
-    await autoTopupEVOZX(
-
-      fee
-
-    );
-
-  }
-
-  await approveFactory(
-
-    config
-
-  );
-
-  const result =
-
-    await createToken(
-
-      config
-
-    );
-
-  const deployment = {
-
-    hash:
-
-      result.hash,
-
-    token:
-
-      result.token,
-
-    creator:
-
-      result.creator,
-
-    name:
-
-      result.name,
-
-    symbol:
-
-      result.symbol,
-
-    supply:
-
-      result.supply.toString(),
-
-    chainId:
-
-      result.chainId.toString(),
-
-    deployedAt:
-
-      Date.now()
-
-  };
-
-  localStorage.setItem(
-
-    STORAGE.lastToken,
-
-    JSON.stringify(
-
-      deployment
-
-    )
-
-  );
-
-  const history = JSON.parse(
-
-    localStorage.getItem(
-
-      STORAGE.deployHistory
-
-    ) ?? "[]"
-
-  );
-
-  history.unshift(
-
-    deployment
-
-  );
-
-  localStorage.setItem(
-
-    STORAGE.deployHistory,
-
-    JSON.stringify(
-
-      history
-
-    )
-
-  );
-
-  window.location.href =
-
-    `success.html?token=${result.token}`;
-
-      }
+    saveLastDeployment,
+    saveDeploymentHistory
+};
