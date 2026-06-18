@@ -11,6 +11,10 @@ import {
     isZeroAddress
 } from "./config.js";
 
+import {
+    initializeWallet
+} from "./wallet.js";
+
 // =====================================================
 // STATE
 // =====================================================
