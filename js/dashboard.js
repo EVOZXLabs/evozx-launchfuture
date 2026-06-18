@@ -286,65 +286,31 @@ async function loadWalletSummary() {
 
     try {
 
-        const provider =
-            getReadProvider();
-
-        console.log(
-            "PROVIDER:",
-            provider
-        );
-
-        const evozBalance =
-            await provider.getBalance(
-                account
-            );
-
-        console.log(
-            "BALANCE:",
-            evozBalance.toString()
-        );
-
-        setText(
-            "dashboardEVOZ",
-            `${Number(
-                formatUnits(
-                    evozBalance,
-                    18
-                )
-            ).toLocaleString()} EVOZ`
-        );
-
-    }
-
-    catch (error) {
-
-        console.error(
-            "EVOZ BALANCE ERROR:",
-            error
-        );
-
-        setText(
-            "dashboardEVOZ",
-            "-"
-        );
-
-    }
-
-    try {
+    console.log(
+        "ACCOUNT:",
+        account
+    );
 
     const balance =
         await getEVOZXBalance(
             account
         );
 
+    console.log(
+        "RAW EVOZX:",
+        balance
+    );
+
+    console.log(
+        "RAW EVOZX STRING:",
+        balance.toString()
+    );
+
     setText(
         "dashboardEVOZX",
-        `${Number(
-            formatUnits(
-                balance,
-                18
-            )
-        ).toLocaleString()} EVOZX`
+        `${formatToken(
+            balance
+        )} EVOZX`
     );
 
 }
@@ -357,11 +323,11 @@ catch (error) {
 
     setText(
         "dashboardEVOZX",
-        error?.message || "ERROR"
+        "ERROR"
     );
 
 }
-
+    
 }
 
 // =====================================================
