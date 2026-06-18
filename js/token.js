@@ -7,13 +7,114 @@ import {
 import {
     NETWORK,
     ABI,
-    STORAGE,
     explorerAddress,
     isZeroAddress
 } from "./config.js";
 
+// =====================================================
+// STATE
+// =====================================================
+
 let provider = null;
+
 let tokenAbi = null;
+
+// =====================================================
+// DOM
+// =====================================================
+
+const $ = selector =>
+    document.querySelector(selector);
+
+function setText(id, value) {
+
+    const element =
+        document.getElementById(id);
+
+    if (!element) {
+
+        return;
+
+    }
+
+    element.textContent = value;
+
+}
+
+function setHTML(id, value) {
+
+    const element =
+        document.getElementById(id);
+
+    if (!element) {
+
+        return;
+
+    }
+
+    element.innerHTML = value;
+
+}
+
+// =====================================================
+// HELPERS
+// =====================================================
+
+function shortAddress(address) {
+
+    if (!address) {
+
+        return "-";
+
+    }
+
+    return (
+
+        address.slice(0, 6) +
+
+        "..." +
+
+        address.slice(-4)
+
+    );
+
+}
+
+function formatSupply(value) {
+
+    try {
+
+        return Number(
+
+            formatUnits(
+
+                value,
+
+                18
+
+            )
+
+        ).toLocaleString();
+
+    }
+
+    catch {
+
+        return String(value);
+
+    }
+
+}
+
+function formatStatus(value) {
+
+    return value
+
+        ? "Enabled"
+
+        : "Disabled";
+
+}
 
 // =====================================================
 // ABI
@@ -22,16 +123,32 @@ let tokenAbi = null;
 async function loadAbi() {
 
     if (tokenAbi) {
+
         return tokenAbi;
+
     }
 
-    const response = await fetch(ABI.token);
+    const response =
+
+        await fetch(
+
+            ABI.token
+
+        );
 
     if (!response.ok) {
-        throw new Error("Unable to load token ABI.");
+
+        throw new Error(
+
+            "Unable to load token ABI."
+
+        );
+
     }
 
-    tokenAbi = await response.json();
+    tokenAbi =
+
+        await response.json();
 
     return tokenAbi;
 
@@ -43,11 +160,19 @@ async function loadAbi() {
 
 function getProvider() {
 
-    if (!provider) {
-        provider = new JsonRpcProvider(
-            NETWORK.rpcUrl
-        );
+    if (provider) {
+
+        return provider;
+
     }
+
+    provider =
+
+        new JsonRpcProvider(
+
+            NETWORK.rpcUrl
+
+        );
 
     return provider;
 
@@ -59,12 +184,18 @@ function getProvider() {
 
 async function getTokenContract(address) {
 
-    const abi = await loadAbi();
+    const abi =
+
+        await loadAbi();
 
     return new Contract(
+
         address,
+
         abi,
+
         getProvider()
+
     );
 
 }
@@ -76,69 +207,92 @@ async function getTokenContract(address) {
 function getTokenAddress() {
 
     const params =
+
         new URLSearchParams(
+
             window.location.search
+
         );
 
-    const query =
-        params.get("address");
+    return params.get(
 
-    if (query) {
-        return query;
-    }
+        "address"
 
-    return sessionStorage.getItem(
-        STORAGE.selectedToken
     );
 
 }
 
 // =====================================================
-// LOAD TOKEN
+// LOAD TOKEN DATA
 // =====================================================
 
-export async function loadToken() {
+export async function loadTokenData() {
 
     const address =
+
         getTokenAddress();
 
     if (!address) {
-        throw new Error("Token address not found.");
+
+        throw new Error(
+
+            "Token address not provided."
+
+        );
+
     }
 
     const token =
-        await getTokenContract(address);
+
+        await getTokenContract(
+
+            address
+
+        );
 
     const [
+
         name,
         symbol,
         owner,
         totalSupply,
+
         deployedChainId,
         launchKitVersion,
-        ownershipEnabled,
+
         burnable,
         mintable,
         mintUsed,
+        ownershipEnabled,
+
         website,
         telegram,
         twitter,
         logoURI,
+
         maxWalletEnabled,
         maxWalletPercent,
+
         maxTxEnabled,
         maxTxPercent,
+
         tradingControlEnabled,
         tradingEnabled,
+
         buyTaxEnabled,
         buyTax,
+
         sellTaxEnabled,
         sellTax,
+
         burnTaxShare,
+
         marketingWallet,
         developmentWallet,
+
         dexPair,
         pairInitialized
+
     ] = await Promise.all([
 
         token.name(),
@@ -149,10 +303,10 @@ export async function loadToken() {
         token.deployedChainId(),
         token.launchKitVersion(),
 
-        token.ownershipEnabled(),
         token.burnable(),
         token.mintable(),
         token.mintUsed(),
+        token.ownershipEnabled(),
 
         token.website(),
         token.telegram(),
@@ -196,10 +350,10 @@ export async function loadToken() {
         deployedChainId,
         launchKitVersion,
 
-        ownershipEnabled,
         burnable,
         mintable,
         mintUsed,
+        ownershipEnabled,
 
         website,
         telegram,
@@ -234,85 +388,125 @@ export async function loadToken() {
 }
 
 // =====================================================
-// DOM HELPERS
+// STATUS
 // =====================================================
 
-function $(selector) {
-    return document.querySelector(selector);
-}
+function setStatus(id, enabled) {
 
-function setText(selector, value) {
-    const element = $(selector);
-    if (element) {
-        element.textContent = value;
-    }
-}
+    const element =
 
-function setStatus(selector, enabled) {
-    const element = $(selector);
+        document.getElementById(id);
 
     if (!element) {
+
         return;
+
     }
 
-    element.textContent = enabled ? "Enabled" : "Disabled";
-    element.className = enabled
-        ? "status enabled"
-        : "status disabled";
-}
+    element.textContent =
 
-function shortAddress(address) {
-    if (
-        !address ||
-        address === ethers.ZeroAddress
-    ) {
-        return "-";
-    }
+        enabled
 
-    return `${address.slice(0, 6)}...${address.slice(-4)}`;
-}
+            ? "Enabled"
 
-function formatSupply(value) {
-    return formatUnits(value, 18);
-}
+            : "Disabled";
 
-function explorerAddress(address) {
-    return `${NETWORK.explorer}/address/${address}`;
+    element.className =
+
+        enabled
+
+            ? "status enabled"
+
+            : "status disabled";
+
 }
 
 // =====================================================
-// BASIC INFO
+// BASIC
 // =====================================================
 
 function renderBasic(token) {
 
-    setText("#tokenName", token.name);
-    setText("#tokenSymbol", token.symbol);
-
     setText(
-        "#tokenAddress",
-        shortAddress(token.address)
+
+        "tokenName",
+
+        token.name
+
     );
 
     setText(
-        "#owner",
-        shortAddress(token.owner)
+
+        "tokenSymbol",
+
+        token.symbol
+
     );
 
     setText(
-        "#supply",
-        formatSupply(token.totalSupply)
+
+        "tokenAddress",
+
+        token.address
+
     );
 
     setText(
-        "#chainId",
-        String(token.deployedChainId)
+
+        "ownerAddress",
+
+        token.owner
+
     );
 
     setText(
-        "#version",
-        String(token.launchKitVersion)
+
+        "owner",
+
+        shortAddress(
+
+            token.owner
+
+        )
+
     );
+
+    setText(
+
+        "supply",
+
+        formatSupply(
+
+            token.totalSupply
+
+        )
+
+    );
+
+    setText(
+
+        "chainId",
+
+        String(
+
+            token.deployedChainId
+
+        )
+
+    );
+
+    setText(
+
+        "version",
+
+        String(
+
+            token.launchKitVersion
+
+        )
+
+    );
+
 }
 
 // =====================================================
@@ -322,25 +516,51 @@ function renderBasic(token) {
 function renderMetadata(token) {
 
     setText(
-        "#website",
+
+        "website",
+
         token.website || "-"
+
     );
 
     setText(
-        "#telegram",
+
+        "telegram",
+
         token.telegram || "-"
+
     );
 
     setText(
-        "#twitter",
+
+        "twitter",
+
         token.twitter || "-"
+
     );
 
-    const logo = $("#logo");
+    const logo =
 
-    if (logo && token.logoURI) {
-        logo.src = token.logoURI;
+        document.getElementById(
+
+            "logo"
+
+        );
+
+    if (
+
+        logo &&
+
+        token.logoURI
+
+    ) {
+
+        logo.src =
+
+            token.logoURI;
+
     }
+
 }
 
 // =====================================================
@@ -350,24 +570,37 @@ function renderMetadata(token) {
 function renderFeatures(token) {
 
     setStatus(
-        "#burnable",
+
+        "burnable",
+
         token.burnable
+
     );
 
     setStatus(
-        "#mintable",
+
+        "mintable",
+
         token.mintable
+
     );
 
     setStatus(
-        "#ownership",
+
+        "ownership",
+
         token.ownershipEnabled
+
     );
 
     setStatus(
-        "#mintUsed",
+
+        "mintUsed",
+
         token.mintUsed
+
     );
+
 }
 
 // =====================================================
@@ -376,113 +609,439 @@ function renderFeatures(token) {
 
 function renderSecurity(token) {
 
-    setStatus(
-        "#maxWalletEnabled",
-        token.maxWalletEnabled
-    );
+    setText(
 
-    setStatus(
-        "#maxTxEnabled",
-        token.maxTxEnabled
+        "maxWalletEnabled",
+
+        formatStatus(
+
+            token.maxWalletEnabled
+
+        )
+
     );
 
     setText(
-        "#maxWalletPercent",
+
+        "maxWalletPercent",
+
         token.maxWalletEnabled
+
             ? `${token.maxWalletPercent}%`
+
             : "-"
+
     );
 
     setText(
-        "#maxTxPercent",
-        token.maxTxEnabled
-            ? `${token.maxTxPercent}%`
-            : "-"
+
+        "maxTxEnabled",
+
+        formatStatus(
+
+            token.maxTxEnabled
+
+        )
+
     );
+
+    setText(
+
+        "maxTxPercent",
+
+        token.maxTxEnabled
+
+            ? `${token.maxTxPercent}%`
+
+            : "-"
+
+    );
+
 }
 
 // =====================================================
-// TRADING
+// TRADING & TAX
 // =====================================================
 
 function renderTrading(token) {
 
-    setStatus(
-        "#tradingControlEnabled",
-        token.tradingControlEnabled
+    setText(
+
+        "tradingControlEnabled",
+
+        formatStatus(
+
+            token.tradingControlEnabled
+
+        )
+
     );
 
-    setStatus(
-        "#tradingEnabled",
-        token.tradingEnabled
+    setText(
+
+        "tradingEnabled",
+
+        formatStatus(
+
+            token.tradingEnabled
+
+        )
+
     );
+
+    setText(
+
+        "buyTaxEnabled",
+
+        formatStatus(
+
+            token.buyTaxEnabled
+
+        )
+
+    );
+
+    setText(
+
+        "buyTax",
+
+        token.buyTaxEnabled
+
+            ? `${token.buyTax}%`
+
+            : "-"
+
+    );
+
+    setText(
+
+        "sellTaxEnabled",
+
+        formatStatus(
+
+            token.sellTaxEnabled
+
+        )
+
+    );
+
+    setText(
+
+        "sellTax",
+
+        token.sellTaxEnabled
+
+            ? `${token.sellTax}%`
+
+            : "-"
+
+    );
+
+    setText(
+
+        "burnTaxShare",
+
+        Number(
+
+            token.burnTaxShare
+
+        ) > 0
+
+            ? `${token.burnTaxShare}%`
+
+            : "-"
+
+    );
+
 }
 
 // =====================================================
-// RENDER
+// DISTRIBUTION
+// =====================================================
+
+function renderDistribution(token) {
+
+    setText(
+
+        "marketingWallet",
+
+        isZeroAddress(
+
+            token.marketingWallet
+
+        )
+
+            ? "-"
+
+            : token.marketingWallet
+
+    );
+
+    setText(
+
+        "developmentWallet",
+
+        isZeroAddress(
+
+            token.developmentWallet
+
+        )
+
+            ? "-"
+
+            : token.developmentWallet
+
+    );
+
+}
+
+// =====================================================
+// DEX
+// =====================================================
+
+function renderDex(token) {
+
+    setText(
+
+        "pairInitialized",
+
+        token.pairInitialized
+
+            ? "Yes"
+
+            : "No"
+
+    );
+
+    setText(
+
+        "dexPair",
+
+        isZeroAddress(
+
+            token.dexPair
+
+        )
+
+            ? "-"
+
+            : token.dexPair
+
+    );
+
+}
+
+// =====================================================
+// ACTIONS
+// =====================================================
+
+function bindActions(token) {
+
+    const copyButton =
+
+        document.getElementById(
+
+            "copyAddress"
+
+        );
+
+    if (copyButton) {
+
+        copyButton.onclick =
+
+            async () => {
+
+                try {
+
+                    await navigator
+
+                        .clipboard
+
+                        .writeText(
+
+                            token.address
+
+                        );
+
+                    copyButton.textContent =
+
+                        "Copied";
+
+                    setTimeout(
+
+                        () => {
+
+                            copyButton.textContent =
+
+                                "Copy Address";
+
+                        },
+
+                        1500
+
+                    );
+
+                }
+
+                catch (error) {
+
+                    console.error(
+
+                        error
+
+                    );
+
+                }
+
+            };
+
+    }
+
+    const explorerButton =
+
+        document.getElementById(
+
+            "openExplorer"
+
+        );
+
+    if (explorerButton) {
+
+        explorerButton.onclick =
+
+            () => {
+
+                window.open(
+
+                    explorerAddress(
+
+                        token.address
+
+                    ),
+
+                    "_blank"
+
+                );
+
+            };
+
+    }
+
+}
+
+// =====================================================
+// MAIN RENDER
 // =====================================================
 
 export async function renderToken() {
 
     try {
 
-        const token = await loadTokenData();
+        const token =
 
-        renderBasicInfo(token);
+            await loadTokenData();
 
-        renderMetadata(token);
+        renderBasic(
 
-        renderFeatures(token);
+            token
 
-        renderSecurity(token);
+        );
 
-        renderTrading(token);
+        renderMetadata(
 
-        renderTax(token);
+            token
 
-        renderDex(token);
+        );
 
-        bindActions(token);
+        renderFeatures(
+
+            token
+
+        );
+
+        renderSecurity(
+
+            token
+
+        );
+
+        renderTrading(
+
+            token
+
+        );
+
+        renderDistribution(
+
+            token
+
+        );
+
+        renderDex(
+
+            token
+
+        );
+
+        bindActions(
+
+            token
+
+        );
 
     }
 
     catch (error) {
 
-        console.error(error);
+        console.error(
+
+            error
+
+        );
 
         const container =
-            $("#tokenContainer");
 
-        if (container) {
+            document.getElementById(
 
-            container.innerHTML = `
+                "tokenContainer"
 
-                <div class="empty-state">
+            );
 
-                    <h2>Unable to load token</h2>
+        if (!container) {
 
-                    <p>
-                        The supplied address is not a valid
-                        LaunchFuture token contract.
-                    </p>
-
-                </div>
-
-            `;
+            return;
 
         }
+
+        container.innerHTML = `
+
+<div class="empty-state">
+
+    <h2>
+
+        Unable To Load Token
+
+    </h2>
+
+    <p>
+
+        This token address is invalid or the contract is not a supported LaunchFuture EVOZ20 token.
+
+    </p>
+
+</div>
+
+`;
 
     }
 
 }
 
 // =====================================================
-// INITIALIZATION
+// INITIALIZE
 // =====================================================
 
 async function initialize() {
-
-    bindNavigation();
 
     await renderToken();
 
@@ -502,6 +1061,6 @@ document.addEventListener(
 
 export {
 
-    loadTokenData
+    initialize
 
 };
