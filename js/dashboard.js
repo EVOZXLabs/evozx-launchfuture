@@ -329,6 +329,45 @@ async function loadWalletSummary() {
 
     }
 
+    try {
+
+    const evozx =
+        await getEVOZXContract();
+
+    const balance =
+        await evozx.balanceOf(
+            account
+        );
+
+    setText(
+
+        "dashboardEVOZX",
+
+        `${Number(
+            formatUnits(
+                balance,
+                18
+            )
+        ).toLocaleString()} EVOZX`
+
+    );
+
+}
+
+catch (error) {
+
+    console.error(
+        "EVOZX BALANCE ERROR:",
+        error
+    );
+
+    setText(
+        "dashboardEVOZX",
+        "-"
+    );
+
+}
+
 }
 
 // =====================================================
