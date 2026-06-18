@@ -11,7 +11,8 @@ import {
 
 import {
     getReadProvider,
-    getTokensByCreator
+    getTokensByCreator,
+    getEVOZXBalance
 } from "./factory.js";
 
 import {
