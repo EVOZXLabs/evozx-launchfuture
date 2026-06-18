@@ -1,520 +1,1058 @@
-import { Contract } from "https://esm.sh/ethers@6";
+import {
+    Contract,
+    formatUnits,
+    parseUnits
+} from "https://esm.sh/ethers@6";
 
 import {
-  CONTRACTS,
-  ABI,
-  explorerToken
+    CONTRACTS,
+    ABI,
+    STORAGE,
+    explorerToken,
+    explorerTransaction
 } from "./config.js";
 
 import {
-  getReadProvider
+    getReadProvider,
+    getTokensByCreator,
+    getEVOZXBalance
 } from "./factory.js";
 
 import {
-  getAccount,
-  restoreConnection
+    getAccount,
+    getSigner,
+    restoreConnection,
+    onAccountChanged
 } from "./wallet.js";
 
-// ======================================================
+// =====================================================
 // STATE
-// ======================================================
+// =====================================================
 
 let tokenAbi = null;
+let evozxAbi = null;
+
 let tokenCache = [];
 
-// ======================================================
+// =====================================================
 // DOM
-// ======================================================
+// =====================================================
 
 const tokenList =
-  document.getElementById("tokenList");
+    document.getElementById(
+        "tokenList"
+    );
 
-const tokenCount =
-  document.getElementById("tokenCount");
+const loadingState =
+    document.getElementById(
+        "loadingState"
+    );
 
-// ======================================================
+const emptyState =
+    document.getElementById(
+        "emptyState"
+    );
+
+const template =
+    document.getElementById(
+        "tokenCardTemplate"
+    );
+
+// =====================================================
 // HELPERS
-// ======================================================
+// =====================================================
 
-function setTokenCount(value) {
+function $(id) {
 
-  if (!tokenCount) {
-    return;
-  }
+    return document.getElementById(
+        id
+    );
 
-  tokenCount.textContent = String(value);
+}
+
+function setText(id, value) {
+
+    const element = $(id);
+
+    if (!element) {
+        return;
+    }
+
+    element.textContent =
+        String(value);
 
 }
 
 function shortAddress(address) {
 
-  if (!address) {
-    return "";
-  }
+    if (!address) {
+        return "-";
+    }
 
-  return (
-    address.slice(0, 6) +
-    "..." +
-    address.slice(-4)
-  );
+    return (
 
-}
+        address.slice(0, 6) +
 
-async function loadTokenAbi() {
+        "..." +
 
-  if (tokenAbi) {
-    return tokenAbi;
-  }
-
-  const response =
-    await fetch("./abi/token.json");
-
-  if (!response.ok) {
-    throw new Error("Unable to load token ABI.");
-  }
-
-  tokenAbi =
-    await response.json();
-
-  return tokenAbi;
-
-}
-
-async function createTokenContract(address) {
-
-  const abi =
-    await loadTokenAbi();
-
-  return new Contract(
-
-    address,
-
-    abi,
-
-    getReadProvider()
-
-  );
-
-}
-
-// ======================================================
-// EMPTY STATE
-// ======================================================
-
-function renderEmpty(message =
-  "No tokens found.") {
-
-  if (!tokenList) {
-    return;
-  }
-
-  tokenList.innerHTML = `
-
-<div class="empty-state">
-
-<h3>No Tokens</h3>
-
-<p>${message}</p>
-
-</div>
-
-`;
-
-  setTokenCount(0);
-
-}
-
-// ======================================================
-// LOADING
-// ======================================================
-
-function renderLoading() {
-
-  if (!tokenList) {
-    return;
-  }
-
-  tokenList.innerHTML = `
-
-<div class="loading-card">
-
-Loading tokens...
-
-</div>
-
-`;
-
-}
-
-// ======================================================
-// TOKEN INFO
-// ======================================================
-
-async function loadTokenInfo(address) {
-
-  const token =
-    await createTokenContract(address);
-
-  const [
-
-    name,
-    symbol,
-    supply
-
-  ] = await Promise.all([
-
-    token.name(),
-    token.symbol(),
-    token.totalSupply()
-
-  ]);
-
-  return {
-
-    address,
-    name,
-    symbol,
-    supply
-
-  };
-
-}
-
-// ======================================================
-// TOKEN CARD
-// ======================================================
-
-function buildCard(token) {
-
-  return `
-
-<div class="token-card">
-
-  <div class="token-header">
-
-    <h3>${token.name}</h3>
-
-    <span class="badge">
-      ${token.symbol}
-    </span>
-
-  </div>
-
-  <div class="token-body">
-
-    <p>
-
-      <strong>Supply</strong><br>
-
-      ${token.supply.toLocaleString()}
-
-    </p>
-
-    <p>
-
-      <strong>Address</strong><br>
-
-      ${shortAddress(token.address)}
-
-    </p>
-
-  </div>
-
-  <div class="token-actions">
-
-    <button
-      class="secondary-button"
-      data-copy="${token.address}"
-    >
-      Copy
-    </button>
-
-    <button
-      class="secondary-button"
-      data-explorer="${token.address}"
-    >
-      Explorer
-    </button>
-
-    <button
-      class="primary-button"
-      data-details="${token.address}"
-    >
-      Details
-    </button>
-
-  </div>
-
-</div>
-
-`;
-
-}
-
-// ======================================================
-// BUTTON EVENTS
-// ======================================================
-
-function bindButtons() {
-
-  document
-
-    .querySelectorAll("[data-copy]")
-
-    .forEach(button => {
-
-      button.onclick = async () => {
-
-        try {
-
-          await navigator.clipboard.writeText(
-
-            button.dataset.copy
-
-          );
-
-        }
-
-        catch (error) {
-
-          console.error(error);
-
-        }
-
-      };
-
-    });
-
-  document
-
-    .querySelectorAll("[data-explorer]")
-
-    .forEach(button => {
-
-      button.onclick = () => {
-
-        window.open(
-
-          explorerToken(
-
-            button.dataset.explorer
-
-          ),
-
-          "_blank"
-
-        );
-
-      };
-
-    });
-
-  document
-
-    .querySelectorAll("[data-details]")
-
-    .forEach(button => {
-
-      button.onclick = () => {
-
-        location.href =
-
-          `./token.html?address=${button.dataset.details}`;
-
-      };
-
-    });
-
-      }
-
-// ======================================================
-// LOAD TOKENS
-// ======================================================
-
-async function loadTokens() {
-
-  await restoreConnection();
-
-  const account =
-
-    getAccount();
-
-  if (!account) {
-
-    renderEmpty(
-
-      "Connect your wallet to view your deployed tokens."
+        address.slice(-4)
 
     );
 
-    return;
+}
 
-  }
+function showLoading(state) {
 
-  try {
-
-    const factory =
-
-      await createTokenContract(
-
-        CONTRACTS.factory
-
-      );
-
-    const addresses =
-
-      await factory.getTokensByCreator(
-
-        account
-
-      );
-
-    if (addresses.length === 0) {
-
-      renderEmpty(
-
-        "This wallet has not deployed any token."
-
-      );
-
-      return;
-
+    if (!loadingState) {
+        return;
     }
 
-    tokenCache = [];
+    loadingState.hidden =
+        !state;
 
-    renderLoading();
+}
 
-    for (const address of addresses) {
+function showEmpty(state) {
 
-      try {
+    if (!emptyState) {
+        return;
+    }
 
-        const token =
+    emptyState.hidden =
+        !state;
 
-          await loadTokenInfo(
+}
 
-            address
+function clearTokens() {
 
-          );
+    if (!tokenList) {
+        return;
+    }
 
-        tokenCache.push({
+    tokenList.innerHTML = "";
 
-          ...token,
+}
 
-          supply: Number(
+// =====================================================
+// ABI
+// =====================================================
 
-            formatUnits(
+async function loadTokenAbi() {
 
-              token.supply,
+    if (tokenAbi) {
+        return tokenAbi;
+    }
 
-              18
-
-            )
-
-          )
-
-        });
-
-      }
-
-      catch (error) {
-
-        console.error(
-
-          address,
-
-          error
-
+    const response =
+        await fetch(
+            ABI.token
         );
 
-      }
+    if (!response.ok) {
+
+        throw new Error(
+            "Unable to load token ABI."
+        );
 
     }
 
-    tokenCache.sort(
+    tokenAbi =
+        await response.json();
 
-      (a,b)=>
+    return tokenAbi;
 
-        a.name.localeCompare(
+}
 
-          b.name
+async function loadEVOZXAbi() {
 
+    if (evozxAbi) {
+        return evozxAbi;
+    }
+
+    const response =
+        await fetch(
+            ABI.evozx
+        );
+
+    if (!response.ok) {
+
+        throw new Error(
+            "Unable to load EVOZX ABI."
+        );
+
+    }
+
+    evozxAbi =
+        await response.json();
+
+    return evozxAbi;
+
+}
+
+// =====================================================
+// CONTRACTS
+// =====================================================
+
+async function createTokenContract(
+    address
+) {
+
+    const abi =
+        await loadTokenAbi();
+
+    return new Contract(
+
+        address,
+
+        abi,
+
+        getReadProvider()
+
+    );
+
+}
+
+async function getEVOZXContract() {
+
+    const abi =
+        await loadEVOZXAbi();
+
+    const signer =
+        getSigner();
+
+    if (!signer) {
+
+        throw new Error(
+            "Wallet not connected."
+        );
+
+    }
+
+    return new Contract(
+
+        CONTRACTS.evozx,
+
+        abi,
+
+        signer
+
+    );
+
+}
+
+// =====================================================
+// WALLET SUMMARY
+// =====================================================
+
+async function loadWalletSummary() {
+
+    const account =
+        getAccount();
+
+    if (!account) {
+
+        setText(
+            "dashboardWallet",
+            "Not Connected"
+        );
+
+        setText(
+            "dashboardEVOZ",
+            "-"
+        );
+
+        setText(
+            "dashboardEVOZX",
+            "-"
+        );
+
+        return;
+
+    }
+
+    setText(
+
+        "dashboardWallet",
+
+        shortAddress(
+            account
         )
 
     );
 
-    tokenList.innerHTML =
+    try {
 
-      tokenCache
+        const nativeBalance =
+            await window.ethereum.request({
 
-        .map(buildCard)
+                method:
+                    "eth_getBalance",
 
-        .join("");
+                params: [
 
-    setTokenCount(
+                    account,
 
-      tokenCache.length
+                    "latest"
 
-    );
+                ]
 
-    bindButtons();
+            });
 
-  }
+        setText(
 
-  catch (error) {
+            "dashboardEVOZ",
 
-    console.error(error);
+            Number(
 
-    renderEmpty(
+                formatUnits(
+                    BigInt(
+                        nativeBalance
+                    ),
+                    18
+                )
 
-      "Unable to load token list."
+            ).toLocaleString()
 
-    );
+        );
 
-  }
+    }
+
+    catch {
+
+        setText(
+            "dashboardEVOZ",
+            "-"
+        );
+
+    }
+
+    try {
+
+        const evozx =
+            await getEVOZXBalance(
+                account
+            );
+
+        setText(
+
+            "dashboardEVOZX",
+
+            Number(
+
+                formatUnits(
+                    evozx,
+                    18
+                )
+
+            ).toLocaleString()
+
+        );
+
+    }
+
+    catch {
+
+        setText(
+            "dashboardEVOZX",
+            "-"
+        );
+
+    }
 
 }
 
-// ======================================================
-// INITIALIZATION
-// ======================================================
+// =====================================================
+// TOKEN INFO
+// =====================================================
+
+async function loadTokenInfo(
+    address
+) {
+
+    const token =
+        await createTokenContract(
+            address
+        );
+
+    const [
+
+        name,
+        symbol,
+        supply
+
+    ] = await Promise.all([
+
+        token.name(),
+
+        token.symbol(),
+
+        token.totalSupply()
+
+    ]);
+
+    return {
+
+        address,
+
+        name,
+
+        symbol,
+
+        supply
+
+    };
+
+}
+
+// =====================================================
+// TOKEN CARD
+// =====================================================
+
+function createTokenCard(
+    token
+) {
+
+    const fragment =
+        template.content.cloneNode(
+            true
+        );
+
+    fragment
+
+        .querySelector(
+            ".token-name"
+        )
+
+        .textContent =
+        token.name;
+
+    fragment
+
+        .querySelector(
+            ".token-symbol"
+        )
+
+        .textContent =
+        token.symbol;
+
+    fragment
+
+        .querySelector(
+            ".token-address"
+        )
+
+        .textContent =
+        shortAddress(
+            token.address
+        );
+
+    fragment
+
+        .querySelector(
+            ".token-supply"
+        )
+
+        .textContent =
+        Number(
+
+            formatUnits(
+                token.supply,
+                18
+            )
+
+        ).toLocaleString();
+
+    const copyButton =
+        fragment.querySelector(
+            ".token-copy"
+        );
+
+    copyButton.onclick =
+        async () => {
+
+            try {
+
+                await navigator
+                    .clipboard
+                    .writeText(
+                        token.address
+                    );
+
+                copyButton.textContent =
+                    "Copied";
+
+                setTimeout(
+
+                    () => {
+
+                        copyButton.textContent =
+                            "Copy";
+
+                    },
+
+                    1500
+
+                );
+
+            }
+
+            catch (
+                error
+            ) {
+
+                console.error(
+                    error
+                );
+
+            }
+
+        };
+
+    const explorerButton =
+        fragment.querySelector(
+            ".token-explorer"
+        );
+
+    explorerButton.onclick =
+        () => {
+
+            window.open(
+
+                explorerToken(
+                    token.address
+                ),
+
+                "_blank"
+
+            );
+
+        };
+
+    const detailsButton =
+        fragment.querySelector(
+            ".token-details"
+        );
+
+    detailsButton.onclick =
+        () => {
+
+            sessionStorage.setItem(
+
+                "selectedToken",
+
+                token.address
+
+            );
+
+            location.href =
+
+                `./token.html?address=${token.address}`;
+
+        };
+
+    return fragment;
+
+}
+
+// =====================================================
+// LOAD TOKENS
+// =====================================================
+
+async function loadTokens() {
+
+    const account =
+        getAccount();
+
+    clearTokens();
+
+    showEmpty(false);
+
+    if (!account) {
+
+        setText(
+            "dashboardTotalTokens",
+            0
+        );
+
+        showEmpty(true);
+
+        return;
+
+    }
+
+    try {
+
+        showLoading(true);
+
+        const addresses =
+            await getTokensByCreator(
+                account
+            );
+
+        tokenCache = [];
+
+        if (
+            !addresses ||
+            addresses.length === 0
+        ) {
+
+            setText(
+                "dashboardTotalTokens",
+                0
+            );
+
+            showLoading(false);
+
+            showEmpty(true);
+
+            return;
+
+        }
+
+        for (
+            const address
+            of addresses
+        ) {
+
+            try {
+
+                const token =
+                    await loadTokenInfo(
+                        address
+                    );
+
+                tokenCache.push(
+                    token
+                );
+
+            }
+
+            catch (
+                error
+            ) {
+
+                console.error(
+
+                    address,
+
+                    error
+
+                );
+
+            }
+
+        }
+
+        tokenCache.sort(
+
+            (a, b) =>
+
+                a.name.localeCompare(
+                    b.name
+                )
+
+        );
+
+        clearTokens();
+
+        for (
+            const token
+            of tokenCache
+        ) {
+
+            tokenList.appendChild(
+
+                createTokenCard(
+                    token
+                )
+
+            );
+
+        }
+
+        setText(
+
+            "dashboardTotalTokens",
+
+            tokenCache.length
+
+        );
+
+        showLoading(false);
+
+    }
+
+    catch (
+        error
+    ) {
+
+        console.error(
+            error
+        );
+
+        showLoading(false);
+
+        showEmpty(true);
+
+    }
+
+        }
+
+// =====================================================
+// DEPLOYMENT HISTORY
+// =====================================================
+
+function loadHistory() {
+
+    const raw =
+        localStorage.getItem(
+            STORAGE.deployHistory
+        ) ?? "[]";
+
+    let history = [];
+
+    try {
+
+        history =
+            JSON.parse(raw);
+
+    }
+
+    catch {
+
+        history = [];
+
+    }
+
+    setText(
+        "historyCount",
+        history.length
+    );
+
+    const container =
+        $("historyList");
+
+    if (!container) {
+        return;
+    }
+
+    if (!history.length) {
+
+        container.innerHTML = `
+
+<div class="empty-state">
+
+<h3>No Deployment History</h3>
+
+<p>
+
+No deployment records found.
+
+</p>
+
+</div>
+
+`;
+
+        return;
+
+    }
+
+    container.innerHTML =
+
+        history.map(item => `
+
+<div class="history-item">
+
+    <div class="history-item-header">
+
+        <strong>
+
+            ${item.name}
+
+            (${item.symbol})
+
+        </strong>
+
+        <span class="history-item-date">
+
+            ${new Date(
+                item.deployedAt
+            ).toLocaleString()}
+
+        </span>
+
+    </div>
+
+    <div class="history-item-body">
+
+        <div>
+
+            <span>
+
+                Token
+
+            </span>
+
+            <strong>
+
+                ${shortAddress(
+                    item.token
+                )}
+
+            </strong>
+
+        </div>
+
+        <div>
+
+            <span>
+
+                Creator
+
+            </span>
+
+            <strong>
+
+                ${shortAddress(
+                    item.creator
+                )}
+
+            </strong>
+
+        </div>
+
+        <div>
+
+            <span>
+
+                Transaction
+
+            </span>
+
+            <strong>
+
+                <a
+                    href="${explorerTransaction(
+                        item.hash
+                    )}"
+                    target="_blank">
+
+                    ${shortAddress(
+                        item.hash
+                    )}
+
+                </a>
+
+            </strong>
+
+        </div>
+
+    </div>
+
+</div>
+
+`).join("");
+
+}
+
+// =====================================================
+// BURN EVOZX
+// =====================================================
+
+async function burnEVOZX() {
+
+    const account =
+        getAccount();
+
+    if (!account) {
+
+        throw new Error(
+            "Wallet not connected."
+        );
+
+    }
+
+    const input =
+        $("burnAmount");
+
+    if (!input) {
+        return;
+    }
+
+    const amount =
+        input.value.trim();
+
+    if (!amount) {
+
+        throw new Error(
+            "Enter EVOZX amount."
+        );
+
+    }
+
+    const contract =
+        await getEVOZXContract();
+
+    const tx =
+        await contract.burn(
+
+            parseUnits(
+                amount,
+                18
+            )
+
+        );
+
+    setText(
+        "burnStatus",
+        "Waiting confirmation..."
+    );
+
+    await tx.wait();
+
+    setText(
+        "burnStatus",
+        "EVOZX burned successfully."
+    );
+
+    input.value = "";
+
+    await loadWalletSummary();
+
+}
+
+function bindBurnButton() {
+
+    const button =
+        $("burnButton");
+
+    if (!button) {
+        return;
+    }
+
+    button.addEventListener(
+
+        "click",
+
+        async () => {
+
+            try {
+
+                button.disabled =
+                    true;
+
+                await burnEVOZX();
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    error
+                );
+
+                setText(
+
+                    "burnStatus",
+
+                    error.message ||
+
+                    "Burn failed."
+
+                );
+
+            }
+
+            finally {
+
+                button.disabled =
+                    false;
+
+            }
+
+        }
+
+    );
+
+}
+
+// =====================================================
+// WALLET LISTENERS
+// =====================================================
+
+function bindWalletListeners() {
+
+    onAccountChanged(
+
+        async () => {
+
+            await loadWalletSummary();
+
+            await loadTokens();
+
+        }
+
+    );
+
+}
+
+// =====================================================
+// INITIALIZE
+// =====================================================
 
 async function initialize() {
 
-  try {
+    try {
 
-    await loadTokens();
+        await restoreConnection();
 
-  }
+        await loadWalletSummary();
 
-  catch (error) {
+        await loadTokens();
 
-    console.error(error);
+        loadHistory();
 
-    renderEmpty(
+        bindBurnButton();
 
-      "Unexpected error."
+        bindWalletListeners();
 
-    );
+    }
 
-  }
+    catch (error) {
+
+        console.error(
+            error
+        );
+
+        showLoading(false);
+
+        showEmpty(true);
+
+    }
 
 }
 
+// =====================================================
+// STARTUP
+// =====================================================
+
 document.addEventListener(
 
-  "DOMContentLoaded",
+    "DOMContentLoaded",
 
-  initialize
+    initialize
 
 );
 
-// ======================================================
+// =====================================================
 // EXPORTS
-// ======================================================
+// =====================================================
 
 export {
 
-  loadTokens
+    initialize,
+    loadTokens,
+    loadHistory
 
 };
