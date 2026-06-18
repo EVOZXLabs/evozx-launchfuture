@@ -13,7 +13,8 @@ import {
 } from "./validation.js";
 
 import {
-    deployToken
+    deployToken,
+    buildDeployment
 } from "./deploy.js";
 
 import {
@@ -760,16 +761,17 @@ async function refreshPreview() {
     try {
 
         const form =
-            getFormData();
+    getFormData();
 
-        // ---------------------------------
-        // DEPLOYMENT FEE
-        // ---------------------------------
+const config =
+    await buildDeployment(
+        form
+    );
 
-        const fee =
-            await getDeploymentFee(
-                form
-            );
+const fee =
+    await getDeploymentFee(
+        config
+    );
 
         setText(
 
