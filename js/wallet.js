@@ -57,7 +57,7 @@ export function getChainId() {
 
 export function isConnected() {
 
-    return !!account;
+    return account !== null;
 
 }
 
@@ -89,7 +89,9 @@ export function onAccountChanged(callback) {
 
     }
 
-    accountListeners.push(callback);
+    accountListeners.push(
+        callback
+    );
 
 }
 
@@ -101,7 +103,9 @@ export function onChainChanged(callback) {
 
     }
 
-    chainListeners.push(callback);
+    chainListeners.push(
+        callback
+    );
 
 }
 
@@ -146,6 +150,69 @@ function emitChainChanged(value) {
 }
 
 // =====================================================
+// UI
+// =====================================================
+
+export function updateWalletUI() {
+
+    document
+        .querySelectorAll("#connectWallet")
+        .forEach(button => {
+
+            button.textContent =
+
+                account
+
+                    ? shortAddress(account)
+
+                    : "Connect Wallet";
+
+            button.dataset.connected =
+
+                account
+
+                    ? "true"
+
+                    : "false";
+
+        });
+
+    const walletAddress =
+        document.getElementById(
+            "walletAddress"
+        );
+
+    if (walletAddress) {
+
+        walletAddress.textContent =
+
+            account
+
+                ? shortAddress(account)
+
+                : "Not Connected";
+
+    }
+
+    const dashboardWallet =
+        document.getElementById(
+            "dashboardWallet"
+        );
+
+    if (dashboardWallet) {
+
+        dashboardWallet.textContent =
+
+            account
+
+                ? shortAddress(account)
+
+                : "-";
+
+    }
+
+}
+// =====================================================
 // NETWORK
 // =====================================================
 
@@ -160,7 +227,8 @@ export async function checkNetwork() {
     const currentChainId =
         await window.ethereum.request({
 
-            method: "eth_chainId"
+            method:
+                "eth_chainId"
 
         });
 
@@ -191,10 +259,12 @@ export async function switchNetwork() {
                 "wallet_switchEthereumChain",
 
             params: [
+
                 {
                     chainId:
                         NETWORK.chainIdHex
                 }
+
             ]
 
         });
@@ -238,11 +308,15 @@ export async function switchNetwork() {
                     },
 
                     rpcUrls: [
+
                         NETWORK.rpcUrl
+
                     ],
 
                     blockExplorerUrls: [
+
                         NETWORK.explorer
+
                     ]
 
                 }
@@ -250,62 +324,6 @@ export async function switchNetwork() {
             ]
 
         });
-
-    }
-
-}
-
-// =====================================================
-// UI
-// =====================================================
-
-export function updateWalletUI() {
-
-    document
-        .querySelectorAll("#connectWallet")
-        .forEach(button => {
-
-            button.textContent =
-
-                account
-
-                    ? shortAddress(account)
-
-                    : "Connect Wallet";
-
-        });
-
-    const walletAddress =
-        document.getElementById(
-            "walletAddress"
-        );
-
-    if (walletAddress) {
-
-        walletAddress.textContent =
-
-            account
-
-                ? shortAddress(account)
-
-                : "Not Connected";
-
-    }
-
-    const dashboardWallet =
-        document.getElementById(
-            "dashboardWallet"
-        );
-
-    if (dashboardWallet) {
-
-        dashboardWallet.textContent =
-
-            account
-
-                ? shortAddress(account)
-
-                : "-";
 
     }
 
@@ -351,8 +369,11 @@ async function hydrateWallet(address) {
 function clearWalletState() {
 
     provider = null;
+
     signer = null;
+
     account = null;
+
     chainId = null;
 
     localStorage.removeItem(
@@ -361,8 +382,13 @@ function clearWalletState() {
 
     updateWalletUI();
 
-    emitAccountChanged(null);
-    emitChainChanged(null);
+    emitAccountChanged(
+        null
+    );
+
+    emitChainChanged(
+        null
+    );
 
 }
 
@@ -424,11 +450,11 @@ export async function restoreConnection() {
 
         updateWalletUI();
 
-        return;
+        return null;
+
     }
 
     const remember =
-
         localStorage.getItem(
             STORAGE.wallet
         );
@@ -437,7 +463,8 @@ export async function restoreConnection() {
 
         updateWalletUI();
 
-        return;
+        return null;
+
     }
 
     const accounts =
@@ -452,15 +479,17 @@ export async function restoreConnection() {
 
         clearWalletState();
 
-        return;
+        return null;
+
     }
 
     await hydrateWallet(
         accounts[0]
     );
 
-}
+    return account;
 
+}
 // =====================================================
 // EVENTS
 // =====================================================
@@ -519,8 +548,19 @@ function bindWalletEvents() {
 
                 }
 
-                await hydrateWallet(
-                    account
+                const network =
+                    await window.ethereum.request({
+
+                        method:
+                            "eth_chainId"
+
+                    });
+
+                chainId =
+                    Number(network);
+
+                emitChainChanged(
+                    chainId
                 );
 
             }
@@ -537,6 +577,10 @@ function bindWalletEvents() {
 
 }
 
+// =====================================================
+// BUTTONS
+// =====================================================
+
 function bindConnectButtons() {
 
     document
@@ -547,10 +591,7 @@ function bindConnectButtons() {
 
         .forEach(button => {
 
-            button.addEventListener(
-
-                "click",
-
+            button.onclick =
                 async () => {
 
                     if (account) {
@@ -571,7 +612,7 @@ function bindConnectButtons() {
 
                         alert(
 
-                            error.message ||
+                            error?.message ||
 
                             "Unable to connect wallet."
 
@@ -579,9 +620,7 @@ function bindConnectButtons() {
 
                     }
 
-                }
-
-            );
+                };
 
         });
 
@@ -605,25 +644,36 @@ export async function initializeWallet() {
 
     bindConnectButtons();
 
-    await restoreConnection();
+    updateWalletUI();
+
+    /*
+    MODE B
+
+    - Tidak auto connect untuk user baru
+    - Akan restore hanya jika user
+      pernah connect sebelumnya
+    */
+
+    try {
+
+        await restoreConnection();
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+    }
 
 }
 
 // =====================================================
-// AUTO START
+// EXPORTS
 // =====================================================
 
-document.addEventListener(
+export {
 
-    "DOMContentLoaded",
+    initializeWallet
 
-    () => {
-
-        initializeWallet()
-            .catch(
-                console.error
-            );
-
-    }
-
-);
+};
