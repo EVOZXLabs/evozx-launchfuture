@@ -3,7 +3,8 @@ import {
 } from "https://esm.sh/ethers@6";
 
 import {
-    NETWORK
+    NETWORK,
+    STORAGE
 } from "./config.js";
 
 // =====================================================
@@ -11,22 +12,18 @@ import {
 // =====================================================
 
 let provider = null;
-
 let signer = null;
-
 let account = null;
-
 let chainId = null;
 
 const accountListeners = [];
-
 const chainListeners = [];
 
 // =====================================================
 // HELPERS
 // =====================================================
 
-function hasWallet() {
+export function hasWallet() {
 
     return typeof window.ethereum !== "undefined";
 
@@ -163,6 +160,7 @@ export async function checkNetwork() {
     }
 
     const currentChainId =
+
         await window.ethereum.request({
 
             method: "eth_chainId"
@@ -184,7 +182,9 @@ export async function switchNetwork() {
     if (!hasWallet()) {
 
         throw new Error(
+
             "Wallet not detected."
+
         );
 
     }
@@ -199,15 +199,15 @@ export async function switchNetwork() {
             params: [
 
                 {
+
                     chainId:
                         NETWORK.chainIdHex
+
                 }
 
             ]
 
         });
-
-        return true;
 
     }
 
@@ -219,53 +219,53 @@ export async function switchNetwork() {
 
         }
 
+        await window.ethereum.request({
+
+            method:
+                "wallet_addEthereumChain",
+
+            params: [
+
+                {
+
+                    chainId:
+                        NETWORK.chainIdHex,
+
+                    chainName:
+                        NETWORK.name,
+
+                    nativeCurrency: {
+
+                        name:
+                            NETWORK.symbol,
+
+                        symbol:
+                            NETWORK.symbol,
+
+                        decimals:
+                            NETWORK.decimals
+
+                    },
+
+                    rpcUrls: [
+
+                        NETWORK.rpcUrl
+
+                    ],
+
+                    blockExplorerUrls: [
+
+                        NETWORK.explorer
+
+                    ]
+
+                }
+
+            ]
+
+        });
+
     }
-
-    await window.ethereum.request({
-
-        method:
-            "wallet_addEthereumChain",
-
-        params: [
-
-            {
-
-                chainId:
-                    NETWORK.chainIdHex,
-
-                chainName:
-                    NETWORK.name,
-
-                nativeCurrency: {
-
-                    name:
-                        NETWORK.symbol,
-
-                    symbol:
-                        NETWORK.symbol,
-
-                    decimals:
-                        NETWORK.decimals
-
-                },
-
-                rpcUrls: [
-
-                    NETWORK.rpcUrl
-
-                ],
-
-                blockExplorerUrls: [
-
-                    NETWORK.explorer
-
-                ]
-
-            }
-
-        ]
-
-    });
 
     return true;
 
@@ -280,12 +280,15 @@ export async function connectWallet() {
     if (!hasWallet()) {
 
         throw new Error(
-            "No wallet detected."
+
+            "Wallet not detected."
+
         );
 
     }
 
     const accounts =
+
         await window.ethereum.request({
 
             method:
@@ -296,26 +299,35 @@ export async function connectWallet() {
     if (!accounts.length) {
 
         throw new Error(
+
             "No account selected."
+
         );
 
     }
 
     provider =
+
         new BrowserProvider(
+
             window.ethereum
+
         );
 
     signer =
+
         await provider.getSigner();
 
     account =
+
         await signer.getAddress();
 
     const network =
+
         await provider.getNetwork();
 
     chainId =
+
         Number(network.chainId);
 
     if (!(await checkNetwork())) {
@@ -324,17 +336,94 @@ export async function connectWallet() {
 
     }
 
+    localStorage.setItem(
+
+        STORAGE.wallet,
+
+        "connected"
+
+    );
+
     updateWalletButtons();
 
-    emitAccountChanged(
-        account
-    );
+    emitAccountChanged(account);
 
-    emitChainChanged(
-        chainId
-    );
+    emitChainChanged(chainId);
 
     return account;
+
+}
+
+export async function restoreConnection() {
+
+    if (
+
+        localStorage.getItem(
+
+            STORAGE.wallet
+
+        ) !== "connected"
+
+    ) {
+
+        updateWalletButtons();
+
+        return;
+
+    }
+
+    if (!hasWallet()) {
+
+        return;
+
+    }
+
+    const accounts =
+
+        await window.ethereum.request({
+
+            method:
+                "eth_accounts"
+
+        });
+
+    if (!accounts.length) {
+
+        disconnectWallet();
+
+        return;
+
+    }
+
+    provider =
+
+        new BrowserProvider(
+
+            window.ethereum
+
+        );
+
+    signer =
+
+        await provider.getSigner();
+
+    account =
+
+        accounts[0];
+
+    const network =
+
+        await provider.getNetwork();
+
+    chainId =
+
+        Number(network.chainId);
+
+    updateWalletButtons();
+
+    emitAccountChanged(account);
+
+    emitChainChanged(chainId);
 
 }
 
@@ -348,13 +437,17 @@ export function disconnectWallet() {
 
     chainId = null;
 
-    updateWalletButtons();
+    localStorage.removeItem(
 
-    emitAccountChanged(
-        null
+        STORAGE.wallet
+
     );
 
-              }
+    updateWalletButtons();
+
+    emitAccountChanged(null);
+
+}
 
 // =====================================================
 // UI
@@ -362,153 +455,52 @@ export function disconnectWallet() {
 
 export function updateWalletButtons() {
 
-    const buttons =
-        document.querySelectorAll(
+    document
+
+        .querySelectorAll(
+
             "#connectWallet"
-        );
 
-    buttons.forEach(button => {
+        )
 
-        if (!button) {
+        .forEach(button => {
 
-            return;
-
-        }
-
-        if (account) {
-
-            button.textContent =
-                shortAddress(
-                    account
-                );
-
-            button.dataset.connected =
-                "true";
-
-        }
-
-        else {
-
-            button.textContent =
-                "Connect Wallet";
-
-            button.dataset.connected =
-                "false";
-
-        }
-
-    });
-
-}
-
-// =====================================================
-// EVENTS
-// =====================================================
-
-function bindWalletEvents() {
-
-    if (!hasWallet()) {
-
-        return;
-
-    }
-
-    window.ethereum.on(
-
-        "accountsChanged",
-
-        async (accounts) => {
-
-            if (!accounts.length) {
-
-                disconnectWallet();
+            if (!button) {
 
                 return;
 
             }
 
-            provider =
-                new BrowserProvider(
-                    window.ethereum
-                );
+            if (account) {
 
-            signer =
-                await provider.getSigner();
+                button.textContent =
 
-            account =
-                accounts[0];
+                    shortAddress(account);
 
-            updateWalletButtons();
+                button.dataset.connected =
 
-            emitAccountChanged(
-                account
-            );
-
-        }
-
-    );
-
-    window.ethereum.on(
-
-        "chainChanged",
-
-        async () => {
-
-            if (!hasWallet()) {
-
-                return;
+                    "true";
 
             }
 
-            try {
+            else {
 
-                provider =
-                    new BrowserProvider(
-                        window.ethereum
-                    );
+                button.textContent =
 
-                const network =
-                    await provider.getNetwork();
+                    "Connect Wallet";
 
-                chainId =
-                    Number(
-                        network.chainId
-                    );
+                button.dataset.connected =
+
+                    "false";
 
             }
 
-            catch {
-
-                chainId = null;
-
-            }
-
-            emitChainChanged(
-                chainId
-            );
-
-        }
-
-    );
+        });
 
 }
 
 // =====================================================
-// INITIALIZE
-// =====================================================
-
-export function initializeWallet() {
-
-    updateWalletButtons();
-
-    bindWalletEvents();
-
-    bindConnectButtons();
-
-}
-
-// =====================================================
-// CONNECT BUTTONS
+// CONNECT BUTTON
 // =====================================================
 
 function bindConnectButtons() {
@@ -516,7 +508,9 @@ function bindConnectButtons() {
     document
 
         .querySelectorAll(
+
             "#connectWallet"
+
         )
 
         .forEach(button => {
@@ -527,13 +521,15 @@ function bindConnectButtons() {
 
                 async () => {
 
-                    if (account) {
-
-                        return;
-
-                    }
-
                     try {
+
+                        if (account) {
+
+                            disconnectWallet();
+
+                            return;
+
+                        }
 
                         await connectWallet();
 
@@ -562,6 +558,110 @@ function bindConnectButtons() {
 }
 
 // =====================================================
+// WALLET EVENTS
+// =====================================================
+
+function bindWalletEvents() {
+
+    if (!hasWallet()) {
+
+        return;
+
+    }
+
+    window.ethereum.on(
+
+        "accountsChanged",
+
+        async accounts => {
+
+            if (!accounts.length) {
+
+                disconnectWallet();
+
+                return;
+
+            }
+
+            provider =
+
+                new BrowserProvider(
+
+                    window.ethereum
+
+                );
+
+            signer =
+
+                await provider.getSigner();
+
+            account =
+
+                accounts[0];
+
+            updateWalletButtons();
+
+            emitAccountChanged(account);
+
+        }
+
+    );
+
+    window.ethereum.on(
+
+        "chainChanged",
+
+        async () => {
+
+            try {
+
+                provider =
+
+                    new BrowserProvider(
+
+                        window.ethereum
+
+                    );
+
+                const network =
+
+                    await provider.getNetwork();
+
+                chainId =
+
+                    Number(network.chainId);
+
+            }
+
+            catch {
+
+                chainId = null;
+
+            }
+
+            emitChainChanged(chainId);
+
+        }
+
+    );
+
+}
+
+// =====================================================
+// INITIALIZE
+// =====================================================
+
+export async function initializeWallet() {
+
+    bindWalletEvents();
+
+    bindConnectButtons();
+
+    await restoreConnection();
+
+}
+
+// =====================================================
 // STARTUP
 // =====================================================
 
@@ -579,6 +679,6 @@ document.addEventListener(
 
 export {
 
-    hasWallet
+    initializeWallet
 
 };
