@@ -483,10 +483,28 @@ else {
 
         }
 
-        setText(
-            "burnEvents",
-            "-"
+        let deploymentHistory = [];
+
+try {
+
+    deploymentHistory =
+        JSON.parse(
+            localStorage.getItem(
+                STORAGE.deployHistory
+            ) || "[]"
         );
+
+}
+catch {
+
+    deploymentHistory = [];
+
+}
+
+setText(
+    "burnEvents",
+    deploymentHistory.length
+);
 
     }
 
