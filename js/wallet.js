@@ -191,12 +191,10 @@ export async function switchNetwork() {
                 "wallet_switchEthereumChain",
 
             params: [
-
                 {
                     chainId:
                         NETWORK.chainIdHex
                 }
-
             ]
 
         });
@@ -240,15 +238,11 @@ export async function switchNetwork() {
                     },
 
                     rpcUrls: [
-
                         NETWORK.rpcUrl
-
                     ],
 
                     blockExplorerUrls: [
-
                         NETWORK.explorer
-
                     ]
 
                 }
@@ -316,6 +310,7 @@ export function updateWalletUI() {
     }
 
 }
+
 // =====================================================
 // INTERNAL
 // =====================================================
@@ -350,6 +345,24 @@ async function hydrateWallet(address) {
     emitChainChanged(
         chainId
     );
+
+}
+
+function clearWalletState() {
+
+    provider = null;
+    signer = null;
+    account = null;
+    chainId = null;
+
+    localStorage.removeItem(
+        STORAGE.wallet
+    );
+
+    updateWalletUI();
+
+    emitAccountChanged(null);
+    emitChainChanged(null);
 
 }
 
@@ -394,8 +407,11 @@ export async function connectWallet() {
     );
 
     localStorage.setItem(
+
         STORAGE.wallet,
+
         "connected"
+
     );
 
     return account;
@@ -412,6 +428,7 @@ export async function restoreConnection() {
     }
 
     const remember =
+
         localStorage.getItem(
             STORAGE.wallet
         );
@@ -433,44 +450,13 @@ export async function restoreConnection() {
 
     if (!accounts.length) {
 
-        localStorage.removeItem(
-            STORAGE.wallet
-        );
-
-        updateWalletUI();
+        clearWalletState();
 
         return;
     }
 
     await hydrateWallet(
         accounts[0]
-    );
-
-}
-
-// =====================================================
-// RESET
-// =====================================================
-
-function clearWalletState() {
-
-    provider = null;
-    signer = null;
-    account = null;
-    chainId = null;
-
-    localStorage.removeItem(
-        STORAGE.wallet
-    );
-
-    updateWalletUI();
-
-    emitAccountChanged(
-        null
-    );
-
-    emitChainChanged(
-        null
     );
 
 }
@@ -484,6 +470,7 @@ function bindWalletEvents() {
     if (!hasWallet()) {
 
         return;
+
     }
 
     window.ethereum.on(
@@ -499,6 +486,7 @@ function bindWalletEvents() {
                     clearWalletState();
 
                     return;
+
                 }
 
                 await hydrateWallet(
@@ -528,6 +516,7 @@ function bindWalletEvents() {
                 if (!account) {
 
                     return;
+
                 }
 
                 await hydrateWallet(
@@ -567,6 +556,7 @@ function bindConnectButtons() {
                     if (account) {
 
                         return;
+
                     }
 
                     try {
@@ -606,6 +596,7 @@ export async function initializeWallet() {
     if (initialized) {
 
         return;
+
     }
 
     initialized = true;
@@ -636,13 +627,3 @@ document.addEventListener(
     }
 
 );
-
-// =====================================================
-// EXPORTS
-// =====================================================
-
-export {
-
-    initializeWallet
-
-};
