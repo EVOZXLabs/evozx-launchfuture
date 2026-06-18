@@ -383,13 +383,17 @@ async function loadPlatformStatistics() {
             await contract.totalSupply();
 
         const burned =
-            initialSupply -
-            currentSupply;
+    await contract.balanceOf(
+        DEAD_ADDRESS
+    );
 
-        const percent =
-            Number(burned) *
-            100 /
-            Number(initialSupply);
+const initialSupply =
+    await contract.INITIAL_SUPPLY();
+
+const percent =
+    Number(burned) *
+    100 /
+    Number(initialSupply);
 
         setText(
             "initialSupply",
