@@ -876,7 +876,6 @@ const fee =
             try {
 
                 const result =
-
                     await checkSymbol(
                         symbol
                     );
@@ -886,11 +885,8 @@ const fee =
                 ) {
 
                     setText(
-
                         "readyStatus",
-
                         "Symbol Already Used"
-
                     );
 
                     return;
@@ -902,6 +898,7 @@ const fee =
             catch (error) {
 
                 console.error(
+                    "SYMBOL CHECK ERROR:",
                     error
                 );
 
@@ -913,14 +910,13 @@ const fee =
         // BALANCE STATUS
         // ---------------------------------
 
-        if (balance < fee) {
+        if (
+            balance < fee
+        ) {
 
             setText(
-
                 "readyStatus",
-
                 "Auto EVOZX Topup Required"
-
             );
 
             return;
@@ -932,28 +928,37 @@ const fee =
         // ---------------------------------
 
         setText(
-
             "readyStatus",
-
             "Ready To Deploy"
-
         );
 
     }
 
     catch (error) {
 
-    console.error("PREVIEW ERROR:", error);
+        console.error(
+            "PREVIEW ERROR:",
+            error
+        );
 
-    setText(
-        "deploymentFee",
-        error?.message || "ERROR"
-    );
+        // Jangan hilangkan saldo
+        // Jangan timpa balance
 
-    setText(
-        "readyStatus",
-        error?.message || "Preview Error"
-    );
+        setText(
+            "deploymentFee",
+            "-"
+        );
+
+        setText(
+            "requiredEVOZ",
+            "Auto"
+        );
+
+        setText(
+            "readyStatus",
+            error?.message ||
+            "Preview Error"
+        );
 
     }
 
