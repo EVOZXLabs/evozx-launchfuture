@@ -503,6 +503,62 @@ export function initializeWallet() {
 
     bindWalletEvents();
 
+    bindConnectButtons();
+
+}
+
+// =====================================================
+// CONNECT BUTTONS
+// =====================================================
+
+function bindConnectButtons() {
+
+    document
+
+        .querySelectorAll(
+            "#connectWallet"
+        )
+
+        .forEach(button => {
+
+            button.addEventListener(
+
+                "click",
+
+                async () => {
+
+                    if (account) {
+
+                        return;
+
+                    }
+
+                    try {
+
+                        await connectWallet();
+
+                    }
+
+                    catch (error) {
+
+                        console.error(error);
+
+                        alert(
+
+                            error.message ||
+
+                            "Unable to connect wallet."
+
+                        );
+
+                    }
+
+                }
+
+            );
+
+        });
+
 }
 
 // =====================================================
