@@ -381,54 +381,14 @@ BADGES
 }
 
 /* =====================================================
-EVOZX DEFLATION ENGINE
+DEFLATION DASHBOARD
 ===================================================== */
 
-.deflation-hero {
-
-    background: linear-gradient(
-        135deg,
-        rgba(255,193,7,.08),
-        rgba(255,193,7,.02)
-    );
-
-    border: 1px solid rgba(255,193,7,.15);
-
-    border-radius: 18px;
-
-    padding: 24px;
-
-    margin-bottom: 24px;
-
-}
-
-.deflation-hero h2 {
-
-    margin: 0 0 10px;
-
-    font-size: 24px;
-
-}
-
-.deflation-hero p {
-
-    margin: 0;
-
-    color: var(--text-muted);
-
-    line-height: 1.6;
-
-}
-
-.deflation-grid {
+.stats-grid {
 
     display: grid;
 
-    grid-template-columns:
-        repeat(
-            auto-fit,
-            minmax(220px, 1fr)
-        );
+    grid-template-columns: repeat(2, 1fr);
 
     gap: 16px;
 
@@ -438,33 +398,31 @@ EVOZX DEFLATION ENGINE
 
 .stat-card {
 
-    background: var(--surface-color);
+    padding: 18px;
 
-    border: 1px solid var(--border-color);
+    border-radius: 16px;
 
-    border-radius: 18px;
+    background: rgba(255,255,255,.03);
 
-    padding: 20px;
-
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 10px;
+    border: 1px solid rgba(255,255,255,.05);
 
 }
 
 .stat-card span {
 
+    display: block;
+
     font-size: 13px;
 
-    color: var(--text-muted);
+    opacity: .7;
+
+    margin-bottom: 8px;
 
 }
 
 .stat-card strong {
 
-    font-size: 24px;
+    font-size: 20px;
 
     font-weight: 700;
 
@@ -472,15 +430,15 @@ EVOZX DEFLATION ENGINE
 
 .progress-card {
 
-    background: var(--surface-color);
-
-    border: 1px solid var(--border-color);
-
-    border-radius: 18px;
-
-    padding: 20px;
-
     margin-bottom: 20px;
+
+    padding: 18px;
+
+    border-radius: 16px;
+
+    background: rgba(255,255,255,.03);
+
+    border: 1px solid rgba(255,255,255,.05);
 
 }
 
@@ -490,49 +448,33 @@ EVOZX DEFLATION ENGINE
 
     justify-content: space-between;
 
-    align-items: center;
-
-    margin-bottom: 16px;
+    margin-bottom: 12px;
 
 }
 
 .progress-bar {
 
-    height: 14px;
-
-    background: rgba(255,255,255,.06);
+    height: 10px;
 
     border-radius: 999px;
 
     overflow: hidden;
 
+    background: rgba(255,255,255,.08);
+
 }
 
 .progress-fill {
 
-    width: 0%;
-
     height: 100%;
 
-    border-radius: 999px;
+    width: 0%;
 
     background: linear-gradient(
         90deg,
-        #f59e0b,
-        #fbbf24
+        #d6a54a,
+        #f6d27b
     );
-
-    transition: width .4s ease;
-
-}
-
-.progress-caption {
-
-    margin: 12px 0 0;
-
-    color: var(--text-muted);
-
-    font-size: 14px;
 
 }
 
