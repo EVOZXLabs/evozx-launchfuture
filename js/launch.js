@@ -1,107 +1,76 @@
 import {
-
-  formatUnits
-
+    formatUnits
 } from "https://esm.sh/ethers@6";
 
 import {
-
-  getDeploymentFee,
-  getDeploymentPreview
-
+    getDeploymentFee
 } from "./factory.js";
 
 import {
-
-  calculateEVOZNeeded
-
-} from "./exchange.js";
-
-import {
-
-  validateConfig,
-  checkSymbol
-
+    validateConfig,
+    checkSymbol
 } from "./validation.js";
 
 import {
-
-  deployToken
-
+    deployToken
 } from "./deploy.js";
 
 import {
-
-  getAccount,
-  restoreConnection
-
+    getAccount
 } from "./wallet.js";
 
 // =====================================================
 // DOM
 // =====================================================
 
-const $ = (id)=>
+const $ = (id) =>
+    document.getElementById(id);
 
-  document.getElementById(id);
+function setText(id, value) {
 
-function text(id,value){
+    const element = $(id);
 
-  const element = $(id);
+    if (!element) {
 
-  if(element){
+        return;
+
+    }
 
     element.textContent = value;
 
-  }
+}
+
+function getValue(id) {
+
+    const element = $(id);
+
+    return element
+        ? element.value.trim()
+        : "";
 
 }
 
-function html(id,value){
+function isChecked(id) {
 
-  const element = $(id);
+    const element = $(id);
 
-  if(element){
-
-    element.innerHTML = value;
-
-  }
+    return element
+        ? element.checked
+        : false;
 
 }
 
-function enable(id,state=true){
+function enable(id, state = true) {
 
-  const element = $(id);
+    const element = $(id);
 
-  if(element){
+    if (!element) {
+
+        return;
+
+    }
 
     element.disabled = !state;
-
-  }
-
-}
-
-function value(id){
-
-  const element = $(id);
-
-  return element
-
-    ? element.value.trim()
-
-    : "";
-
-}
-
-function checked(id){
-
-  const element = $(id);
-
-  return element
-
-    ? element.checked
-
-    : false;
 
 }
 
@@ -109,145 +78,140 @@ function checked(id){
 // STATE
 // =====================================================
 
-let deploymentFee = 0n;
-
 let deployRunning = false;
 
 let symbolTimer = null;
 
+let deploymentFee = 0n;
+
 // =====================================================
-// BUILD FORM
+// FORM DATA
 // =====================================================
 
-function getFormData(){
+function getFormData() {
+
+    return {
+
+        // BASIC
+
+        name:
+            getValue("name"),
+
+        symbol:
+            getValue("symbol"),
 
-  return{
+        supply:
+            Number(
+                getValue("supply")
+            ),
 
-    name:
+        // FEATURES
 
-      value("name"),
+        burnable:
+            isChecked("burnable"),
 
-    symbol:
+        mintable:
+            isChecked("mintable"),
 
-      value("symbol"),
+        ownershipEnabled:
+            isChecked(
+                "ownershipEnabled"
+            ),
 
-    supply:
+        // SECURITY
 
-      Number(
+        maxWalletEnabled:
+            isChecked(
+                "maxWalletEnabled"
+            ),
 
-        value("supply")
+        maxWalletPercent:
+            Number(
+                getValue(
+                    "maxWalletPercent"
+                )
+            ) || 0,
 
-      ),
+        maxTxEnabled:
+            isChecked(
+                "maxTxEnabled"
+            ),
 
-    burnable:
+        maxTxPercent:
+            Number(
+                getValue(
+                    "maxTxPercent"
+                )
+            ) || 0,
 
-      checked("burnable"),
+        // TRADING
 
-    mintable:
+        tradingControlEnabled:
+            isChecked(
+                "tradingControlEnabled"
+            ),
 
-      checked("mintable"),
+        tradingEnabled:
+            isChecked(
+                "tradingEnabled"
+            ),
 
-    ownershipEnabled:
+        // TAX
 
-      checked("ownership"),
+        buyTaxEnabled:
+            isChecked(
+                "buyTaxEnabled"
+            ),
 
-    website:
+        buyTax:
+            Number(
+                getValue("buyTax")
+            ) || 0,
 
-      value("website"),
+        sellTaxEnabled:
+            isChecked(
+                "sellTaxEnabled"
+            ),
 
-    telegram:
+        sellTax:
+            Number(
+                getValue("sellTax")
+            ) || 0,
 
-      value("telegram"),
+        burnTaxShare:
+            Number(
+                getValue(
+                    "burnTaxShare"
+                )
+            ) || 0,
 
-    twitter:
+        // WALLETS
 
-      value("twitter"),
+        marketingWallet:
+            getValue(
+                "marketingWallet"
+            ),
 
-    logoURI:
+        developmentWallet:
+            getValue(
+                "developmentWallet"
+            ),
 
-      value("logoURI"),
+        // METADATA
 
-    maxWalletEnabled:
+        website:
+            getValue("website"),
 
-      checked("maxWalletEnabled"),
+        telegram:
+            getValue("telegram"),
 
-    maxWalletPercent:
+        twitter:
+            getValue("twitter"),
 
-      Number(
+        logoURI:
+            getValue("logoURI")
 
-        value("maxWalletPercent")
-
-      )||0,
-
-    maxTxEnabled:
-
-      checked("maxTxEnabled"),
-
-    maxTxPercent:
-
-      Number(
-
-        value("maxTxPercent")
-
-      )||0,
-
-    tradingControlEnabled:
-
-      checked(
-
-        "tradingControlEnabled"
-
-      ),
-
-    tradingEnabled:
-
-      checked(
-
-        "tradingEnabled"
-
-      ),
-
-    buyTaxEnabled:
-
-      checked("buyTaxEnabled"),
-
-    buyTax:
-
-      Number(
-
-        value("buyTax")
-
-      )||0,
-
-    sellTaxEnabled:
-
-      checked("sellTaxEnabled"),
-
-    sellTax:
-
-      Number(
-
-        value("sellTax")
-
-      )||0,
-
-    burnTaxShare:
-
-      Number(
-
-        value("burnTaxShare")
-
-      )||0,
-
-    marketingWallet:
-
-      value("marketingWallet"),
-
-    developmentWallet:
-
-      value("developmentWallet")
-
-  };
+    };
 
 }
 
@@ -255,21 +219,18 @@ function getFormData(){
 // STATUS
 // =====================================================
 
-function setStatus(message=""){
+function setStatus(message = "") {
 
-  text(
-
-    "statusText",
-
-    message
-
-  );
+    setText(
+        "statusText",
+        message
+    );
 
 }
 
-function clearStatus(){
+function clearStatus() {
 
-  setStatus("");
+    setStatus("");
 
 }
 
@@ -277,45 +238,43 @@ function clearStatus(){
 // ACCORDION
 // =====================================================
 
-function initializeAccordion(){
+function initializeAccordion() {
 
-  document
+    document
 
-    .querySelectorAll(".accordion")
+        .querySelectorAll(
+            ".accordion"
+        )
 
-    .forEach(item=>{
+        .forEach(accordion => {
 
-      const header =
+            const header =
 
-        item.querySelector(
+                accordion.querySelector(
+                    ".accordion-header"
+                );
 
-          ".accordion-header"
+            if (!header) {
 
-        );
+                return;
 
-      if(!header){
+            }
 
-        return;
+            header.addEventListener(
 
-      }
+                "click",
 
-      header.addEventListener(
+                () => {
 
-        "click",
+                    accordion.classList.toggle(
+                        "open"
+                    );
 
-        ()=>{
+                }
 
-          item.classList.toggle(
+            );
 
-            "open"
-
-          );
-
-        }
-
-      );
-
-    });
+        });
 
 }
 
@@ -323,197 +282,168 @@ function initializeAccordion(){
 // FEATURE STATE
 // =====================================================
 
-function updateFeatureState(){
+function updateFeatureState() {
 
-  enable(
+    enable(
 
-    "maxWalletPercent",
+        "maxWalletPercent",
 
-    checked(
-
-      "maxWalletEnabled"
-
-    )
-
-  );
-
-  enable(
-
-    "maxTxPercent",
-
-    checked(
-
-      "maxTxEnabled"
-
-    )
-
-  );
-
-  enable(
-
-    "tradingEnabled",
-
-    checked(
-
-      "tradingControlEnabled"
-
-    )
-
-  );
-
-  const taxEnabled =
-
-    checked("buyTaxEnabled") ||
-
-    checked("sellTaxEnabled");
-
-  enable(
-
-    "buyTax",
-
-    checked(
-
-      "buyTaxEnabled"
-
-    )
-
-  );
-
-  enable(
-
-    "sellTax",
-
-    checked(
-
-      "sellTaxEnabled"
-
-    )
-
-  );
-
-  enable(
-
-    "burnTaxShare",
-
-    taxEnabled
-
-  );
-
-  enable(
-
-    "marketingWallet",
-
-    taxEnabled
-
-  );
-
-  enable(
-
-    "developmentWallet",
-
-    taxEnabled
-
-  );
-
-}
-
-// =====================================================
-// SYMBOL
-// =====================================================
-
-async function updateSymbolStatus(){
-
-  const badge =
-
-    $("symbolStatus");
-
-  if(!badge){
-
-    return;
-
-  }
-
-  const symbol =
-
-    value("symbol");
-
-  if(!symbol){
-
-    badge.textContent="";
-
-    badge.className="";
-
-    return;
-
-  }
-
-  try{
-
-    const result =
-
-      await checkSymbol(
-
-        symbol
-
-      );
-
-    if(result.exists){
-
-      badge.textContent=
-
-        "Already Used";
-
-      badge.className=
-
-        "badge badge-red";
-
-    }
-
-    else{
-
-      badge.textContent=
-
-        "Available";
-
-      badge.className=
-
-        "badge badge-green";
-
-    }
-
-  }
-
-  catch{
-
-    badge.textContent=
-
-      "";
-
-    badge.className=
-
-      "";
-
-  }
-
-}
-
-function scheduleSymbolCheck(){
-
-  clearTimeout(
-
-    symbolTimer
-
-  );
-
-  symbolTimer =
-
-    setTimeout(
-
-      updateSymbolStatus,
-
-      400
+        isChecked(
+            "maxWalletEnabled"
+        )
 
     );
+
+    enable(
+
+        "maxTxPercent",
+
+        isChecked(
+            "maxTxEnabled"
+        )
+
+    );
+
+    enable(
+
+        "tradingEnabled",
+
+        isChecked(
+            "tradingControlEnabled"
+        )
+
+    );
+
+    const buyTaxEnabled =
+
+        isChecked(
+            "buyTaxEnabled"
+        );
+
+    const sellTaxEnabled =
+
+        isChecked(
+            "sellTaxEnabled"
+        );
+
+    enable(
+        "buyTax",
+        buyTaxEnabled
+    );
+
+    enable(
+        "sellTax",
+        sellTaxEnabled
+    );
+
+    const taxEnabled =
+
+        buyTaxEnabled ||
+
+        sellTaxEnabled;
+
+    enable(
+        "burnTaxShare",
+        taxEnabled
+    );
+
+    enable(
+        "marketingWallet",
+        taxEnabled
+    );
+
+    enable(
+        "developmentWallet",
+        taxEnabled
+    );
+
+}
+
+// =====================================================
+// SYMBOL STATUS
+// =====================================================
+
+async function updateSymbolStatus() {
+
+    const badge =
+        $("symbolStatus");
+
+    if (!badge) {
+
+        return;
+
+    }
+
+    const symbol =
+        getValue(
+            "symbol"
+        );
+
+    if (!symbol) {
+
+        badge.textContent = "";
+
+        badge.className =
+            "badge";
+
+        return;
+
+    }
+
+    try {
+
+        const result =
+
+            await checkSymbol(
+                symbol
+            );
+
+        if (result.exists) {
+
+            badge.textContent =
+                "Already Used";
+
+            badge.className =
+                "badge badge-red";
+
+            return;
+
+        }
+
+        badge.textContent =
+            "Available";
+
+        badge.className =
+            "badge badge-green";
+
+    }
+
+    catch {
+
+        badge.textContent = "";
+
+        badge.className =
+            "badge";
+
+    }
+
+}
+
+function scheduleSymbolCheck() {
+
+    clearTimeout(
+        symbolTimer
+    );
+
+    symbolTimer =
+
+        setTimeout(
+
+            updateSymbolStatus,
+
+            400
+
+        );
 
 }
 
@@ -521,27 +451,69 @@ function scheduleSymbolCheck(){
 // VALIDATION
 // =====================================================
 
-function validateForm(){
+function validateForm() {
 
-  const error =
+    const formData =
+        getFormData();
 
-    validateConfig(
+    const error =
 
-      getFormData()
+        validateConfig(
+            formData
+        );
+
+    if (error) {
+
+        setStatus(
+            error
+        );
+
+        return false;
+
+    }
+
+    clearStatus();
+
+    return true;
+
+}
+
+// =====================================================
+// DEPLOY BUTTON
+// =====================================================
+
+function setDeployLoading(state) {
+
+    deployRunning =
+        state;
+
+    const button =
+        $("deployButton");
+
+    if (!button) {
+
+        return;
+
+    }
+
+    button.disabled =
+        state;
+
+    button.classList.toggle(
+
+        "loading",
+
+        state
 
     );
 
-  if(error){
+    button.textContent =
 
-    setStatus(error);
+        state
 
-    return false;
+            ? "Deploying..."
 
-  }
-
-  clearStatus();
-
-  return true;
+            : "Deploy Token";
 
 }
 
@@ -549,91 +521,55 @@ function validateForm(){
 // EVENTS
 // =====================================================
 
-function bindEvents(){
+function bindEvents() {
 
-  document
+    document
 
-    .querySelectorAll(
+        .querySelectorAll(
 
-      "input,textarea,select"
+            "input, textarea, select"
 
-    )
+        )
 
-    .forEach(element=>{
+        .forEach(element => {
 
-      element.addEventListener(
+            element.addEventListener(
 
-        "input",
+                "input",
 
-        async()=>{
+                async () => {
 
-          updateFeatureState();
+                    updateFeatureState();
 
-          validateForm();
+                    validateForm();
 
-          scheduleSymbolCheck();
+                    scheduleSymbolCheck();
 
-          await refreshPreview();
+                    await refreshPreview();
 
-        }
+                }
 
-      );
+            );
 
-      element.addEventListener(
+            element.addEventListener(
 
-        "change",
+                "change",
 
-        async()=>{
+                async () => {
 
-          updateFeatureState();
+                    updateFeatureState();
 
-          validateForm();
+                    validateForm();
 
-          scheduleSymbolCheck();
+                    scheduleSymbolCheck();
 
-          await refreshPreview();
+                    await refreshPreview();
 
-        }
+                }
 
-      );
+            );
 
-    });
-
-          }
-
-// =====================================================
-// DEPLOY BUTTON
-// =====================================================
-
-function setDeployLoading(state){
-
-  deployRunning = state;
-
-  const button = $("deployButton");
-
-  if(!button){
-
-    return;
-
-  }
-
-  button.disabled = state;
-
-  button.classList.toggle(
-
-    "loading",
-
-    state
-
-  );
-
-  button.textContent =
-
-    state
-
-      ? "Deploying..."
-
-      : "Deploy Token";
+        });
 
 }
 
@@ -641,143 +577,94 @@ function setDeployLoading(state){
 // PREVIEW
 // =====================================================
 
-async function refreshPreview(){
+async function refreshPreview() {
 
-  try{
+    try {
 
-    if(!validateForm()){
+        if (!validateForm()) {
 
-      return;
+            return;
+
+        }
+
+        const form =
+            getFormData();
+
+        const fee =
+            await getDeploymentFee(
+                form
+            );
+
+        deploymentFee =
+            fee;
+
+        setText(
+
+            "deploymentFee",
+
+            formatUnits(
+                fee,
+                18
+            ) + " EVOZX"
+
+        );
+
+        const account =
+            getAccount();
+
+        if (!account) {
+
+            setText(
+
+                "walletBalance",
+
+                "Not Connected"
+
+            );
+
+            setText(
+
+                "readyStatus",
+
+                "Connect Wallet"
+
+            );
+
+            return;
+
+        }
+
+        setText(
+
+            "walletBalance",
+
+            "Connected"
+
+        );
+
+        setText(
+
+            "readyStatus",
+
+            "Ready To Deploy"
+
+        );
 
     }
 
-    const account =
+    catch (error) {
 
-      getAccount();
+        console.error(error);
 
-    if(!account){
+        setStatus(
 
-      return;
+            error.message ||
+
+            "Unable to calculate deployment fee."
+
+        );
 
     }
-
-    const form =
-
-      getFormData();
-
-    const fee =
-
-      await getDeploymentFee(
-
-        form
-
-      );
-
-    deploymentFee = fee;
-
-    text(
-
-      "deploymentFee",
-
-      `${formatUnits(fee,18)} EVOZX`
-
-    );
-
-    const preview =
-
-      await getDeploymentPreview(
-
-        form,
-
-        account
-
-      );
-
-    text(
-
-      "evozxBalance",
-
-      formatUnits(
-
-        preview.balance,
-
-        18
-
-      )
-
-    );
-
-    const missing =
-
-      preview.balance >= preview.fee
-
-        ? 0n
-
-        : preview.fee -
-
-          preview.balance;
-
-    text(
-
-      "missingEVOZX",
-
-      formatUnits(
-
-        missing,
-
-        18
-
-      )
-
-    );
-
-    const requiredEVOZ =
-
-      await calculateEVOZNeeded(
-
-        missing
-
-      );
-
-    text(
-
-      "neededEVOZ",
-
-      formatUnits(
-
-        requiredEVOZ,
-
-        18
-
-      )
-
-    );
-
-    text(
-
-      "readyStatus",
-
-      preview.enoughBalance
-
-        ? "Ready to Deploy"
-
-        : "Automatic EVOZX Top-up Required"
-
-    );
-
-  }
-
-  catch(error){
-
-    console.error(error);
-
-    setStatus(
-
-      error.message
-
-    );
-
-  }
 
 }
 
@@ -785,97 +672,97 @@ async function refreshPreview(){
 // DEPLOY
 // =====================================================
 
-async function onDeploy(){
+async function onDeploy() {
 
-  if(deployRunning){
+    if (deployRunning) {
 
-    return;
-
-  }
-
-  try{
-
-    if(!validateForm()){
-
-      return;
+        return;
 
     }
 
-    setDeployLoading(true);
+    try {
 
-    await deployToken(
+        if (!getAccount()) {
 
-      getFormData()
+            throw new Error(
+                "Please connect your wallet."
+            );
 
-    );
+        }
 
-  }
+        if (!validateForm()) {
 
-  catch(error){
+            return;
 
-    console.error(error);
+        }
 
-    setStatus(
+        setDeployLoading(
+            true
+        );
 
-      error.message ||
+        await deployToken(
 
-      "Deployment failed."
+            getFormData()
 
-    );
+        );
 
-  }
+    }
 
-  finally{
+    catch (error) {
 
-    setDeployLoading(false);
+        console.error(error);
 
-  }
+        setStatus(
+
+            error.message ||
+
+            "Deployment failed."
+
+        );
+
+    }
+
+    finally {
+
+        setDeployLoading(
+            false
+        );
+
+    }
 
 }
 
 // =====================================================
-// INITIALIZATION
+// INITIALIZE
 // =====================================================
 
-async function initialize(){
+async function initialize() {
 
-  try{
+    initializeAccordion();
 
-    await restoreConnection();
+    updateFeatureState();
 
-  }
+    bindEvents();
 
-  catch(error){
+    await updateSymbolStatus();
 
-    console.error(error);
+    await refreshPreview();
 
-  }
+    const deployButton =
 
-  initializeAccordion();
+        $("deployButton");
 
-  updateFeatureState();
+    if (deployButton) {
 
-  bindEvents();
+        deployButton.addEventListener(
 
-  await updateSymbolStatus();
+            "click",
 
-  await refreshPreview();
+            onDeploy
 
-  const deployButton =
+        );
 
-    $("deployButton");
-
-  if(deployButton){
-
-    deployButton.addEventListener(
-
-      "click",
-
-      onDeploy
-
-    );
-
-  }
+    }
 
 }
 
@@ -885,9 +772,9 @@ async function initialize(){
 
 document.addEventListener(
 
-  "DOMContentLoaded",
+    "DOMContentLoaded",
 
-  initialize
+    initialize
 
 );
 
@@ -895,10 +782,9 @@ document.addEventListener(
 // EXPORTS
 // =====================================================
 
-export{
+export {
 
-  refreshPreview,
-
-  onDeploy
+    refreshPreview,
+    onDeploy
 
 };
