@@ -11,6 +11,12 @@ import {
     isZeroAddress
 } from "./config.js";
 
+import {
+    initializeWallet,
+    getAccount,
+    shortAddress
+} from "./wallet.js";
+
 // =====================================================
 // STATE
 // =====================================================
@@ -1042,6 +1048,8 @@ export async function renderToken() {
 // =====================================================
 
 async function initialize() {
+
+    await initializeWallet();
 
     await renderToken();
 
