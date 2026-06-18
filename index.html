@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
@@ -7,42 +6,34 @@
 <meta charset="UTF-8">
 
 <meta
-name="viewport"
-content="width=device-width, initial-scale=1.0">
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
 
 <title>
 
-LaunchFuture
+    LaunchFuture
 
 </title>
 
 <meta
-name="description"
-content="LaunchFuture is a decentralized EVOZ20 token generator powered by EVOZX. Deploy verified tokens directly on the EVOZ Network without a backend.">
+    name="description"
+    content="LaunchFuture is the official EVOZ20 launchpad for creating verified tokens directly from your wallet.">
 
 <meta
-name="theme-color"
-content="#050816">
+    name="theme-color"
+    content="#050816">
 
 <link
-rel="icon"
-href="./images/logo.png">
+    rel="icon"
+    href="./images/logo.png">
 
 <link
-rel="apple-touch-icon"
-href="./images/logo.png">
+    rel="apple-touch-icon"
+    href="./images/logo.png">
 
 <link
-rel="preconnect"
-href="https://rpc.evozscan.com">
-
-<link
-rel="preconnect"
-href="https://esm.sh">
-
-<link
-rel="stylesheet"
-href="./css/app.css">
+    rel="stylesheet"
+    href="./css/app.css">
 
 </head>
 
@@ -50,497 +41,475 @@ href="./css/app.css">
 
 <header class="topbar">
 
-<div class="container">
+    <div class="container">
 
-<a
-class="brand"
-href="./index.html">
+        <a
+            href="./index.html"
+            class="brand">
 
-<img
-src="./images/logo.png"
-alt="LaunchFuture Logo">
+            <img
+                src="./images/logo.png"
+                alt="LaunchFuture">
 
-<div>
+            <div>
 
-<h1>
+                <h1>
 
-LaunchFuture
+                    LaunchFuture
 
-</h1>
+                </h1>
 
-<p>
+                <p>
 
-EVOZ20 Launch Platform
+                    Official EVOZ20 Launchpad
 
-</p>
+                </p>
 
-</div>
+            </div>
 
-</a>
+        </a>
 
-<nav>
+        <nav>
 
-<span class="network-badge">
+            <button
+                id="connectWallet"
+                class="primary-button">
 
-EVOZ Mainnet
+                Connect Wallet
 
-</span>
+            </button>
 
-<div id="walletContainer">
+        </nav>
 
-<button
-id="connectWallet"
-class="primary-button">
-
-Connect Wallet
-
-</button>
-
-</div>
-
-</nav>
-
-</div>
+    </div>
 
 </header>
 
-<section class="hero">
+<main>
 
-<div class="container hero-grid">
+    <!-- ===================================== -->
+    <!-- HERO -->
+    <!-- ===================================== -->
 
-<div class="hero-content">
+    <section class="hero">
 
-<span class="hero-tag">
+        <div class="container hero-grid">
 
-Powered by EVOZX
+            <div class="hero-content">
 
-</span>
+                <span class="hero-tag">
 
-<h2>
+                    Official Launch Platform
 
-Deploy Verified EVOZ20 Tokens
+                </span>
 
-</h2>
+                <h2>
 
-<p>
+                    Deploy Verified EVOZ20 Tokens
 
-Create professional tokens directly on the EVOZ Network using the official Launchpad Factory.
-No backend, no server, and fully decentralized.
+                </h2>
 
-</p>
+                <p>
 
-<div class="hero-buttons">
+                    Create professional tokens directly from your wallet.
+                    No backend, no database, and fully decentralized.
 
-<a
-href="./launch.html"
-id="createButton"
-class="primary-button">
+                </p>
 
-Create Token
+                <div class="hero-buttons">
 
-</a>
+                    <a
+                        href="./launch.html"
+                        class="primary-button">
 
-<a
-href="./dashboard.html"
-id="dashboardButton"
-class="secondary-button">
+                        Create Token
 
-Dashboard
+                    </a>
 
-</a>
+                    <a
+                        href="./dashboard.html"
+                        class="secondary-button">
 
-</div>
+                        Dashboard
 
-</div>
+                    </a>
 
-<div class="hero-card">
+                </div>
 
-<img
-src="./images/logo.png"
-alt="LaunchFuture">
+            </div>
 
-</div>
+            <div class="hero-card">
 
-</div>
+                <img
+                    src="./images/logo.png"
+                    alt="LaunchFuture">
 
-</section>
+            </div>
 
-<section class="statistics">
+        </div>
 
-<div class="container">
+    </section>
 
-<h2>
+    <!-- ===================================== -->
+    <!-- FACTORY STATS -->
+    <!-- ===================================== -->
 
-Network Statistics
+    <section>
 
-</h2>
+        <div class="container">
 
-<div class="stats-grid">
+            <div class="page-header text-center">
 
-<div class="stat-card">
+                <h2>
 
-<span>
+                    Factory Statistics
 
-Factory
+                </h2>
 
-</span>
+                <p>
 
-<strong id="factoryName">
+                    Real-time information from the LaunchFuture Factory.
 
-Loading...
+                </p>
 
-</strong>
+            </div>
 
-</div>
+            <div class="stats-grid">
 
-<div class="stat-card">
+                <div class="stat-card">
 
-<span>
+                    <span>
 
-Launchpad
+                        Factory
 
-</span>
+                    </span>
 
-<strong id="factoryVersion">
+                    <strong id="factoryName">
 
-Loading...
+                        Loading...
 
-</strong>
+                    </strong>
 
-</div>
+                </div>
 
-<div class="stat-card">
+                <div class="stat-card">
 
-<span>
+                    <span>
 
-Total Tokens
+                        Version
 
-</span>
+                    </span>
 
-<strong id="totalTokens">
+                    <strong id="factoryVersion">
 
-0
+                        Loading...
 
-</strong>
+                    </strong>
 
-</div>
+                </div>
 
-<div class="stat-card">
+                <div class="stat-card">
 
-<span>
+                    <span>
 
-Exchange Rate
+                        Total Tokens
 
-</span>
+                    </span>
 
-<strong id="exchangeRate">
+                    <strong id="totalTokens">
 
-Loading...
+                        Loading...
 
-</strong>
+                    </strong>
 
-</div>
+                </div>
 
-<div class="stat-card">
+                <div class="stat-card">
 
-<span>
+                    <span>
 
-Factory Owner
+                        Factory Owner
 
-</span>
+                    </span>
 
-<strong id="factoryOwner">
+                    <strong id="factoryOwner">
 
-Loading...
+                        Loading...
 
-</strong>
+                    </strong>
 
-</div>
+                </div>
 
-</div>
+            </div>
 
-</div>
+        </div>
 
-</section>
+    </section>
 
-<section class="features">
+    <!-- ===================================== -->
+    <!-- FEATURES -->
+    <!-- ===================================== -->
 
-<div class="container">
+    <section>
 
-<h2>
+        <div class="container">
 
-Why LaunchFuture?
+            <div class="page-header text-center">
 
-</h2>
+                <h2>
 
-<div class="feature-grid">
+                    Why LaunchFuture
 
-<article class="feature-card">
+                </h2>
 
-<h3>
+            </div>
 
-Fully Decentralized
+            <div class="feature-grid">
 
-</h3>
+                <article class="feature-card">
 
-<p>
+                    <h3>
 
-Runs entirely on-chain using the official EVOZX Ultimate Factory.
+                        Fully Decentralized
 
-</p>
+                    </h3>
 
-</article>
+                    <p>
 
-<article class="feature-card">
+                        Deploy directly from your wallet using the official LaunchFuture Factory.
 
-<h3>
+                    </p>
 
-GitHub Pages Ready
+                </article>
 
-</h3>
+                <article class="feature-card">
 
-<p>
+                    <h3>
 
-No backend, database, or server required.
+                        No Backend Required
 
-</p>
+                    </h3>
 
-</article>
+                    <p>
 
-<article class="feature-card">
+                        Hosted entirely as a static application with no server dependency.
 
-<h3>
+                    </p>
 
-Automatic EVOZX Top-up
+                </article>
 
-</h3>
+                <article class="feature-card">
 
-<p>
+                    <h3>
 
-Users only need EVOZ.
-Required EVOZX is purchased automatically before deployment.
+                        Verified Deployments
 
-</p>
+                    </h3>
 
-</article>
+                    <p>
 
-<article class="feature-card">
+                        Every token is created through the same audited deployment process.
 
-<h3>
+                    </p>
 
-Verified Launchpad
+                </article>
 
-</h3>
+                <article class="feature-card">
 
-<p>
+                    <h3>
 
-Every token is created from the same audited Launchpad implementation.
+                        Launch In Minutes
 
-</p>
+                    </h3>
 
-</article>
+                    <p>
 
-</div>
+                        Configure your token and deploy with a simple guided interface.
 
-</div>
+                    </p>
 
-</section>
+                </article>
 
-<section class="workflow">
+            </div>
 
-<div class="container">
+        </div>
 
-<h2>
+    </section>
 
-How It Works
+    <!-- ===================================== -->
+    <!-- WORKFLOW -->
+    <!-- ===================================== -->
 
-</h2>
+    <section>
 
-<div class="workflow-grid">
+        <div class="container">
 
-<div class="step">
+            <div class="page-header text-center">
 
-<div class="step-number">
+                <h2>
 
-1
+                    How It Works
 
-</div>
+                </h2>
 
-<h3>
+            </div>
 
-Connect Wallet
+            <div class="feature-grid">
 
-</h3>
+                <div class="feature-card">
 
-<p>
+                    <h3>
 
-Connect your EVOZ-compatible wallet.
+                        1. Connect Wallet
 
-</p>
+                    </h3>
 
-</div>
+                    <p>
 
-<div class="step">
+                        Connect your EVOZ-compatible wallet.
 
-<div class="step-number">
+                    </p>
 
-2
+                </div>
 
-</div>
+                <div class="feature-card">
 
-<h3>
+                    <h3>
 
-Configure Token
+                        2. Configure Token
 
-</h3>
+                    </h3>
 
-<p>
+                    <p>
 
-Fill in your Launchpad configuration.
+                        Choose features and token settings.
 
-</p>
+                    </p>
 
-</div>
+                </div>
 
-<div class="step">
+                <div class="feature-card">
 
-<div class="step-number">
+                    <h3>
 
-3
+                        3. Review Deployment
 
-</div>
+                    </h3>
 
-<h3>
+                    <p>
 
-Pay Deployment Fee
+                        Verify all information before deployment.
 
-</h3>
+                    </p>
 
-<p>
+                </div>
 
-If EVOZX is insufficient, EVOZ will automatically be converted.
+                <div class="feature-card">
 
-</p>
+                    <h3>
 
-</div>
+                        4. Launch
 
-<div class="step">
+                    </h3>
 
-<div class="step-number">
+                    <p>
 
-4
+                        Confirm the transaction and deploy instantly.
 
-</div>
+                    </p>
 
-<h3>
+                </div>
 
-Deploy
+            </div>
 
-</h3>
+        </div>
 
-<p>
+    </section>
 
-Your token is deployed instantly on EVOZ Network.
-
-</p>
-
-</div>
-
-</div>
-
-</div>
-
-</section>
+</main>
 
 <footer>
 
-<div class="container footer-grid">
+    <div class="container">
 
-<div>
+        <div class="footer-grid">
 
-<img
-src="./images/logo.png"
-alt="LaunchFuture Logo"
-class="footer-logo">
+            <div>
 
-<p>
+                <img
+                    src="./images/logo.png"
+                    alt="LaunchFuture"
+                    class="footer-logo">
 
-LaunchFuture is an official EVOZX token launch platform for EVOZ Network.
+                <p>
 
-</p>
+                    LaunchFuture is the official launchpad for deploying verified EVOZ20 tokens.
 
-</div>
+                </p>
 
-<div>
+            </div>
 
-<h4>
+            <div>
 
-Resources
+                <h4>
 
-</h4>
+                    Navigation
 
-<a href="./launch.html">
+                </h4>
 
-Create Token
+                <a href="./launch.html">
 
-</a>
+                    Deploy Token
 
-<a href="./dashboard.html">
+                </a>
 
-Dashboard
+                <a href="./dashboard.html">
 
-</a>
+                    Dashboard
 
-<a
-href="https://evozscan.com"
-target="_blank"
-rel="noopener">
+                </a>
 
-Explorer
+            </div>
 
-</a>
+            <div>
 
-</div>
+                <h4>
 
-<div>
+                    Network
 
-<h4>
+                </h4>
 
-Network
+                <p>
 
-</h4>
+                    EVOZ Ecosystem
 
-<p>
+                </p>
 
-EVOZ Mainnet
+                <p>
 
-</p>
+                    Multichain Ready
 
-<p>
+                </p>
 
-RPC:
-https://rpc.evozscan.com
+            </div>
 
-</p>
+        </div>
 
-</div>
+        <div class="footer-bottom">
 
-</div>
+            © 2026 LaunchFuture
 
-<div class="footer-bottom">
+        </div>
 
-© 2026 LaunchFuture
-
-</div>
+    </div>
 
 </footer>
 
 <script
-type="module"
-src="./js/index.js">
-
+    type="module"
+    src="./js/index.js">
 </script>
 
 </body>
 
-</html>
+                  </html>
