@@ -1017,5 +1017,3 @@ document.addEventListener(
     initialize
 
 );
-
-}
