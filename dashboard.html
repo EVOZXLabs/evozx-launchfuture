@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
@@ -7,287 +6,416 @@
 <meta charset="UTF-8">
 
 <meta
-name="viewport"
-content="width=device-width, initial-scale=1.0">
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
 
 <title>
 
-LaunchFuture • Dashboard
+    LaunchFuture • Dashboard
 
 </title>
 
-<link
-rel="icon"
-href="./images/logo.png">
+<meta
+    name="description"
+    content="Manage deployed EVOZ20 tokens, deployment history, and EVOZX burn operations.">
 
 <link
-rel="stylesheet"
-href="./css/app.css">
+    rel="icon"
+    href="./images/logo.png">
 
 <link
-rel="stylesheet"
-href="./css/dashboard.css">
+    rel="stylesheet"
+    href="./css/app.css">
+
+<link
+    rel="stylesheet"
+    href="./css/dashboard.css">
 
 </head>
 
 <body>
 
-<header
-class="topbar">
+<header class="topbar">
 
-<div
-class="container">
+    <div class="container">
 
-<a
-href="./index.html"
-class="brand">
+        <a
+            href="./index.html"
+            class="brand">
 
-<img
-src="./images/logo.png"
-alt="LaunchFuture">
+            <img
+                src="./images/logo.png"
+                alt="LaunchFuture">
 
-<div>
+            <div>
 
-<h1>
+                <h1>
 
-LaunchFuture
+                    LaunchFuture
 
-</h1>
+                </h1>
 
-<p>
+                <p>
 
-My Deployed Tokens
+                    Creator Dashboard
 
-</p>
+                </p>
 
-</div>
+            </div>
 
-</a>
+        </a>
 
-<nav>
+        <nav>
 
-<div
-class="network-badge">
+            <span class="network-badge">
 
-EVOZ Mainnet
+                EVOZ Mainnet
 
-</div>
+            </span>
 
-<button
+            <button
+                id="connectWallet"
+                class="primary-button">
 
-id="connectWallet"
+                Connect Wallet
 
-class="primary-button">
+            </button>
 
-Connect Wallet
+        </nav>
 
-</button>
-
-</nav>
-
-</div>
+    </div>
 
 </header>
 
-<main
-class="dashboard-page">
+<main class="dashboard-page">
 
-<div
-class="container">
+    <div class="container">
 
-<div
-class="page-header">
+        <!-- ========================================= -->
+        <!-- HEADER -->
+        <!-- ========================================= -->
 
-<h2>
+        <div class="page-header">
 
-Dashboard
+            <h2>
 
-</h2>
+                Dashboard
 
-<p>
+            </h2>
 
-View every EVOZ20 token deployed using your connected wallet through the official LaunchFuture Factory.
+            <p>
 
-</p>
+                Manage deployed tokens, review deployment history, monitor balances,
+                and burn EVOZX directly from your LaunchFuture account.
 
-</div>
+            </p>
 
-<section
-class="stats-grid">
+        </div>
 
-<div
-class="info-card">
+        <!-- ========================================= -->
+        <!-- WALLET SUMMARY -->
+        <!-- ========================================= -->
 
-<span>
+        <section class="stats-grid">
 
-Connected Wallet
+            <div class="info-card">
 
-</span>
+                <span>
 
-<strong
-id="dashboardWallet">
+                    Wallet
 
--
+                </span>
 
-</strong>
+                <strong id="dashboardWallet">
 
-</div>
+                    -
 
-<div
-class="info-card">
+                </strong>
 
-<span>
+            </div>
 
-Total Tokens
+            <div class="info-card">
 
-</span>
+                <span>
 
-<strong
-id="dashboardTotalTokens">
+                    EVOZ Balance
 
-0
+                </span>
 
-</strong>
+                <strong id="dashboardEVOZ">
 
-</div>
+                    -
 
-<div
-class="info-card">
+                </strong>
 
-<span>
+            </div>
 
-Factory
+            <div class="info-card">
 
-</span>
+                <span>
 
-<strong
-id="dashboardFactory">
+                    EVOZX Balance
 
-LaunchFuture
+                </span>
 
-</strong>
+                <strong id="dashboardEVOZX">
 
-</div>
+                    -
 
-<div
-class="info-card">
+                </strong>
 
-<span>
+            </div>
 
-Network
+            <div class="info-card">
 
-</span>
+                <span>
 
-<strong>
+                    My Tokens
 
-EVOZ Mainnet
+                </span>
 
-</strong>
+                <strong id="dashboardTotalTokens">
 
-</div>
+                    0
 
-</section>
+                </strong>
 
-<section
-class="dashboard-section">
+            </div>
 
-<div
-class="section-header">
+        </section>
 
-<div>
+        <!-- ========================================= -->
+        <!-- QUICK ACTIONS -->
+        <!-- ========================================= -->
 
-<h3>
+        <section class="dashboard-section">
 
-My Tokens
+            <div class="section-header">
 
-</h3>
+                <div>
 
-<p>
+                    <h3>
 
-Every verified EVOZ20 token deployed from this wallet will appear below.
+                        Quick Actions
 
-</p>
+                    </h3>
 
-</div>
+                    <p>
 
-<a
+                        Launch and manage your ecosystem.
 
-href="./launch.html"
+                    </p>
 
-class="primary-button">
+                </div>
 
-Deploy New Token
+            </div>
 
-</a>
+            <div class="actions-grid">
 
-</div>
+                <a
+                    href="./launch.html"
+                    class="primary-button">
 
-<div
+                    Deploy New Token
 
-id="loadingState"
+                </a>
 
-class="loading-panel"
+                <a
+                    href="./index.html"
+                    class="secondary-button">
 
-hidden>
+                    Home
 
-<div
-class="spinner">
+                </a>
 
-</div>
+            </div>
 
-<p>
+        </section>
 
-Loading deployed tokens...
+        <!-- ========================================= -->
+        <!-- BURN EVOZX -->
+        <!-- ========================================= -->
 
-</p>
+        <section class="dashboard-section">
 
-</div>
+            <div class="section-header">
 
-<div
+                <div>
 
-id="emptyState"
+                    <h3>
 
-class="empty-state"
+                        Burn EVOZX
 
-hidden>
+                    </h3>
 
-<h3>
+                    <p>
 
-No Tokens Found
+                        Permanently remove EVOZX from circulation.
 
-</h3>
+                    </p>
 
-<p>
+                </div>
 
-No verified EVOZ20 tokens have been deployed from this wallet yet.
+            </div>
 
-</p>
+            <div class="burn-card">
 
-<a
+                <div class="form-group">
 
-href="./launch.html"
+                    <label>
 
-class="primary-button">
+                        EVOZX Amount
 
-Deploy Your First Token
+                    </label>
 
-</a>
+                    <input
+                        id="burnAmount"
+                        type="number"
+                        min="0"
+                        step="0.000000000000000001"
+                        placeholder="100">
 
-</div>
+                </div>
 
-<div
+                <button
+                    id="burnButton"
+                    class="primary-button">
 
-id="tokenList"
+                    Burn EVOZX
 
-class="token-grid">
+                </button>
 
-<!-- Filled by dashboard.js -->
+                <div
+                    id="burnStatus"
+                    class="status-panel">
 
-</div>
+                </div>
 
-</section>
+            </div>
 
-</div>
+        </section>
+
+        <!-- ========================================= -->
+        <!-- DEPLOYMENT HISTORY -->
+        <!-- ========================================= -->
+
+        <section class="dashboard-section">
+
+            <div class="section-header">
+
+                <div>
+
+                    <h3>
+
+                        Deployment History
+
+                    </h3>
+
+                    <p>
+
+                        Stored locally from successful LaunchFuture deployments.
+
+                    </p>
+
+                </div>
+
+                <span
+                    id="historyCount"
+                    class="badge">
+
+                    0
+
+                </span>
+
+            </div>
+
+            <div
+                id="historyList"
+                class="history-list">
+
+            </div>
+
+        </section>
+
+        <!-- ========================================= -->
+        <!-- TOKENS -->
+        <!-- ========================================= -->
+
+        <section class="dashboard-section">
+
+            <div class="section-header">
+
+                <div>
+
+                    <h3>
+
+                        My Tokens
+
+                    </h3>
+
+                    <p>
+
+                        Verified EVOZ20 contracts deployed by this wallet.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div
+                id="loadingState"
+                class="loading-panel"
+                hidden>
+
+                <div class="spinner">
+
+                </div>
+
+                <p>
+
+                    Loading deployed tokens...
+
+                </p>
+
+            </div>
+
+            <div
+                id="emptyState"
+                class="empty-state"
+                hidden>
+
+                <h3>
+
+                    No Tokens Found
+
+                </h3>
+
+                <p>
+
+                    Connect a wallet or deploy your first token.
+
+                </p>
+
+                <a
+                    href="./launch.html"
+                    class="primary-button">
+
+                    Deploy Token
+
+                </a>
+
+            </div>
+
+            <div
+                id="tokenList"
+                class="token-grid">
+
+            </div>
+
+        </section>
+
+    </div>
 
 </main>
 
@@ -306,7 +434,8 @@ class="token-grid">
 
                 <p>
 
-                    LaunchFuture is the official launchpad interface for deploying verified EVOZ20 tokens on EVOZ Mainnet.
+                    LaunchFuture is the official launchpad interface
+                    for verified EVOZ20 deployments.
 
                 </p>
 
@@ -328,7 +457,7 @@ class="token-grid">
 
                 <a href="./launch.html">
 
-                    Deploy Token
+                    Deploy
 
                 </a>
 
@@ -356,12 +485,6 @@ class="token-grid">
 
                 <p>
 
-                    RPC
-
-                </p>
-
-                <p>
-
                     https://rpc.evozscan.com
 
                 </p>
@@ -380,10 +503,9 @@ class="token-grid">
 
 </footer>
 
-<!-- =====================================================
-TOKEN CARD TEMPLATE
-Filled automatically by dashboard.js
-===================================================== -->
+<!-- ========================================= -->
+<!-- TOKEN CARD TEMPLATE -->
+<!-- ========================================= -->
 
 <template id="tokenCardTemplate">
 
@@ -403,7 +525,7 @@ Filled automatically by dashboard.js
 
             </div>
 
-            <span class="badge success">
+            <span class="badge badge-green">
 
                 Active
 
