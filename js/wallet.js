@@ -1,15 +1,14 @@
 import {
-
-  BrowserProvider
-
+    BrowserProvider
 } from "https://esm.sh/ethers@6";
 
 import {
-
-  NETWORK,
-  STORAGE
-
+    NETWORK
 } from "./config.js";
+
+// =====================================================
+// STATE
+// =====================================================
 
 let provider = null;
 
@@ -17,57 +16,137 @@ let signer = null;
 
 let account = null;
 
+let chainId = null;
+
+const accountListeners = [];
+
+const chainListeners = [];
+
 // =====================================================
-// STATE
+// HELPERS
 // =====================================================
 
-function hasWallet(){
+function hasWallet() {
 
-  return typeof window.ethereum !== "undefined";
-
-}
-
-export function getProvider(){
-
-  return provider;
+    return typeof window.ethereum !== "undefined";
 
 }
 
-export function getSigner(){
+export function getProvider() {
 
-  return signer;
-
-}
-
-export function getAccount(){
-
-  return account;
+    return provider;
 
 }
 
-export function isConnected(){
+export function getSigner() {
 
-  return account !== null;
+    return signer;
 
 }
 
-export function shortAddress(address){
+export function getAccount() {
 
-  if(!address){
+    return account;
 
-    return "";
+}
 
-  }
+export function getChainId() {
 
-  return `${
+    return chainId;
 
-    address.slice(0,6)
+}
 
-  }...${
+export function isConnected() {
 
-    address.slice(-4)
+    return !!account;
 
-  }`;
+}
+
+export function shortAddress(address) {
+
+    if (!address) {
+
+        return "";
+
+    }
+
+    return (
+
+        address.slice(0, 6) +
+
+        "..." +
+
+        address.slice(-4)
+
+    );
+
+}
+
+// =====================================================
+// CALLBACKS
+// =====================================================
+
+export function onAccountChanged(callback) {
+
+    if (typeof callback !== "function") {
+
+        return;
+
+    }
+
+    accountListeners.push(callback);
+
+}
+
+export function onChainChanged(callback) {
+
+    if (typeof callback !== "function") {
+
+        return;
+
+    }
+
+    chainListeners.push(callback);
+
+}
+
+function emitAccountChanged(value) {
+
+    for (const callback of accountListeners) {
+
+        try {
+
+            callback(value);
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+        }
+
+    }
+
+}
+
+function emitChainChanged(value) {
+
+    for (const callback of chainListeners) {
+
+        try {
+
+            callback(value);
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+        }
+
+    }
 
 }
 
@@ -75,121 +154,120 @@ export function shortAddress(address){
 // NETWORK
 // =====================================================
 
-export async function checkNetwork(){
+export async function checkNetwork() {
 
-  if(!hasWallet()){
+    if (!hasWallet()) {
 
-    return false;
+        return false;
 
-  }
+    }
 
-  const chainId =
+    const currentChainId =
+        await window.ethereum.request({
 
-    await window.ethereum.request({
+            method: "eth_chainId"
 
-      method:"eth_chainId"
+        });
 
-    });
+    return (
 
-  return (
+        Number(currentChainId) ===
 
-    Number(chainId) ===
-
-    NETWORK.chainId
-
-  );
-
-}
-
-export async function switchToEVOZ(){
-
-  if(!hasWallet()){
-
-    throw new Error(
-
-      "Web3 wallet not detected."
+        NETWORK.chainId
 
     );
 
-  }
+}
 
-  try{
+export async function switchNetwork() {
 
-    await window.ethereum.request({
+    if (!hasWallet()) {
 
-      method:"wallet_switchEthereumChain",
+        throw new Error(
+            "Wallet not detected."
+        );
 
-      params:[{
+    }
 
-        chainId:
+    try {
 
-          NETWORK.chainIdHex
+        await window.ethereum.request({
 
-      }]
+            method:
+                "wallet_switchEthereumChain",
 
-    });
+            params: [
 
-    return true;
+                {
+                    chainId:
+                        NETWORK.chainIdHex
+                }
 
-  }
+            ]
 
-  catch(error){
+        });
 
-    if(error.code !== 4902){
+        return true;
 
-      throw error;
+    }
+
+    catch (error) {
+
+        if (error.code !== 4902) {
+
+            throw error;
+
+        }
 
     }
 
     await window.ethereum.request({
 
-      method:"wallet_addEthereumChain",
+        method:
+            "wallet_addEthereumChain",
 
-      params:[{
+        params: [
 
-        chainId:
+            {
 
-          NETWORK.chainIdHex,
+                chainId:
+                    NETWORK.chainIdHex,
 
-        chainName:
+                chainName:
+                    NETWORK.name,
 
-          NETWORK.name,
+                nativeCurrency: {
 
-        nativeCurrency:{
+                    name:
+                        NETWORK.symbol,
 
-          name:
+                    symbol:
+                        NETWORK.symbol,
 
-            NETWORK.symbol,
+                    decimals:
+                        NETWORK.decimals
 
-          symbol:
+                },
 
-            NETWORK.symbol,
+                rpcUrls: [
 
-          decimals:
+                    NETWORK.rpcUrl
 
-            NETWORK.decimals
+                ],
 
-        },
+                blockExplorerUrls: [
 
-        rpcUrls:[
+                    NETWORK.explorer
 
-          NETWORK.rpcUrl
+                ]
 
-        ],
-
-        blockExplorerUrls:[
-
-          NETWORK.explorer
+            }
 
         ]
-
-      }]
 
     });
 
     return true;
-
-  }
 
 }
 
@@ -197,175 +275,129 @@ export async function switchToEVOZ(){
 // CONNECTION
 // =====================================================
 
-export async function connectWallet(){
+export async function connectWallet() {
 
-  if(!hasWallet()){
+    if (!hasWallet()) {
 
-    throw new Error(
+        throw new Error(
+            "No wallet detected."
+        );
 
-      "Web3 wallet not detected."
+    }
 
+    const accounts =
+        await window.ethereum.request({
+
+            method:
+                "eth_requestAccounts"
+
+        });
+
+    if (!accounts.length) {
+
+        throw new Error(
+            "No account selected."
+        );
+
+    }
+
+    provider =
+        new BrowserProvider(
+            window.ethereum
+        );
+
+    signer =
+        await provider.getSigner();
+
+    account =
+        await signer.getAddress();
+
+    const network =
+        await provider.getNetwork();
+
+    chainId =
+        Number(network.chainId);
+
+    if (!(await checkNetwork())) {
+
+        await switchNetwork();
+
+    }
+
+    updateWalletButtons();
+
+    emitAccountChanged(
+        account
     );
 
-  }
+    emitChainChanged(
+        chainId
+    );
 
-  if(!(await checkNetwork())){
-
-    await switchToEVOZ();
-
-  }
-
-  await window.ethereum.request({
-
-    method:"eth_requestAccounts"
-
-  });
-
-  provider = new BrowserProvider(
-
-    window.ethereum
-
-  );
-
-  signer = await provider.getSigner();
-
-  account = await signer.getAddress();
-
-  localStorage.setItem(
-
-    STORAGE.wallet,
-
-    "true"
-
-  );
-
-  updateWalletButtons();
-
-  return account;
+    return account;
 
 }
 
-export async function restoreConnection(){
+export function disconnectWallet() {
 
-  if(
+    provider = null;
 
-    localStorage.getItem(
+    signer = null;
 
-      STORAGE.wallet
+    account = null;
 
-    ) !== "true"
-
-  ){
+    chainId = null;
 
     updateWalletButtons();
 
-    return;
+    emitAccountChanged(
+        null
+    );
 
-  }
-
-  if(!hasWallet()){
-
-    updateWalletButtons();
-
-    return;
-
-  }
-
-  const accounts =
-
-    await window.ethereum.request({
-
-      method:"eth_accounts"
-
-    });
-
-  if(accounts.length===0){
-
-    disconnectWallet();
-
-    return;
-
-  }
-
-  if(!(await checkNetwork())){
-
-    disconnectWallet();
-
-    return;
-
-  }
-
-  provider = new BrowserProvider(
-
-    window.ethereum
-
-  );
-
-  signer = await provider.getSigner();
-
-  account = accounts[0];
-
-  updateWalletButtons();
-
-}
-
-export function disconnectWallet(){
-
-  provider = null;
-
-  signer = null;
-
-  account = null;
-
-  localStorage.removeItem(
-
-    STORAGE.wallet
-
-  );
-
-  updateWalletButtons();
-
-}
+              }
 
 // =====================================================
 // UI
 // =====================================================
 
-export function updateWalletButtons(){
+export function updateWalletButtons() {
 
-  const buttons = document.querySelectorAll(
+    const buttons =
+        document.querySelectorAll(
+            "#connectWallet"
+        );
 
-    "#connectWallet"
+    buttons.forEach(button => {
 
-  );
+        if (!button) {
 
-  buttons.forEach(button=>{
+            return;
 
-    if(account){
+        }
 
-      button.textContent =
+        if (account) {
 
-        shortAddress(account);
+            button.textContent =
+                shortAddress(
+                    account
+                );
 
-      button.dataset.connected =
+            button.dataset.connected =
+                "true";
 
-        "true";
+        }
 
-    }
+        else {
 
-    else{
+            button.textContent =
+                "Connect Wallet";
 
-      button.textContent =
+            button.dataset.connected =
+                "false";
 
-        "Connect Wallet";
+        }
 
-      button.dataset.connected =
-
-        "false";
-
-    }
-
-  });
+    });
 
 }
 
@@ -373,68 +405,124 @@ export function updateWalletButtons(){
 // EVENTS
 // =====================================================
 
-window.addEventListener(
+function bindWalletEvents() {
 
-  "DOMContentLoaded",
-
-  ()=>{
-
-    restoreConnection();
-
-  }
-
-);
-
-if(typeof window.ethereum !== "undefined"){
-
-  window.ethereum.on(
-
-    "accountsChanged",
-
-    async(accounts)=>{
-
-      if(accounts.length===0){
-
-        disconnectWallet();
+    if (!hasWallet()) {
 
         return;
 
-      }
-
-      provider = new BrowserProvider(
-
-        window.ethereum
-
-      );
-
-      signer = await provider.getSigner();
-
-      account = accounts[0];
-
-      localStorage.setItem(
-
-        STORAGE.wallet,
-
-        "true"
-
-      );
-
-      updateWalletButtons();
-
     }
 
-  );
+    window.ethereum.on(
 
-  window.ethereum.on(
+        "accountsChanged",
 
-    "chainChanged",
+        async (accounts) => {
 
-    ()=>{
+            if (!accounts.length) {
 
-      window.location.reload();
+                disconnectWallet();
 
-    }
+                return;
 
-  );
+            }
 
-    }
+            provider =
+                new BrowserProvider(
+                    window.ethereum
+                );
+
+            signer =
+                await provider.getSigner();
+
+            account =
+                accounts[0];
+
+            updateWalletButtons();
+
+            emitAccountChanged(
+                account
+            );
+
+        }
+
+    );
+
+    window.ethereum.on(
+
+        "chainChanged",
+
+        async () => {
+
+            if (!hasWallet()) {
+
+                return;
+
+            }
+
+            try {
+
+                provider =
+                    new BrowserProvider(
+                        window.ethereum
+                    );
+
+                const network =
+                    await provider.getNetwork();
+
+                chainId =
+                    Number(
+                        network.chainId
+                    );
+
+            }
+
+            catch {
+
+                chainId = null;
+
+            }
+
+            emitChainChanged(
+                chainId
+            );
+
+        }
+
+    );
+
+}
+
+// =====================================================
+// INITIALIZE
+// =====================================================
+
+export function initializeWallet() {
+
+    updateWalletButtons();
+
+    bindWalletEvents();
+
+}
+
+// =====================================================
+// STARTUP
+// =====================================================
+
+document.addEventListener(
+
+    "DOMContentLoaded",
+
+    initializeWallet
+
+);
+
+// =====================================================
+// EXPORTS
+// =====================================================
+
+export {
+
+    hasWallet
+
+};
