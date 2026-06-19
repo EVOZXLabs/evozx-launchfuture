@@ -101,10 +101,49 @@
 
         <section class="dashboard-section">
 
-            <input
-                id="tokenSearch"
-                type="text"
-                placeholder="Search token name, symbol, or address">
+    <div
+        style="
+            display:flex;
+            gap:12px;
+            flex-wrap:wrap;
+        ">
+
+        <input
+            id="tokenSearch"
+            type="text"
+            placeholder="Search token name, symbol, or address"
+            style="flex:1;">
+
+        <select
+            id="sortSelect">
+
+            <option value="newest">
+
+                Newest
+
+            </option>
+
+            <option value="oldest">
+
+                Oldest
+
+            </option>
+
+            <option value="az">
+
+                A-Z
+
+            </option>
+
+            <option value="za">
+
+                Z-A
+
+            </option>
+
+        </select>
+
+    </div>
 
         </section>
 
