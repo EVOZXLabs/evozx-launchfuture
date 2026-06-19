@@ -193,6 +193,28 @@ LOADING
 }
 
 /* =====================================================
+HIDDEN FIX
+===================================================== */
+
+[hidden] {
+
+    display: none !important;
+
+}
+
+.loading-panel[hidden] {
+
+    display: none !important;
+
+}
+
+.empty-state[hidden] {
+
+    display: none !important;
+
+}
+
+/* =====================================================
 EMPTY STATE
 ===================================================== */
 
