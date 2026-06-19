@@ -415,13 +415,11 @@ async function loadPlatformStatistics() {
         );
 
         setText(
-            "totalBurnedDetail",
-            `${formatToken(
-                burned
-            )} / ${formatToken(
-                initialSupply
-            )} EVOZX`
-        );
+    "totalBurnedDetail",
+    formatToken(
+        burned
+    )
+);
 
         setText(
             "burnPercent",
