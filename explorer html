@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<title>
+
+    LaunchFuture • Explorer
+
+</title>
+
+<link
+    rel="icon"
+    href="./images/logo.png">
+
+<link
+    rel="stylesheet"
+    href="./css/app.css">
+
+<link
+    rel="stylesheet"
+    href="./css/explorer.css">
+
+</head>
+
+<body>
+
+<header class="topbar">
+
+    <div class="container">
+
+        <a
+            href="./index.html"
+            class="brand">
+
+            <img
+                src="./images/logo.png"
+                alt="LaunchFuture">
+
+            <div>
+
+                <h1>
+
+                    LaunchFuture
+
+                </h1>
+
+                <p>
+
+                    Token Explorer
+
+                </p>
+
+            </div>
+
+        </a>
+
+        <nav>
+
+            <button
+                id="connectWallet"
+                class="primary-button">
+
+                Connect Wallet
+
+            </button>
+
+        </nav>
+
+    </div>
+
+</header>
+
+<main class="dashboard-page">
+
+    <div class="container">
+
+        <div class="page-header">
+
+            <h2>
+
+                Public Token Explorer
+
+            </h2>
+
+            <p>
+
+                Browse all EVOZ20 tokens created through LaunchFuture.
+
+            </p>
+
+        </div>
+
+        <!-- SEARCH -->
+
+        <section class="dashboard-section">
+
+            <input
+                id="tokenSearch"
+                type="text"
+                placeholder="Search token name, symbol, or address">
+
+        </section>
+
+        <!-- TOKEN LIST -->
+
+        <section class="dashboard-section">
+
+            <div
+                id="loadingState"
+                class="loading-panel">
+
+                <div class="spinner">
+
+                </div>
+
+                <p>
+
+                    Loading tokens...
+
+                </p>
+
+            </div>
+
+            <div
+                id="tokenList"
+                class="token-grid">
+
+            </div>
+
+        </section>
+
+    </div>
+
+</main>
+
+<footer>
+
+    <div class="container">
+
+        <div class="footer-bottom">
+
+            © 2026 LaunchFuture
+
+        </div>
+
+    </div>
+
+</footer>
+
+<!-- TEMPLATE -->
+
+<template id="tokenCardTemplate">
+
+    <article class="token-card">
+
+        <div class="token-card-header">
+
+            <div>
+
+                <h3 class="token-name">
+
+                </h3>
+
+                <p class="token-symbol">
+
+                </p>
+
+            </div>
+
+            <span class="badge badge-green">
+
+                Active
+
+            </span>
+
+        </div>
+
+        <div class="token-card-body">
+
+            <div class="token-row">
+
+                <span>
+
+                    Address
+
+                </span>
+
+                <strong class="token-address">
+
+                </strong>
+
+            </div>
+
+            <div class="token-row">
+
+                <span>
+
+                    Supply
+
+                </span>
+
+                <strong class="token-supply">
+
+                </strong>
+
+            </div>
+
+        </div>
+
+        <div class="token-card-actions">
+
+            <button
+                class="secondary-button token-copy">
+
+                Copy
+
+            </button>
+
+            <button
+                class="secondary-button token-explorer">
+
+                Explorer
+
+            </button>
+
+            <button
+                class="primary-button token-details">
+
+                Details
+
+            </button>
+
+        </div>
+
+    </article>
+
+</template>
+
+<script
+    type="module"
+    src="./js/explorer.js">
+</script>
+
+</body>
+</html>
