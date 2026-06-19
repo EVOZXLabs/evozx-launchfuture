@@ -14,7 +14,9 @@ import{
 
   getTotalTokens,
 
-  getOwner
+  getOwner,
+
+  getAllTokens
 
 }from"./factory.js";
 
@@ -65,6 +67,14 @@ const ownerElement=
 document.getElementById(
 
   "factoryOwner"
+
+);
+
+const latestTokensElement=
+
+document.getElementById(
+
+  "latestTokens"
 
 );
 
@@ -182,6 +192,113 @@ async function loadFactoryInfo(){
 
 }
 
+async function loadLatestTokens(){
+
+  if(
+
+    !latestTokensElement
+
+  ){
+
+    return;
+
+  }
+
+  try{
+
+    const tokens=
+
+      await getAllTokens();
+
+    const latest=
+
+      [...tokens]
+
+        .sort(
+
+          (a,b)=>
+
+            Number(b[5])-
+
+            Number(a[5])
+
+        )
+
+        .slice(
+
+          0,
+
+          6
+
+        );
+
+    latestTokensElement.innerHTML="";
+
+    for(
+
+      const token
+
+      of latest
+
+    ){
+
+      const card=
+
+        document.createElement(
+
+          "article"
+
+        );
+
+      card.className=
+
+        "feature-card";
+
+      card.innerHTML=`
+
+        <h3>
+
+          ${token[2]}
+
+        </h3>
+
+        <p>
+
+          ${token[3]}
+
+        </p>
+
+        <a
+          href="./token.html?address=${token[0]}">
+
+          View Token
+
+        </a>
+
+      `;
+
+      latestTokensElement.appendChild(
+
+        card
+
+      );
+
+    }
+
+  }
+
+  catch(error){
+
+    console.error(
+
+      error
+
+    );
+
+  }
+
+}
+
 // =====================================================
 // CONNECT WALLET
 // =====================================================
@@ -216,6 +333,7 @@ updateWalletButton();
 
 await loadFactoryInfo();
 
+await loadLatestTokens();
 if(connectButton){
 
 connectButton.addEventListener(  
