@@ -261,9 +261,11 @@ async function loadExplorer() {
 
             catch (error) {
 
-                console.error(
-                    error
-                );
+    console.error(
+        "FAILED TOKEN:",
+        address,
+        error
+    );
 
             }
 
