@@ -104,6 +104,24 @@ function createTokenCard(token) {
             token.supply
         );
 
+    fragment
+    .querySelector(
+        ".token-creator"
+    )
+    .textContent =
+    shortAddress(
+        token.creator
+    );
+
+    fragment
+    .querySelector(
+        ".token-created"
+    )
+    .textContent =
+    new Date(
+        Number(token.createdAt) * 1000
+    ).toLocaleDateString();
+
     const copyButton =
         fragment.querySelector(
             ".token-copy"
