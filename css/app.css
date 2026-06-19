@@ -164,7 +164,15 @@ h1 {
 
 h2 {
 
-    font-size: 2.6rem;
+    font-size: clamp(
+        1.8rem,
+        5vw,
+        2.4rem
+    );
+
+    font-weight: 700;
+
+    letter-spacing: -.02em;
 
 }
 
@@ -195,7 +203,7 @@ LAYOUT
 .container {
 
     width: min(
-        100% - 40px,
+        100% - 28px,
         var(--container)
     );
 
@@ -205,7 +213,11 @@ LAYOUT
 
 section {
 
-    padding: 64px 0;
+    padding: clamp(
+        32px,
+        5vw,
+        64px
+    ) 0;
 
 }
 
