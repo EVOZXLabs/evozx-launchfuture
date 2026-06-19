@@ -1,8 +1,4 @@
 import {
-    formatUnits
-} from "https://esm.sh/ethers@6";
-
-import {
     getAllTokens
 } from "./factory.js";
 
@@ -19,6 +15,9 @@ let allTokens = [];
 let filteredTokens = [];
 
 let currentPage = 1;
+
+let currentSort =
+    "newest";
 
 const PAGE_SIZE = 20;
 
@@ -63,7 +62,7 @@ function formatSupply(value) {
 }
 
 // =====================================================
-// RENDER STATISTIC
+// RENDER STATISTICS
 // =====================================================
 
 function renderStats() {
@@ -97,19 +96,25 @@ function renderStats() {
             .toDateString();
 
     const createdToday =
+
         allTokens.filter(
             token => {
 
                 const date =
+
                     new Date(
+
                         Number(
                             token.createdAt
                         ) * 1000
+
                     );
 
                 return (
+
                     date.toDateString() ===
                     today
+
                 );
 
             }
@@ -120,6 +125,7 @@ function renderStats() {
         [...allTokens]
 
             .sort(
+
                 (a, b) =>
 
                     Number(
@@ -129,6 +135,7 @@ function renderStats() {
                     Number(
                         a.createdAt
                     )
+
             )[0];
 
     statsBar.innerHTML = `
@@ -136,11 +143,15 @@ function renderStats() {
         <div class="stat-card">
 
             <div class="stat-label">
+
                 Total Tokens
+
             </div>
 
             <div class="stat-value">
+
                 ${totalTokens}
+
             </div>
 
         </div>
@@ -148,11 +159,15 @@ function renderStats() {
         <div class="stat-card">
 
             <div class="stat-label">
+
                 Creators
+
             </div>
 
             <div class="stat-value">
+
                 ${totalCreators}
+
             </div>
 
         </div>
@@ -160,11 +175,15 @@ function renderStats() {
         <div class="stat-card">
 
             <div class="stat-label">
+
                 Created Today
+
             </div>
 
             <div class="stat-value">
+
                 ${createdToday}
+
             </div>
 
         </div>
@@ -172,11 +191,15 @@ function renderStats() {
         <div class="stat-card">
 
             <div class="stat-label">
+
                 Latest Token
+
             </div>
 
             <div class="stat-value">
+
                 ${latestToken?.symbol ?? "-"}
+
             </div>
 
         </div>
@@ -186,17 +209,19 @@ function renderStats() {
 }
 
 // =====================================================
-// CARD
+// TOKEN CARD
 // =====================================================
 
 function createTokenCard(token) {
 
     const template =
+
         document.getElementById(
             "tokenCardTemplate"
         );
 
     const fragment =
+
         template.content.cloneNode(
             true
         );
@@ -234,24 +259,29 @@ function createTokenCard(token) {
         );
 
     fragment
-    .querySelector(
-        ".token-creator"
-    )
-    .textContent =
-    shortAddress(
-        token.creator
-    );
+        .querySelector(
+            ".token-creator"
+        )
+        .textContent =
+        shortAddress(
+            token.creator
+        );
 
     fragment
-    .querySelector(
-        ".token-created"
-    )
-    .textContent =
-    new Date(
-        Number(token.createdAt) * 1000
-    ).toLocaleDateString();
+        .querySelector(
+            ".token-created"
+        )
+        .textContent =
+        new Date(
+
+            Number(
+                token.createdAt
+            ) * 1000
+
+        ).toLocaleDateString();
 
     const copyButton =
+
         fragment.querySelector(
             ".token-copy"
         );
@@ -280,26 +310,28 @@ function createTokenCard(token) {
         };
 
     const explorerButton =
+
         fragment.querySelector(
             ".token-explorer"
         );
 
     explorerButton.onclick =
-    () => {
+        () => {
 
-        window.open(
+            window.open(
 
-            explorerToken(
-                token.address
-            ),
+                explorerToken(
+                    token.address
+                ),
 
-            "_blank"
+                "_blank"
 
-        );
+            );
 
-    };
+        };
 
     const detailsButton =
+
         fragment.querySelector(
             ".token-details"
         );
@@ -308,23 +340,17 @@ function createTokenCard(token) {
         () => {
 
             location.href =
+
                 `./token.html?address=${token.address}`;
 
         };
-
-    console.log(
-    "RENDER SUPPLY:",
-    token.name,
-    token.supply,
-    formatSupply(token.supply)
-);
 
     return fragment;
 
 }
 
 // =====================================================
-// SHORT TOKENS
+// SORT TOKENS
 // =====================================================
 
 function sortTokens(
@@ -414,63 +440,66 @@ function sortTokens(
 function applyFilters() {
 
     const searchInput =
+
         document.getElementById(
             "tokenSearch"
         );
 
-    const sortSelect =
-        document.getElementById(
-            "sortSelect"
-        );
-
     const keyword =
 
-        searchInput.value
+        searchInput
+            ?.value
             .trim()
-            .toLowerCase();
+            .toLowerCase()
+
+        ?? "";
 
     let tokens =
         [...allTokens];
 
     if (keyword) {
 
-        tokens = tokens.filter(
+        tokens =
 
-            token =>
+            tokens.filter(
 
-                token.name
-                    .toLowerCase()
-                    .includes(
-                        keyword
-                    )
+                token =>
 
-                ||
+                    token.name
+                        .toLowerCase()
+                        .includes(
+                            keyword
+                        )
 
-                token.symbol
-                    .toLowerCase()
-                    .includes(
-                        keyword
-                    )
+                    ||
 
-                ||
+                    token.symbol
+                        .toLowerCase()
+                        .includes(
+                            keyword
+                        )
 
-                token.address
-                    .toLowerCase()
-                    .includes(
-                        keyword
-                    )
+                    ||
 
-        );
+                    token.address
+                        .toLowerCase()
+                        .includes(
+                            keyword
+                        )
+
+            );
 
     }
 
-    tokens = sortTokens(
+    tokens =
 
-        tokens,
+        sortTokens(
 
-        sortSelect.value
+            tokens,
 
-    );
+            currentSort
+
+        );
 
     filteredTokens =
         tokens;
@@ -490,26 +519,37 @@ function applyFilters() {
 function renderTokens(tokens) {
 
     const container =
+
         document.getElementById(
             "tokenList"
         );
 
     const info =
+
         document.getElementById(
             "paginationInfo"
         );
 
+    if (!container) {
+
+        return;
+
+    }
+
     container.innerHTML = "";
 
     const start =
+
         (currentPage - 1) *
         PAGE_SIZE;
 
     const end =
+
         start +
         PAGE_SIZE;
 
     const pageTokens =
+
         tokens.slice(
             start,
             end
@@ -544,6 +584,7 @@ function renderTokens(tokens) {
 function renderPagination(tokens) {
 
     const pagination =
+
         document.getElementById(
             "pagination"
         );
@@ -570,6 +611,7 @@ function renderPagination(tokens) {
     }
 
     const prev =
+
         document.createElement(
             "button"
         );
@@ -598,13 +640,47 @@ function renderPagination(tokens) {
         prev
     );
 
+    const maxButtons = 7;
+
+    let startPage =
+
+        Math.max(
+            1,
+            currentPage - 3
+        );
+
+    let endPage =
+
+        Math.min(
+            totalPages,
+            startPage + maxButtons - 1
+        );
+
+    if (
+        endPage -
+        startPage <
+        maxButtons - 1
+    ) {
+
+        startPage =
+
+            Math.max(
+                1,
+                endPage -
+                maxButtons +
+                1
+            );
+
+    }
+
     for (
-        let page = 1;
-        page <= totalPages;
+        let page = startPage;
+        page <= endPage;
         page++
     ) {
 
         const button =
+
             document.createElement(
                 "button"
             );
@@ -639,6 +715,7 @@ function renderPagination(tokens) {
     }
 
     const next =
+
         document.createElement(
             "button"
         );
@@ -676,6 +753,7 @@ function renderPagination(tokens) {
 async function loadExplorer() {
 
     const loading =
+
         document.getElementById(
             "loadingState"
         );
@@ -683,6 +761,7 @@ async function loadExplorer() {
     try {
 
         const tokens =
+
             await getAllTokens();
 
         console.log(
@@ -694,87 +773,42 @@ async function loadExplorer() {
 
         for (const item of tokens) {
 
-            console.log(
-                "TOKEN:",
-                item
-            );
-
             allTokens.push({
 
-    address:
-        item[0],
+                address:
+                    item[0],
 
-    creator:
-        item[1],
+                creator:
+                    item[1],
 
-    name:
-        item[2],
+                name:
+                    item[2],
 
-    symbol:
-        item[3],
+                symbol:
+                    item[3],
 
-    supply:
-        item[4],
+                supply:
+                    item[4],
 
-    createdAt:
-        item[5],
+                createdAt:
+                    item[5],
 
-    chainId:
-        item[6],
+                chainId:
+                    item[6],
 
-    active:
-        item[7]
+                active:
+                    item[7]
 
-  });
+            });
 
-}
+        }
 
-        console.log(
-    "PUBLIC TOKENS:",
-    allTokens
-);
-        console.log(
-    "FIRST TOKEN DATA:",
-    {
-        name:
-            allTokens[0]?.name,
+        renderStats();
 
-        supply:
-            String(
-                allTokens[0]?.supply
-            )
-    }
-);
+        filteredTokens =
+            [...allTokens];
 
-console.log(
-    "SECOND TOKEN DATA:",
-    {
-        name:
-            allTokens[1]?.name,
-
-        supply:
-            String(
-                allTokens[1]?.supply
-            )
-    }
-);
-        
-        allTokens.sort(
-
-    (a, b) =>
-
-        a.name.localeCompare(
-            b.name
-        )
-
-);
-
-renderStats();
-
-filteredTokens =
-    [...allTokens];
-
-applyFilters();
+        applyFilters();
 
     }
 
@@ -807,6 +841,7 @@ applyFilters();
 function setupSearch() {
 
     const input =
+
         document.getElementById(
             "tokenSearch"
         );
@@ -821,34 +856,68 @@ function setupSearch() {
 
         "input",
 
-        applyFilters
+        () => {
+
+            applyFilters();
+
+        }
 
     );
 
 }
 
 // =====================================================
-// SETUP SORT
+// SORT BUTTONS
 // =====================================================
 
 function setupSort() {
 
-    const select =
-        document.getElementById(
-            "sortSelect"
+    const buttons =
+
+        document.querySelectorAll(
+            ".sort-btn"
         );
 
-    if (!select) {
+    if (!buttons.length) {
 
         return;
 
     }
 
-    select.addEventListener(
+    buttons.forEach(
 
-        "change",
+        button => {
 
-        applyFilters
+            button.addEventListener(
+
+                "click",
+
+                () => {
+
+                    buttons.forEach(
+
+                        item =>
+
+                            item.classList.remove(
+                                "active"
+                            )
+
+                    );
+
+                    button.classList.add(
+                        "active"
+                    );
+
+                    currentSort =
+                        button.dataset.sort;
+
+                    applyFilters();
+
+                }
+
+            );
+
+        }
 
     );
 
@@ -866,9 +935,9 @@ document.addEventListener(
 
         await loadExplorer();
 
-setupSearch();
+        setupSearch();
 
-setupSort();
+        setupSort();
 
     }
 
