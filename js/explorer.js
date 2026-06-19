@@ -60,6 +60,89 @@ function formatSupply(value) {
 
 }
 
+function renderStats() {
+
+    const statsBar =
+        document.getElementById(
+            "statsBar"
+        );
+
+    if (!statsBar) {
+
+        return;
+
+    }
+
+    const totalTokens =
+        allTokens.length;
+
+    const activeTokens =
+        allTokens.filter(
+            token => token.active
+        ).length;
+
+    let totalSupply =
+        0n;
+
+    for (const token of allTokens) {
+
+        try {
+
+            totalSupply +=
+                BigInt(
+                    token.supply
+                );
+
+        }
+
+        catch {
+
+        }
+
+    }
+
+    statsBar.innerHTML = `
+
+        <div class="stat-card">
+
+            <div class="stat-label">
+                Total Tokens
+            </div>
+
+            <div class="stat-value">
+                ${totalTokens}
+            </div>
+
+        </div>
+
+        <div class="stat-card">
+
+            <div class="stat-label">
+                Active Tokens
+            </div>
+
+            <div class="stat-value">
+                ${activeTokens}
+            </div>
+
+        </div>
+
+        <div class="stat-card">
+
+            <div class="stat-label">
+                Total Supply
+            </div>
+
+            <div class="stat-value">
+                ${totalSupply.toLocaleString()}
+            </div>
+
+        </div>
+
+    `;
+
+}
+
 // =====================================================
 // CARD
 // =====================================================
@@ -476,17 +559,19 @@ console.log(
         
         allTokens.sort(
 
-            (a, b) =>
+    (a, b) =>
 
-                a.name.localeCompare(
-                    b.name
-                )
+        a.name.localeCompare(
+            b.name
+        )
 
-        );
+);
 
-        renderTokens(
-            allTokens
-        );
+renderStats();
+
+renderTokens(
+    allTokens
+);
 
     }
 
