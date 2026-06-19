@@ -413,7 +413,7 @@ TOKEN CARD
 
 .token-card-actions button {
 
-    flex: 1;
+    flex: 1 1 120px;
 
 }
 
@@ -523,9 +523,9 @@ PROGRESS
 
     text-align: center;
 
-    opacity: .8;
+    font-size: 13px;
 
-    font-size: 14px;
+    word-break: break-word;
 
 }
 
@@ -550,6 +550,8 @@ ACTIVITY
     justify-content: space-between;
 
     align-items: center;
+
+    gap: 12px;
 
     padding: 14px 16px;
 
@@ -585,6 +587,16 @@ ACTIVITY
     color: var(--gold);
 
     font-weight: 700;
+
+}
+
+.activity-token {
+
+    flex: 1;
+
+    min-width: 0;
+
+    word-break: break-word;
 
 }
 
@@ -636,6 +648,8 @@ HISTORY
     gap: 12px;
 
     margin-bottom: 12px;
+
+    flex-wrap: wrap;
 
 }
 
@@ -700,13 +714,13 @@ RESPONSIVE
 
     }
 
+    @media (max-width: 768px) {
+
     .stats-grid {
 
-        grid-template-columns:
-            repeat(
-                2,
-                1fr
-            );
+        grid-template-columns: 1fr;
+
+    }
 
     }
 
@@ -728,11 +742,13 @@ RESPONSIVE
 
     }
 
-    .token-card-actions button {
+    .token-card-actions {
 
-        font-size: 12px;
+    display: flex;
 
-        padding: 10px;
+    gap: 10px;
+
+    flex-wrap: wrap;
 
     }
 
