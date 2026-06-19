@@ -238,35 +238,13 @@ async function loadExplorer() {
     const addresses =
         await getAllTokens();
 
-        console.log(
-    "TYPE:",
-    typeof addresses
-);
-
-console.log(
-    "RAW:",
-    addresses
-);
-
-console.log(
-    "FIRST:",
-    addresses[0]
-);
-
-console.log(
-    "SECOND:",
-    addresses[1]
-);
-
-    console.log(
-        "ALL TOKENS:",
-        addresses
-    );
+        const tokenAddresses =
+    addresses[0];
 
     for (
-        const address
-        of addresses
-    ) {
+    const address
+    of tokenAddresses
+)
 
             try {
 
