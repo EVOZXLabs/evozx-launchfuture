@@ -6,7 +6,8 @@ import {
 import {
     CONTRACTS,
     ABI,
-    STORAGE
+    STORAGE,
+    explorerTransaction
 } from "./config.js";
 
 import {
