@@ -273,6 +273,15 @@ async function loadExplorer() {
     "PUBLIC TOKENS:",
     allTokens
 );
+        console.log(
+    "FIRST SUPPLY:",
+    allTokens[0]?.supply
+);
+
+console.log(
+    "SECOND SUPPLY:",
+    allTokens[1]?.supply
+);
         
         allTokens.sort(
 
