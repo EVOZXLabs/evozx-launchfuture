@@ -695,61 +695,34 @@ RESPONSIVE
 @media (max-width: 768px) {
 
     .dashboard-page {
-
         padding: 24px 0 50px;
-
     }
 
     .page-header h2 {
-
         font-size: 28px;
-
     }
 
     .section-header {
-
         flex-direction: column;
-
         align-items: flex-start;
-
     }
-
-    @media (max-width: 768px) {
 
     .stats-grid {
-
         grid-template-columns: 1fr;
-
-    }
-
     }
 
     .dashboard-section {
-
         padding: 16px;
-
     }
 
     .token-grid {
-
         grid-template-columns: 1fr;
-
     }
 
     .token-card-actions {
-
-        flex-direction: row;
-
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
     }
 
-    .token-card-actions {
-
-    display: flex;
-
-    gap: 10px;
-
-    flex-wrap: wrap;
-
-    }
-
-    }
+}
