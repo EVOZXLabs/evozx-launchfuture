@@ -7,7 +7,7 @@ import {
 } from "./factory.js";
 
 import {
-    CONTRACTS
+    explorerToken
 } from "./config.js";
 
 // =====================================================
@@ -138,17 +138,19 @@ function createTokenCard(token) {
         );
 
     explorerButton.onclick =
-        () => {
+    () => {
 
-            window.open(
+        window.open(
 
-                `${CONTRACTS.explorer}/address/${token.address}`,
+            explorerToken(
+                token.address
+            ),
 
-                "_blank"
+            "_blank"
 
-            );
+        );
 
-        };
+    };
 
     const detailsButton =
         fragment.querySelector(
