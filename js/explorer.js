@@ -16,6 +16,8 @@ import {
 
 let allTokens = [];
 
+let filteredTokens = [];
+
 let currentPage = 1;
 
 const PAGE_SIZE = 20;
@@ -322,6 +324,166 @@ function createTokenCard(token) {
 }
 
 // =====================================================
+// SHORT TOKENS
+// =====================================================
+
+function sortTokens(
+    tokens,
+    mode
+) {
+
+    const result =
+        [...tokens];
+
+    switch (mode) {
+
+        case "newest":
+
+            result.sort(
+
+                (a, b) =>
+
+                    Number(
+                        b.createdAt
+                    ) -
+
+                    Number(
+                        a.createdAt
+                    )
+
+            );
+
+            break;
+
+        case "oldest":
+
+            result.sort(
+
+                (a, b) =>
+
+                    Number(
+                        a.createdAt
+                    ) -
+
+                    Number(
+                        b.createdAt
+                    )
+
+            );
+
+            break;
+
+        case "az":
+
+            result.sort(
+
+                (a, b) =>
+
+                    a.name.localeCompare(
+                        b.name
+                    )
+
+            );
+
+            break;
+
+        case "za":
+
+            result.sort(
+
+                (a, b) =>
+
+                    b.name.localeCompare(
+                        a.name
+                    )
+
+            );
+
+            break;
+
+    }
+
+    return result;
+
+}
+
+// =====================================================
+// APPLY FILTERS
+// =====================================================
+
+function applyFilters() {
+
+    const searchInput =
+        document.getElementById(
+            "tokenSearch"
+        );
+
+    const sortSelect =
+        document.getElementById(
+            "sortSelect"
+        );
+
+    const keyword =
+
+        searchInput.value
+            .trim()
+            .toLowerCase();
+
+    let tokens =
+        [...allTokens];
+
+    if (keyword) {
+
+        tokens = tokens.filter(
+
+            token =>
+
+                token.name
+                    .toLowerCase()
+                    .includes(
+                        keyword
+                    )
+
+                ||
+
+                token.symbol
+                    .toLowerCase()
+                    .includes(
+                        keyword
+                    )
+
+                ||
+
+                token.address
+                    .toLowerCase()
+                    .includes(
+                        keyword
+                    )
+
+        );
+
+    }
+
+    tokens = sortTokens(
+
+        tokens,
+
+        sortSelect.value
+
+    );
+
+    filteredTokens =
+        tokens;
+
+    currentPage = 1;
+
+    renderTokens(
+        filteredTokens
+    );
+
+}
+
+// =====================================================
 // RENDER
 // =====================================================
 
@@ -609,9 +771,10 @@ console.log(
 
 renderStats();
 
-renderTokens(
-    allTokens
-);
+filteredTokens =
+    [...allTokens];
+
+applyFilters();
 
     }
 
@@ -658,61 +821,34 @@ function setupSearch() {
 
         "input",
 
-        () => {
+        applyFilters
 
-            const keyword =
+    );
 
-                input.value
-                    .trim()
-                    .toLowerCase();
+}
 
-            if (!keyword) {
+// =====================================================
+// SETUP SORT
+// =====================================================
 
-                renderTokens(
-                    allTokens
-                );
+function setupSort() {
 
-                return;
+    const select =
+        document.getElementById(
+            "sortSelect"
+        );
 
-            }
+    if (!select) {
 
-            const filtered =
+        return;
 
-                allTokens.filter(
+    }
 
-                    token =>
+    select.addEventListener(
 
-                        token.name
-                            .toLowerCase()
-                            .includes(
-                                keyword
-                            )
+        "change",
 
-                        ||
-
-                        token.symbol
-                            .toLowerCase()
-                            .includes(
-                                keyword
-                            )
-
-                        ||
-
-                        token.address
-                            .toLowerCase()
-                            .includes(
-                                keyword
-                            )
-
-                );
-
-            currentPage = 1;
-
-renderTokens(
-    filtered
-);
-
-        }
+        applyFilters
 
     );
 
@@ -730,7 +866,9 @@ document.addEventListener(
 
         await loadExplorer();
 
-        setupSearch();
+setupSearch();
+
+setupSort();
 
     }
 
