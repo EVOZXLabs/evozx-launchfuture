@@ -274,13 +274,29 @@ async function loadExplorer() {
     allTokens
 );
         console.log(
-    "FIRST SUPPLY:",
-    allTokens[0]?.supply
+    "FIRST TOKEN DATA:",
+    {
+        name:
+            allTokens[0]?.name,
+
+        supply:
+            String(
+                allTokens[0]?.supply
+            )
+    }
 );
 
 console.log(
-    "SECOND SUPPLY:",
-    allTokens[1]?.supply
+    "SECOND TOKEN DATA:",
+    {
+        name:
+            allTokens[1]?.name,
+
+        supply:
+            String(
+                allTokens[1]?.supply
+            )
+    }
 );
         
         allTokens.sort(
