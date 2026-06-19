@@ -40,32 +40,17 @@ function formatSupply(value) {
 
     try {
 
-        return Number(
-            formatUnits(
-                value,
-                18
-            )
+        return BigInt(
+            value
         ).toLocaleString();
 
     }
 
     catch {
 
-        try {
-
-            return Number(
-                value
-            ).toLocaleString();
-
-        }
-
-        catch {
-
-            return String(
-                value
-            );
-
-        }
+        return String(
+            value
+        );
 
     }
 
@@ -177,6 +162,13 @@ function createTokenCard(token) {
                 `./token.html?address=${token.address}`;
 
         };
+
+    console.log(
+    "RENDER SUPPLY:",
+    token.name,
+    token.supply,
+    formatSupply(token.supply)
+);
 
     return fragment;
 
