@@ -720,8 +720,10 @@ async function loadTokens() {
     );
 
     showLoading(false);
-showEmpty(false);
-    
+
+    showEmpty(false);
+
+
     if (!account) {
 
         setText(
@@ -735,16 +737,20 @@ showEmpty(false);
 
     }
 
+
     try {
 
         showLoading(true);
+
 
         const addresses =
             await getTokensByCreator(
                 account
             );
 
+
         tokenCache = [];
+
 
         if (
             !addresses ||
@@ -763,6 +769,7 @@ showEmpty(false);
             return;
 
         }
+
 
         for (
             const address
@@ -793,6 +800,7 @@ showEmpty(false);
 
         }
 
+
         tokenCache.sort(
 
             (a, b) =>
@@ -803,36 +811,58 @@ showEmpty(false);
 
         );
 
+
         const container =
             $("tokenList");
 
+
         for (
-    const token
-    of tokenCache
-) {
+            const token
+            of tokenCache
+        ) {
 
-    container.appendChild(
+            container.appendChild(
 
-        createTokenCard(
-            token
-        )
+                createTokenCard(
+                    token
+                )
 
-    );
+            );
 
-}
+        }
 
-setText(
 
-    "dashboardTotalTokens",
+        setText(
 
-    tokenCache.length
+            "dashboardTotalTokens",
 
-);
+            tokenCache.length
 
-// FIX
-showEmpty(false);
+        );
 
-showLoading(false);
+
+        // ==============================
+        // FIX UI STATE
+        // ==============================
+
+        showLoading(false);
+
+
+        if (
+            tokenCache.length > 0
+        ) {
+
+            showEmpty(false);
+
+        }
+
+        else {
+
+            showEmpty(true);
+
+        }
+
+
     }
 
     catch (error) {
@@ -840,6 +870,13 @@ showLoading(false);
         console.error(
             error
         );
+
+
+        setText(
+            "dashboardTotalTokens",
+            0
+        );
+
 
         showLoading(false);
 
