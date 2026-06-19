@@ -36,73 +36,90 @@ function shortAddress(address) {
 
 }
 
-function formatToken(value) {
+function formatSupply(value) {
 
     try {
 
         return Number(
-
             formatUnits(
                 value,
                 18
             )
-
         ).toLocaleString();
 
     }
 
     catch {
 
-        return "0";
+        try {
+
+            return Number(
+                value
+            ).toLocaleString();
+
+        }
+
+        catch {
+
+            return String(
+                value
+            );
+
+        }
 
     }
 
 }
 
 // =====================================================
-// TOKEN CARD
+// CARD
 // =====================================================
 
 function createTokenCard(token) {
 
     const template =
-
         document.getElementById(
             "tokenCardTemplate"
         );
 
     const fragment =
-
         template.content.cloneNode(
             true
         );
 
     fragment
-        .querySelector(".token-name")
+        .querySelector(
+            ".token-name"
+        )
         .textContent =
         token.name;
 
     fragment
-        .querySelector(".token-symbol")
+        .querySelector(
+            ".token-symbol"
+        )
         .textContent =
         token.symbol;
 
     fragment
-        .querySelector(".token-address")
+        .querySelector(
+            ".token-address"
+        )
         .textContent =
         shortAddress(
             token.address
         );
 
     fragment
-        .querySelector(".token-supply")
+        .querySelector(
+            ".token-supply"
+        )
         .textContent =
-        formatToken(
+        formatSupply(
             token.supply
         );
 
     const copyButton =
-
         fragment.querySelector(
             ".token-copy"
         );
@@ -112,22 +129,25 @@ function createTokenCard(token) {
 
             try {
 
-                await navigator.clipboard.writeText(
-                    token.address
-                );
+                await navigator
+                    .clipboard
+                    .writeText(
+                        token.address
+                    );
 
             }
 
             catch (error) {
 
-                console.error(error);
+                console.error(
+                    error
+                );
 
             }
 
         };
 
     const explorerButton =
-
         fragment.querySelector(
             ".token-explorer"
         );
@@ -137,7 +157,7 @@ function createTokenCard(token) {
 
             window.open(
 
-                `${CONTRACTS.explorer}/token/${token.address}`,
+                `${CONTRACTS.explorer}/address/${token.address}`,
 
                 "_blank"
 
@@ -146,7 +166,6 @@ function createTokenCard(token) {
         };
 
     const detailsButton =
-
         fragment.querySelector(
             ".token-details"
         );
@@ -164,21 +183,41 @@ function createTokenCard(token) {
 }
 
 // =====================================================
-// LOAD EXPLORER
+// RENDER
+// =====================================================
+
+function renderTokens(tokens) {
+
+    const container =
+        document.getElementById(
+            "tokenList"
+        );
+
+    container.innerHTML = "";
+
+    for (const token of tokens) {
+
+        container.appendChild(
+
+            createTokenCard(
+                token
+            )
+
+        );
+
+    }
+
+}
+
+// =====================================================
+// LOAD
 // =====================================================
 
 async function loadExplorer() {
 
     const loading =
-
         document.getElementById(
             "loadingState"
-        );
-
-    const container =
-
-        document.getElementById(
-            "tokenList"
         );
 
     try {
@@ -194,6 +233,11 @@ async function loadExplorer() {
         allTokens = [];
 
         for (const item of tokens) {
+
+            console.log(
+                "TOKEN:",
+                item
+            );
 
             allTokens.push({
 
@@ -232,19 +276,9 @@ async function loadExplorer() {
 
         );
 
-        container.innerHTML = "";
-
-        for (const token of allTokens) {
-
-            container.appendChild(
-
-                createTokenCard(
-                    token
-                )
-
-            );
-
-        }
+        renderTokens(
+            allTokens
+        );
 
     }
 
@@ -261,7 +295,8 @@ async function loadExplorer() {
 
         if (loading) {
 
-            loading.hidden = true;
+            loading.hidden =
+                true;
 
         }
 
@@ -270,25 +305,8 @@ async function loadExplorer() {
 }
 
 // =====================================================
-// STARTUP
+// SEARCH
 // =====================================================
-
-function renderTokens(
-    tokens
-) {
-
-    const container =
-        document.getElementById(
-            "tokenList"
-        );
-
-    container.innerHTML = "";
-
-    renderTokens(
-    allTokens
-);
-
-}
 
 function setupSearch() {
 
@@ -297,33 +315,62 @@ function setupSearch() {
             "tokenSearch"
         );
 
+    if (!input) {
+
+        return;
+
+    }
+
     input.addEventListener(
+
         "input",
+
         () => {
 
             const keyword =
+
                 input.value
                     .trim()
                     .toLowerCase();
 
+            if (!keyword) {
+
+                renderTokens(
+                    allTokens
+                );
+
+                return;
+
+            }
+
             const filtered =
+
                 allTokens.filter(
+
                     token =>
+
                         token.name
                             .toLowerCase()
-                            .includes(keyword)
+                            .includes(
+                                keyword
+                            )
 
                         ||
 
                         token.symbol
                             .toLowerCase()
-                            .includes(keyword)
+                            .includes(
+                                keyword
+                            )
 
                         ||
 
                         token.address
                             .toLowerCase()
-                            .includes(keyword)
+                            .includes(
+                                keyword
+                            )
+
                 );
 
             renderTokens(
@@ -331,9 +378,14 @@ function setupSearch() {
             );
 
         }
+
     );
 
 }
+
+// =====================================================
+// STARTUP
+// =====================================================
 
 document.addEventListener(
 
