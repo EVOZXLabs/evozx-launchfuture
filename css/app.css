@@ -241,6 +241,9 @@ HEADER
     border-bottom:
         1px solid var(--border);
 
+    box-shadow:
+    0 8px 30px rgba(0,0,0,.25);
+
 }
 
 .topbar .container {
@@ -1363,10 +1366,12 @@ RESPONSIVE
     }
 
     .primary-button,
-    .secondary-button {
+.secondary-button {
 
-        width: 100%;
+    width: 100%;
 
-    }
+    min-height: 48px;
+
+}
 
        }
