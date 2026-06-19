@@ -340,7 +340,9 @@ WALLET
 
 #connectWallet {
 
-    min-width: 170px;
+    min-width: 180px;
+
+    justify-content: center;
 
 }
 
@@ -488,7 +490,7 @@ PAGE HEADER
 
 .page-header {
 
-    margin-bottom: 40px;
+    margin-bottom: 48px;
 
 }
 
@@ -1120,9 +1122,9 @@ footer {
         1fr
         1fr;
 
-    gap: 48px;
+    gap: 56px;
 
-    padding: 56px 0;
+    padding: 64px 0;
 
 }
 
@@ -1148,13 +1150,18 @@ footer {
 
     color: var(--muted);
 
-    transition: .25s;
+    transition:
+        color .25s,
+        transform .25s;
 
 }
 
 .footer-grid a:hover {
 
     color: var(--gold);
+
+    transform:
+        translateX(3px);
 
 }
 
