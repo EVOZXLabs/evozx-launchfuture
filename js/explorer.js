@@ -274,11 +274,6 @@ async function loadExplorer() {
     "PUBLIC TOKENS:",
     allTokens
 );
-        
-        "FAILED TOKEN:",
-        address,
-        error
-    );
 
         allTokens.sort(
 
