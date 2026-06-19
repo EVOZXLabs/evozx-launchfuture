@@ -16,6 +16,10 @@ import {
 
 let allTokens = [];
 
+let currentPage = 1;
+
+const PAGE_SIZE = 20;
+
 // =====================================================
 // HELPERS
 // =====================================================
@@ -205,9 +209,28 @@ function renderTokens(tokens) {
             "tokenList"
         );
 
+    const info =
+        document.getElementById(
+            "paginationInfo"
+        );
+
     container.innerHTML = "";
 
-    for (const token of tokens) {
+    const start =
+        (currentPage - 1) *
+        PAGE_SIZE;
+
+    const end =
+        start +
+        PAGE_SIZE;
+
+    const pageTokens =
+        tokens.slice(
+            start,
+            end
+        );
+
+    for (const token of pageTokens) {
 
         container.appendChild(
 
@@ -218,6 +241,146 @@ function renderTokens(tokens) {
         );
 
     }
+
+    if (info) {
+
+        info.textContent =
+
+            `Showing ${pageTokens.length ? start + 1 : 0}-${Math.min(end, tokens.length)} of ${tokens.length} tokens`;
+
+    }
+
+    renderPagination(
+        tokens
+    );
+
+}
+
+function renderPagination(tokens) {
+
+    const pagination =
+        document.getElementById(
+            "pagination"
+        );
+
+    if (!pagination) {
+
+        return;
+
+    }
+
+    pagination.innerHTML = "";
+
+    const totalPages =
+
+        Math.ceil(
+            tokens.length /
+            PAGE_SIZE
+        );
+
+    if (totalPages <= 1) {
+
+        return;
+
+    }
+
+    const prev =
+        document.createElement(
+            "button"
+        );
+
+    prev.className =
+        "secondary-button";
+
+    prev.textContent =
+        "Previous";
+
+    prev.disabled =
+        currentPage === 1;
+
+    prev.onclick =
+        () => {
+
+            currentPage--;
+
+            renderTokens(
+                tokens
+            );
+
+        };
+
+    pagination.appendChild(
+        prev
+    );
+
+    for (
+        let page = 1;
+        page <= totalPages;
+        page++
+    ) {
+
+        const button =
+            document.createElement(
+                "button"
+            );
+
+        button.textContent =
+            page;
+
+        button.className =
+
+            page === currentPage
+
+                ? "primary-button"
+
+                : "secondary-button";
+
+        button.onclick =
+            () => {
+
+                currentPage =
+                    page;
+
+                renderTokens(
+                    tokens
+                );
+
+            };
+
+        pagination.appendChild(
+            button
+        );
+
+    }
+
+    const next =
+        document.createElement(
+            "button"
+        );
+
+    next.className =
+        "secondary-button";
+
+    next.textContent =
+        "Next";
+
+    next.disabled =
+        currentPage === totalPages;
+
+    next.onclick =
+        () => {
+
+            currentPage++;
+
+            renderTokens(
+                tokens
+            );
+
+        };
+
+    pagination.appendChild(
+        next
+    );
 
 }
 
@@ -418,9 +581,11 @@ function setupSearch() {
 
                 );
 
-            renderTokens(
-                filtered
-            );
+            currentPage = 1;
+
+renderTokens(
+    filtered
+);
 
         }
 
