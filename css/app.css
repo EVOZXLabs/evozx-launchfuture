@@ -372,6 +372,8 @@ BUTTONS
 
 }
 
+/* ========================================= */
+
 .secondary-button {
 
     display: inline-flex;
@@ -386,11 +388,16 @@ BUTTONS
 
     border-radius: var(--radius-md);
 
-    border: 1px solid var(--gold);
+    border: 1px solid rgba(255,255,255,.08);
 
-    background: transparent;
+    background:
+        rgba(255,255,255,.03);
 
-    color: var(--gold);
+    backdrop-filter:
+        blur(10px);
+
+    color:
+        rgba(255,255,255,.92);
 
     cursor: pointer;
 
@@ -401,9 +408,17 @@ BUTTONS
 .secondary-button:hover {
 
     background:
-        rgba(217,164,65,.10);
+        rgba(255,255,255,.08);
+
+    border-color:
+        rgba(217,164,65,.30);
+
+    transform:
+        translateY(-2px);
 
 }
+
+/* ========================================= */
 
 .primary-button:disabled,
 .secondary-button:disabled {
