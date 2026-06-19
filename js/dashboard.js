@@ -719,8 +719,9 @@ async function loadTokens() {
         "tokenList"
     );
 
-    showEmpty(false);
-
+    showLoading(false);
+showEmpty(false);
+    
     if (!account) {
 
         setText(
@@ -806,30 +807,32 @@ async function loadTokens() {
             $("tokenList");
 
         for (
-            const token
-            of tokenCache
-        ) {
+    const token
+    of tokenCache
+) {
 
-            container.appendChild(
+    container.appendChild(
 
-                createTokenCard(
-                    token
-                )
+        createTokenCard(
+            token
+        )
 
-            );
+    );
 
-        }
+}
 
-        setText(
+setText(
 
-            "dashboardTotalTokens",
+    "dashboardTotalTokens",
 
-            tokenCache.length
+    tokenCache.length
 
-        );
+);
 
-        showLoading(false);
+// FIX
+showEmpty(false);
 
+showLoading(false);
     }
 
     catch (error) {
