@@ -210,29 +210,43 @@ async function loadLatestTokens(){
 
       await getAllTokens();
 
-    const latest=
+    const latest =
 
-      [...tokens]
+  Array.isArray(tokens)
 
+    ? [...tokens]
         .sort(
-
-          (a,b)=>
-
-            Number(b[5])-
-
+          (a, b) =>
+            Number(b[5]) -
             Number(a[5])
-
         )
+        .slice(0, 6)
 
-        .slice(
-
-          0,
-
-          6
-
-        );
+    : [];
 
     latestTokensElement.innerHTML="";
+
+      if(latest.length===0){
+
+  latestTokensElement.innerHTML=`
+
+    <div class="feature-card">
+
+      <h3>
+        No Tokens Yet
+      </h3>
+
+      <p>
+        Be the first creator on LaunchFuture.
+      </p>
+
+    </div>
+
+  `;
+
+  return;
+
+      }
 
     for(
 
