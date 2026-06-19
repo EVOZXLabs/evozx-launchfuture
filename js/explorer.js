@@ -241,31 +241,39 @@ async function loadExplorer() {
 
             allTokens.push({
 
-                address:
-                    item.token,
+    address:
+        item[0],
 
-                name:
-                    item.name,
+    creator:
+        item[1],
 
-                symbol:
-                    item.symbol,
+    name:
+        item[2],
 
-                supply:
-                    item.supply,
+    symbol:
+        item[3],
 
-                creator:
-                    item.creator,
+    supply:
+        item[4],
 
-                createdAt:
-                    item.createdAt,
+    createdAt:
+        item[5],
 
-                active:
-                    item.active
+    chainId:
+        item[6],
 
-            });
+    active:
+        item[7]
 
-        }
+  });
 
+}
+
+        console.log(
+    "PUBLIC TOKENS:",
+    allTokens
+);
+        
         allTokens.sort(
 
             (a, b) =>
