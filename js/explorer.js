@@ -267,8 +267,6 @@ async function loadExplorer() {
 
             }
 
-        }
-
         allTokens.sort(
 
             (a, b) =>
