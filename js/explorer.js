@@ -273,10 +273,78 @@ async function loadExplorer() {
 // STARTUP
 // =====================================================
 
+function renderTokens(
+    tokens
+) {
+
+    const container =
+        document.getElementById(
+            "tokenList"
+        );
+
+    container.innerHTML = "";
+
+    renderTokens(
+    allTokens
+);
+
+}
+
+function setupSearch() {
+
+    const input =
+        document.getElementById(
+            "tokenSearch"
+        );
+
+    input.addEventListener(
+        "input",
+        () => {
+
+            const keyword =
+                input.value
+                    .trim()
+                    .toLowerCase();
+
+            const filtered =
+                allTokens.filter(
+                    token =>
+                        token.name
+                            .toLowerCase()
+                            .includes(keyword)
+
+                        ||
+
+                        token.symbol
+                            .toLowerCase()
+                            .includes(keyword)
+
+                        ||
+
+                        token.address
+                            .toLowerCase()
+                            .includes(keyword)
+                );
+
+            renderTokens(
+                filtered
+            );
+
+        }
+    );
+
+}
+
 document.addEventListener(
 
     "DOMContentLoaded",
 
-    loadExplorer
+    async () => {
+
+        await loadExplorer();
+
+        setupSearch();
+
+    }
 
 );
