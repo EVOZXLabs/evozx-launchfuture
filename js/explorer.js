@@ -235,33 +235,46 @@ async function loadExplorer() {
 
     try {
 
-    const addresses =
-        await getAllTokens();
+    const tokens =
+    await getAllTokens();
 
         const tokenAddresses =
     addresses[0];
 
-    for (
-    const address
-    of tokenAddresses
-)
+    for (const item of tokens) {
 
-            try {
+    allTokens.push({
 
-                const token =
-                    await loadTokenInfo(
-                        address
-                    );
+        address:
+            item.token,
 
-                allTokens.push(
-                    token
-                );
+        name:
+            item.name,
 
-            }
+        symbol:
+            item.symbol,
 
-            catch (error) {
+        supply:
+            item.supply,
 
-    console.error(
+        creator:
+            item.creator,
+
+        createdAt:
+            item.createdAt,
+
+        active:
+            item.active
+
+    });
+
+    }
+
+        console.log(
+    "PUBLIC TOKENS:",
+    allTokens
+);
+        
         "FAILED TOKEN:",
         address,
         error
