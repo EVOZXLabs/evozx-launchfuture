@@ -203,7 +203,7 @@ LAYOUT
 .container {
 
     width: min(
-        100% - 28px,
+        100% - 32px,
         var(--container)
     );
 
@@ -369,7 +369,10 @@ BUTTONS
 
     cursor: pointer;
 
-    transition: .25s;
+    transition:
+    background .25s,
+    transform .25s,
+    box-shadow .25s;
 
     box-shadow:
         0 10px 25px rgba(217,164,65,.22);
@@ -378,9 +381,14 @@ BUTTONS
 
 .primary-button:hover {
 
-    background: var(--gold-hover);
+    background:
+        var(--gold-hover);
 
-    transform: translateY(-2px);
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 14px 35px rgba(217,164,65,.32);
 
 }
 
@@ -451,10 +459,14 @@ CARDS
 .feature-card {
 
     background:
-        rgba(255,255,255,.03);
+        linear-gradient(
+            180deg,
+            rgba(255,255,255,.04),
+            rgba(255,255,255,.015)
+        );
 
     border:
-        1px solid var(--border);
+        1px solid rgba(255,255,255,.06);
 
     border-radius:
         var(--radius-lg);
@@ -463,7 +475,7 @@ CARDS
         blur(14px);
 
     box-shadow:
-        var(--shadow);
+        0 12px 35px rgba(0,0,0,.22);
 
 }
 
@@ -791,7 +803,7 @@ textarea {
     border: 1px solid var(--border);
 
     background:
-        rgba(255,255,255,.03);
+    rgba(255,255,255,.04);
 
     color: var(--white);
 
@@ -800,6 +812,9 @@ textarea {
     outline: none;
 
     transition: .25s;
+
+    backdrop-filter:
+    blur(8px);
 
 }
 
@@ -851,12 +866,21 @@ ACCORDION (GLOBAL)
 
 .accordion {
 
-    border: 1px solid var(--border);
+    border:
+        1px solid rgba(255,255,255,.06);
 
-    border-radius: var(--radius-lg);
+    border-radius:
+        var(--radius-lg);
 
     background:
-        rgba(255,255,255,.02);
+        linear-gradient(
+            180deg,
+            rgba(255,255,255,.035),
+            rgba(255,255,255,.015)
+        );
+
+    backdrop-filter:
+        blur(12px);
 
     overflow: hidden;
 
