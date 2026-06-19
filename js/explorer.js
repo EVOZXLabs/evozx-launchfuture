@@ -1,21 +1,24 @@
 import {
-    Contract,
     formatUnits
 } from "https://esm.sh/ethers@6";
 
 import {
-    getAllTokens,
-    getReadProvider
+    getAllTokens
 } from "./factory.js";
 
 import {
-    CONTRACTS,
-    ABI
+    CONTRACTS
 } from "./config.js";
 
-let tokenAbi = null;
+// =====================================================
+// STATE
+// =====================================================
 
 let allTokens = [];
+
+// =====================================================
+// HELPERS
+// =====================================================
 
 function shortAddress(address) {
 
@@ -38,10 +41,12 @@ function formatToken(value) {
     try {
 
         return Number(
+
             formatUnits(
                 value,
                 18
             )
+
         ).toLocaleString();
 
     }
@@ -54,123 +59,50 @@ function formatToken(value) {
 
 }
 
-async function loadTokenAbi() {
+// =====================================================
+// TOKEN CARD
+// =====================================================
 
-    if (tokenAbi) {
-
-        return tokenAbi;
-
-    }
-
-    const response =
-        await fetch(
-            ABI.token
-        );
-
-    tokenAbi =
-        await response.json();
-
-    return tokenAbi;
-
-}
-
-async function createTokenContract(
-    address
-) {
-
-    return new Contract(
-
-        address,
-
-        await loadTokenAbi(),
-
-        getReadProvider()
-
-    );
-
-}
-
-async function loadTokenInfo(
-    address
-) {
-
-    const token =
-        await createTokenContract(
-            address
-        );
-
-    const [
-
-        name,
-        symbol,
-        supply
-
-    ] = await Promise.all([
-
-        token.name(),
-        token.symbol(),
-        token.totalSupply()
-
-    ]);
-
-    return {
-
-        address,
-        name,
-        symbol,
-        supply
-
-    };
-
-}
-
-function createTokenCard(
-    token
-) {
+function createTokenCard(token) {
 
     const template =
+
         document.getElementById(
             "tokenCardTemplate"
         );
 
     const fragment =
+
         template.content.cloneNode(
             true
         );
 
     fragment
-        .querySelector(
-            ".token-name"
-        )
+        .querySelector(".token-name")
         .textContent =
         token.name;
 
     fragment
-        .querySelector(
-            ".token-symbol"
-        )
+        .querySelector(".token-symbol")
         .textContent =
         token.symbol;
 
     fragment
-        .querySelector(
-            ".token-address"
-        )
+        .querySelector(".token-address")
         .textContent =
         shortAddress(
             token.address
         );
 
     fragment
-        .querySelector(
-            ".token-supply"
-        )
+        .querySelector(".token-supply")
         .textContent =
         formatToken(
             token.supply
         );
 
     const copyButton =
+
         fragment.querySelector(
             ".token-copy"
         );
@@ -178,15 +110,24 @@ function createTokenCard(
     copyButton.onclick =
         async () => {
 
-            await navigator
-                .clipboard
-                .writeText(
+            try {
+
+                await navigator.clipboard.writeText(
                     token.address
                 );
+
+            }
+
+            catch (error) {
+
+                console.error(error);
+
+            }
 
         };
 
     const explorerButton =
+
         fragment.querySelector(
             ".token-explorer"
         );
@@ -205,6 +146,7 @@ function createTokenCard(
         };
 
     const detailsButton =
+
         fragment.querySelector(
             ".token-details"
         );
@@ -219,61 +161,66 @@ function createTokenCard(
 
     return fragment;
 
-      }
+}
+
+// =====================================================
+// LOAD EXPLORER
+// =====================================================
 
 async function loadExplorer() {
 
     const loading =
+
         document.getElementById(
             "loadingState"
         );
 
     const container =
+
         document.getElementById(
             "tokenList"
         );
 
     try {
 
-    const tokens =
-    await getAllTokens();
-
-        const tokenAddresses =
-    addresses[0];
-
-    for (const item of tokens) {
-
-    allTokens.push({
-
-        address:
-            item.token,
-
-        name:
-            item.name,
-
-        symbol:
-            item.symbol,
-
-        supply:
-            item.supply,
-
-        creator:
-            item.creator,
-
-        createdAt:
-            item.createdAt,
-
-        active:
-            item.active
-
-    });
-
-    }
+        const tokens =
+            await getAllTokens();
 
         console.log(
-    "PUBLIC TOKENS:",
-    allTokens
-);
+            "FACTORY TOKENS:",
+            tokens
+        );
+
+        allTokens = [];
+
+        for (const item of tokens) {
+
+            allTokens.push({
+
+                address:
+                    item.token,
+
+                name:
+                    item.name,
+
+                symbol:
+                    item.symbol,
+
+                supply:
+                    item.supply,
+
+                creator:
+                    item.creator,
+
+                createdAt:
+                    item.createdAt,
+
+                active:
+                    item.active
+
+            });
+
+        }
 
         allTokens.sort(
 
@@ -285,10 +232,9 @@ async function loadExplorer() {
 
         );
 
-        for (
-            const token
-            of allTokens
-        ) {
+        container.innerHTML = "";
+
+        for (const token of allTokens) {
 
             container.appendChild(
 
@@ -302,13 +248,30 @@ async function loadExplorer() {
 
     }
 
-    finally {
+    catch (error) {
 
-        loading.hidden = true;
+        console.error(
+            "EXPLORER ERROR:",
+            error
+        );
 
     }
 
-      }
+    finally {
+
+        if (loading) {
+
+            loading.hidden = true;
+
+        }
+
+    }
+
+}
+
+// =====================================================
+// STARTUP
+// =====================================================
 
 document.addEventListener(
 
