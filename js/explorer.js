@@ -235,13 +235,18 @@ async function loadExplorer() {
 
     try {
 
-        const addresses =
-            await getAllTokens();
+    const addresses =
+        await getAllTokens();
 
-        for (
-            const address
-            of addresses
-        ) {
+    console.log(
+        "ALL TOKENS:",
+        addresses
+    );
+
+    for (
+        const address
+        of addresses
+    ) {
 
             try {
 
