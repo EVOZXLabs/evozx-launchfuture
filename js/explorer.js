@@ -60,6 +60,10 @@ function formatSupply(value) {
 
 }
 
+// =====================================================
+// RENDER STATISTIC
+// =====================================================
+
 function renderStats() {
 
     const statsBar =
@@ -76,30 +80,54 @@ function renderStats() {
     const totalTokens =
         allTokens.length;
 
-    const activeTokens =
+    const totalCreators =
+        new Set(
+
+            allTokens.map(
+                token =>
+                    token.creator
+            )
+
+        ).size;
+
+    const today =
+        new Date()
+            .toDateString();
+
+    const createdToday =
         allTokens.filter(
-            token => token.active
-        ).length;
+            token => {
 
-    let totalSupply =
-        0n;
+                const date =
+                    new Date(
+                        Number(
+                            token.createdAt
+                        ) * 1000
+                    );
 
-    for (const token of allTokens) {
-
-        try {
-
-            totalSupply +=
-                BigInt(
-                    token.supply
+                return (
+                    date.toDateString() ===
+                    today
                 );
 
-        }
+            }
+        ).length;
 
-        catch {
+    const latestToken =
 
-        }
+        [...allTokens]
 
-    }
+            .sort(
+                (a, b) =>
+
+                    Number(
+                        b.createdAt
+                    ) -
+
+                    Number(
+                        a.createdAt
+                    )
+            )[0];
 
     statsBar.innerHTML = `
 
@@ -118,11 +146,11 @@ function renderStats() {
         <div class="stat-card">
 
             <div class="stat-label">
-                Active Tokens
+                Creators
             </div>
 
             <div class="stat-value">
-                ${activeTokens}
+                ${totalCreators}
             </div>
 
         </div>
@@ -130,11 +158,23 @@ function renderStats() {
         <div class="stat-card">
 
             <div class="stat-label">
-                Total Supply
+                Created Today
             </div>
 
             <div class="stat-value">
-                ${totalSupply.toLocaleString()}
+                ${createdToday}
+            </div>
+
+        </div>
+
+        <div class="stat-card">
+
+            <div class="stat-label">
+                Latest Token
+            </div>
+
+            <div class="stat-value">
+                ${latestToken?.symbol ?? "-"}
             </div>
 
         </div>
