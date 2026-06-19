@@ -280,8 +280,6 @@ async function loadExplorer() {
         error
     );
 
-            }
-
         allTokens.sort(
 
             (a, b) =>
