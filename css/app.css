@@ -334,6 +334,16 @@ NAVIGATION
 
 }
 
+@media (max-width: 768px) {
+
+    .topbar nav {
+
+        display: none;
+
+    }
+
+}
+
 /* ==========================================================
 WALLET
 ========================================================== */
@@ -1289,11 +1299,17 @@ RESPONSIVE
 
     .topbar .container {
 
-        flex-direction: column;
+        flex-direction: row;
 
-        padding: 16px 0;
+        justify-content: space-between;
+
+        align-items: center;
+
+        padding: 12px 0;
 
     }
+
+}
 
     .topbar nav {
 
