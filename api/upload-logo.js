@@ -18,12 +18,37 @@ export default async function handler(
 
     }
 
-    return res.status(200).json({
-        success: true,
-        message:
-            "Pinata API Connected",
-        jwt:
-            !!process.env.PINATA_JWT
-    });
+    try {
+
+        const jwt =
+            process.env.PINATA_JWT;
+
+        const pinataRes =
+            await fetch(
+                "https://api.pinata.cloud/data/testAuthentication",
+                {
+                    headers: {
+                        Authorization:
+                            `Bearer ${jwt}`
+                    }
+                }
+            );
+
+        const result =
+            await pinataRes.json();
+
+        return res.status(200).json({
+            success: true,
+            pinata: result
+        });
+
+    } catch (err) {
+
+        return res.status(500).json({
+            success: false,
+            error: err.message
+        });
+
+    }
 
 }
