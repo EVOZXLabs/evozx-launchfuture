@@ -1370,17 +1370,23 @@ MOBILE MENU
 
     height: 56px;
 
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
     border: none;
 
-    border-radius: 14px;
+    border-radius: 12px;
 
     background: rgba(255,255,255,.08);
 
     color: white;
 
-    font-size: 32px;
+    font-size: 34px;
 
-    font-weight: 700;
+    line-height: 1;
 
     cursor: pointer;
 
