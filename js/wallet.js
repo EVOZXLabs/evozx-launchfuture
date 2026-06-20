@@ -229,9 +229,9 @@ if (headerWalletStatus) {
 
         account
 
-            ? "🟢 Connected"
+            ? "🟢"
 
-            : "🔴 Offline";
+            : "🔴";
 
 }
 
