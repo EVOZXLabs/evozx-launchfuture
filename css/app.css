@@ -1492,10 +1492,10 @@ WALLET BRAND
 .mobile-menu hr {
 
     border: none;
-
     height: 1px;
 
-    margin: 6px 0;
+    margin-top: -6px;
+    margin-bottom: 14px;
 
     background: #d6a84a;
 
