@@ -156,7 +156,9 @@ function emitChainChanged(value) {
 export function updateWalletUI() {
 
     document
-        .querySelectorAll("#connectWallet")
+        .querySelectorAll(
+            "#connectWallet, #connectWalletMobile"
+        )
         .forEach(button => {
 
             button.textContent =
@@ -176,6 +178,23 @@ export function updateWalletUI() {
                     : "false";
 
         });
+
+    const walletStatus =
+        document.getElementById(
+            "walletStatus"
+        );
+
+    if (walletStatus) {
+
+        walletStatus.textContent =
+
+            account
+
+                ? "Connected"
+
+                : "Not Connected";
+
+    }
 
     const walletAddress =
         document.getElementById(
@@ -212,6 +231,7 @@ export function updateWalletUI() {
     }
 
 }
+
 // =====================================================
 // NETWORK
 // =====================================================
@@ -584,10 +604,9 @@ function bindWalletEvents() {
 function bindConnectButtons() {
 
     document
-
-        .querySelectorAll(
-            "#connectWallet"
-        )
+    .querySelectorAll(
+        "#connectWallet, #connectWalletMobile"
+    )
 
         .forEach(button => {
 
