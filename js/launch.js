@@ -300,25 +300,27 @@ export function getFormData() {
 
         // LINKS
 
-        website:
-            getValue(
-                "website"
-            ),
+website:
+    getValue(
+        "website"
+    ),
 
-        telegram:
-            getValue(
-                "telegram"
-            ),
+telegram:
+    getValue(
+        "telegram"
+    ),
 
-        twitter:
-            getValue(
-                "twitter"
-            ),
+twitter:
+    getValue(
+        "twitter"
+    ),
 
-        logoURI:
-            getValue(
-                "logoURI"
-            )
+logoFile:
+    document
+        .getElementById(
+            "logoFile"
+        )
+        ?.files?.[0] || null
 
     };
 
