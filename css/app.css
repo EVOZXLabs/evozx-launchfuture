@@ -1485,4 +1485,115 @@ MOBILE MENU
 
 }
 
+    /* ==========================================================
+WALLET BRAND
+========================================================== */
+
+.wallet-brand {
+
+    margin-top: 30px;
+
+    text-align: center;
+
+    animation:
+        fadeInBrand .8s ease;
+
+}
+
+.wallet-brand img {
+
+    width: 110px;
+
+    height: auto;
+
+    display: block;
+
+    margin: 0 auto 16px;
+
+    animation:
+        floatLogo 4s ease-in-out infinite;
+
+    filter:
+        drop-shadow(
+            0 0 18px
+            rgba(214,168,74,.35)
+        );
+
+}
+
+.wallet-brand h4 {
+
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size: 16px;
+
+    font-weight: 700;
+
+}
+
+.wallet-brand p {
+
+    margin-top: 6px;
+
+    color: #94a3b8;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+
+}
+
+/* Floating logo */
+
+@keyframes floatLogo {
+
+    0% {
+
+        transform:
+            translateY(0px);
+
+    }
+
+    50% {
+
+        transform:
+            translateY(-8px);
+
+    }
+
+    100% {
+
+        transform:
+            translateY(0px);
+
+    }
+
+}
+
+/* Fade in */
+
+@keyframes fadeInBrand {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(10px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0);
+
+    }
+
+}
+
        }
