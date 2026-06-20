@@ -1295,6 +1295,8 @@ async function initialize() {
 
         bindFormInputs();
 
+        setupLogoPreview();
+
         bindDeployButton();
 
         bindWalletListeners();
@@ -1318,6 +1320,101 @@ async function initialize() {
         );
 
     }
+
+}
+
+function setupLogoPreview() {
+
+    const logoInput =
+        document.getElementById(
+            "logoFile"
+        );
+
+    const logoPreview =
+        document.getElementById(
+            "logoPreview"
+        );
+
+    const clearLogo =
+        document.getElementById(
+            "clearLogo"
+        );
+
+    if (!logoInput) {
+
+        return;
+
+    }
+
+    logoInput.addEventListener(
+        "change",
+        event => {
+
+            const file =
+                event.target.files?.[0];
+
+            if (!file) {
+
+                if (logoPreview) {
+
+                    logoPreview.style.display =
+                        "none";
+
+                }
+
+                if (clearLogo) {
+
+                    clearLogo.style.display =
+                        "none";
+
+                }
+
+                return;
+
+            }
+
+            if (logoPreview) {
+
+                logoPreview.src =
+                    URL.createObjectURL(
+                        file
+                    );
+
+                logoPreview.style.display =
+                    "block";
+
+            }
+
+            if (clearLogo) {
+
+                clearLogo.style.display =
+                    "inline-block";
+
+            }
+
+        }
+    );
+
+    clearLogo?.addEventListener(
+        "click",
+        () => {
+
+            logoInput.value = "";
+
+            if (logoPreview) {
+
+                logoPreview.src = "";
+
+                logoPreview.style.display =
+                    "none";
+
+            }
+
+            clearLogo.style.display =
+                "none";
+
+        }
+    );
 
 }
 
