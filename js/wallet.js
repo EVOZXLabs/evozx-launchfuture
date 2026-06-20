@@ -622,7 +622,7 @@ function bindConnectButtons() {
 
     document
     .querySelectorAll(
-        "#connectWallet, #connectWalletMobile"
+        "#connectWallet"
     )
 
         .forEach(button => {
