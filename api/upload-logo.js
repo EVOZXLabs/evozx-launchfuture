@@ -1,13 +1,29 @@
+export const config = {
+    api: {
+        bodyParser: false
+    }
+};
+
 export default async function handler(
     req,
     res
 ) {
 
-    res.status(200).json({
+    if (req.method !== "POST") {
 
+        return res.status(405).json({
+            success: false,
+            error: "Method not allowed"
+        });
+
+    }
+
+    return res.status(200).json({
         success: true,
-        message: "Upload API Ready"
-
+        message:
+            "Pinata API Connected",
+        jwt:
+            !!process.env.PINATA_JWT
     });
 
 }
