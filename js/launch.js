@@ -1155,16 +1155,54 @@ async function onDeploy() {
         }
 
         setStatus(
+    "Uploading logo..."
+);
 
-            "Waiting for wallet confirmation..."
+const form =
+    getFormData();
 
+if (form.logoFile) {
+
+    const fd =
+        new FormData();
+
+    fd.append(
+        "file",
+        form.logoFile
+    );
+
+    const response =
+        await fetch(
+            "/api/upload-logo",
+            {
+                method: "POST",
+                body: fd
+            }
         );
 
-        await deployToken(
+    const result =
+        await response.json();
 
-            getFormData()
+    if (!result.success) {
 
+        throw new Error(
+            result.error ||
+            "Logo upload failed."
         );
+
+    }
+
+    form.logoURI =
+        result.url;
+}
+
+setStatus(
+    "Waiting for wallet confirmation..."
+);
+
+await deployToken(
+    form
+);
 
     }
 
