@@ -218,6 +218,23 @@ export function updateWalletUI() {
             "dashboardWallet"
         );
 
+    const headerWalletStatus =
+    document.getElementById(
+        "headerWalletStatus"
+    );
+
+if (headerWalletStatus) {
+
+    headerWalletStatus.textContent =
+
+        account
+
+            ? "🟢 Connected"
+
+            : "🔴 Offline";
+
+}
+
     if (dashboardWallet) {
 
         dashboardWallet.textContent =
