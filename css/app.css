@@ -1485,13 +1485,18 @@ MOBILE MENU
 
 }
 
-    /* ==========================================================
+/* ==========================================================
 WALLET BRAND
 ========================================================== */
 
 .wallet-brand {
 
-    margin-top: 30px;
+    margin-top: 16px;
+
+    padding-top: 20px;
+
+    border-top:
+        1px solid rgba(255,255,255,.08);
 
     text-align: center;
 
@@ -1511,13 +1516,8 @@ WALLET BRAND
     margin: 0 auto 16px;
 
     animation:
-        floatLogo 4s ease-in-out infinite;
-
-    filter:
-        drop-shadow(
-            0 0 18px
-            rgba(214,168,74,.35)
-        );
+        floatLogo 4s ease-in-out infinite,
+        pulseGlow 3s ease-in-out infinite;
 
 }
 
@@ -1531,28 +1531,34 @@ WALLET BRAND
 
     font-weight: 700;
 
+    letter-spacing: .5px;
+
 }
 
-.wallet-brand p {
+.brand-powered {
 
-    margin-top: 6px;
-
-    color: #94a3b8;
+    margin-top: 8px;
 
     font-size: 13px;
 
-    line-height: 1.5;
+    font-weight: 600;
+
+    color: #d6a84a;
+
+    letter-spacing: 1px;
+
+    text-transform: uppercase;
 
 }
 
-/* Floating logo */
+/* Floating */
 
 @keyframes floatLogo {
 
     0% {
 
         transform:
-            translateY(0px);
+            translateY(0);
 
     }
 
@@ -1566,13 +1572,49 @@ WALLET BRAND
     100% {
 
         transform:
-            translateY(0px);
+            translateY(0);
 
     }
 
 }
 
-/* Fade in */
+/* Gold glow */
+
+@keyframes pulseGlow {
+
+    0% {
+
+        filter:
+            drop-shadow(
+                0 0 10px
+                rgba(214,168,74,.3)
+            );
+
+    }
+
+    50% {
+
+        filter:
+            drop-shadow(
+                0 0 25px
+                rgba(214,168,74,.8)
+            );
+
+    }
+
+    100% {
+
+        filter:
+            drop-shadow(
+                0 0 10px
+                rgba(214,168,74,.3)
+            );
+
+    }
+
+}
+
+/* Fade */
 
 @keyframes fadeInBrand {
 
@@ -1596,4 +1638,4 @@ WALLET BRAND
 
 }
 
-       }
+     }
