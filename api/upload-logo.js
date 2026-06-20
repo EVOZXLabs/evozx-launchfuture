@@ -76,18 +76,22 @@ export default async function handler(
 
         if (!upload.ok) {
 
-            return res.status(500).json({
-                success: false,
-                error:
-                    result.error ||
-                    "Pinata upload failed"
-            });
+            throw new Error(
+                result.error ||
+                "Pinata upload failed"
+            );
 
         }
 
         return res.status(200).json({
 
             success: true,
+
+            fileName:
+                file.originalFilename,
+
+            fileSize:
+                file.size,
 
             cid:
                 result.IpfsHash,
@@ -100,6 +104,8 @@ export default async function handler(
     }
 
     catch (error) {
+
+        console.error(error);
 
         return res.status(500).json({
 
