@@ -350,7 +350,7 @@ WALLET
 
 #connectWallet {
 
-    min-width: 180px;
+    min-width: 200px;
 
     justify-content: center;
 
@@ -1366,9 +1366,9 @@ MOBILE MENU
 
 .menu-toggle {
 
-    width: 56px;
+    width: 65px;
 
-    height: 56px;
+    height: 65px;
 
     display: flex;
 
