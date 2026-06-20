@@ -306,6 +306,25 @@ BRAND
 
     line-height: 1.2;
 
+    font-weight: 800;
+
+    background:
+        linear-gradient(
+            135deg,
+            #fff2b0 0%,
+            #ffd87a 20%,
+            #d6a84a 50%,
+            #b8831f 80%,
+            #f7d47a 100%
+        );
+
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+
+    text-shadow:
+        0 0 25px rgba(214,168,74,.25);
+
 }
 
 .brand p {
@@ -314,7 +333,7 @@ BRAND
 
     font-size: .85rem;
 
-    color: var(--muted);
+    color: #bfa26a;
 
     line-height: 1.2;
 
