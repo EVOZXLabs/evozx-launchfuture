@@ -1239,6 +1239,34 @@ await deployToken(
     form
 );
 
+        }
+
+catch (error) {
+
+    console.error(
+        error
+    );
+
+    setStatus(
+
+        error?.message ||
+
+        "Deployment failed."
+
+    );
+
+}
+
+finally {
+
+    setDeployLoading(
+        false
+    );
+
+}
+
+}
+
 // =====================================================
 // EVENTS
 // =====================================================
