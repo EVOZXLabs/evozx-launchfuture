@@ -916,7 +916,7 @@ ACCORDION (GLOBAL)
 .accordion {
 
     border:
-        1px solid rgba(255,255,255,.06);
+        1px solid rgba(214,168,74,.22);
 
     border-radius:
         var(--radius-lg);
@@ -932,6 +932,25 @@ ACCORDION (GLOBAL)
         blur(12px);
 
     overflow: hidden;
+
+    box-shadow:
+        0 0 0 1px rgba(214,168,74,.08),
+        0 12px 35px rgba(0,0,0,.22);
+
+    transition:
+        border-color .25s ease,
+        box-shadow .25s ease,
+        transform .25s ease;
+
+}
+
+.accordion:hover {
+
+    border-color:
+        rgba(214,168,74,.45);
+
+    box-shadow:
+        0 0 20px rgba(214,168,74,.12);
 
 }
 
@@ -970,6 +989,16 @@ ACCORDION (GLOBAL)
 
     animation:
         accordionFade .2s ease;
+
+}
+
+.accordion.open {
+
+    border-color:
+        rgba(214,168,74,.55);
+
+    box-shadow:
+        0 0 24px rgba(214,168,74,.18);
 
 }
 
