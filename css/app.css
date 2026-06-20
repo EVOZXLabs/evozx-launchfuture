@@ -1489,6 +1489,24 @@ MOBILE MENU
 WALLET BRAND
 ========================================================== */
 
+.mobile-menu hr {
+
+    border: none;
+
+    height: 1px;
+
+    margin: 6px 0;
+
+    background: #d6a84a;
+
+}
+
+.wallet-section p {
+
+    margin: 6px 0;
+
+}
+    
 .wallet-brand {
 
     margin-top: 16px;
