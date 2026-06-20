@@ -1154,14 +1154,37 @@ async function onDeploy() {
 
         }
 
-        setStatus(
-    "Uploading logo to IPFS..."
-);
-
-const form =
+        const form =
     getFormData();
 
 if (form.logoFile) {
+
+    if (
+        !form.logoFile.type.startsWith(
+            "image/"
+        )
+    ) {
+
+        throw new Error(
+            "Only image files allowed."
+        );
+
+    }
+
+    if (
+        form.logoFile.size >
+        2 * 1024 * 1024
+    ) {
+
+        throw new Error(
+            "Logo max 2 MB."
+        );
+
+    }
+
+    setStatus(
+        "Uploading logo to IPFS..."
+    );
 
     const fd =
         new FormData();
@@ -1196,8 +1219,9 @@ if (form.logoFile) {
         result.url;
 
     setStatus(
-        "✅ Logo uploaded to IPFS"
-    );
+    `✅ Logo uploaded to IPFS
+CID: ${result.cid}`
+);
 
     await new Promise(
         resolve => setTimeout(
