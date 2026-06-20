@@ -611,16 +611,31 @@ LaunchFuture • Deploy Token
 
                         <div class="form-group">
 
-                            <label>
+    <label>
 
-                                Logo URI
+        Token Logo
 
-                            </label>
+    </label>
 
-                            <input
-                                id="logoURI"
-                                type="url"
-                                placeholder="https://...">
+    <input
+        id="logoFile"
+        type="file"
+        accept="image/*">
+
+    <img
+        id="logoPreview"
+        alt="Logo Preview"
+        style="
+            display:none;
+            width:120px;
+            height:120px;
+            object-fit:contain;
+            margin-top:12px;
+            border-radius:12px;
+            border:1px solid rgba(214,168,74,.35);
+            background:rgba(255,255,255,.03);
+            padding:10px;
+        ">
 
                         </div>
 
