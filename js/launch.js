@@ -1155,7 +1155,7 @@ async function onDeploy() {
         }
 
         setStatus(
-    "Uploading logo..."
+    "Uploading logo to IPFS..."
 );
 
 const form =
@@ -1194,6 +1194,17 @@ if (form.logoFile) {
 
     form.logoURI =
         result.url;
+
+    setStatus(
+        "✅ Logo uploaded to IPFS"
+    );
+
+    await new Promise(
+        resolve => setTimeout(
+            resolve,
+            1000
+        )
+    );
 }
 
 setStatus(
@@ -1203,34 +1214,6 @@ setStatus(
 await deployToken(
     form
 );
-
-    }
-
-    catch (error) {
-
-        console.error(
-            error
-        );
-
-        setStatus(
-
-            error?.message ||
-
-            "Deployment failed."
-
-        );
-
-    }
-
-    finally {
-
-        setDeployLoading(
-            false
-        );
-
-    }
-
-}
 
 // =====================================================
 // EVENTS
