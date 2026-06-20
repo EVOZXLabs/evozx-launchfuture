@@ -65,21 +65,57 @@ LaunchFuture • Deploy Token
 
         </a>
 
-        <nav>
+        <button
+    id="menuToggle"
+    class="menu-toggle">
 
-            <button
-                id="connectWallet"
-                class="primary-button">
+    ☰
 
-                Connect Wallet
+</button>
 
-            </button>
+<nav>
 
-        </nav>
+    <button
+        id="connectWallet"
+        class="primary-button">
+
+        Connect Wallet
+
+    </button>
+
+</nav>
 
     </div>
 
 </header>
+
+    <div
+    id="menuOverlay"
+    class="menu-overlay">
+
+</div>
+
+<aside
+    id="mobileMenu"
+    class="mobile-menu">
+
+    <a href="./index.html">
+        Home
+    </a>
+
+    <a href="./launch.html">
+        Deploy
+    </a>
+
+    <a href="./explorer.html">
+        Explorer
+    </a>
+
+    <a href="./dashboard.html">
+        Dashboard
+    </a>
+
+</aside>
 
 <main class="launch-page">
 
@@ -956,6 +992,10 @@ LaunchFuture • Deploy Token
     type="module"
     src="./js/launch.js">
 </script>
+
+    <script
+    src="./js/menu.js">
+    </script>
 
 </body>
 
