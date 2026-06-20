@@ -71,25 +71,25 @@
 
         </a>
 
-<button
-    id="menuToggle"
-    class="menu-toggle">
+<div class="header-actions">
 
-    ☰
+    <span
+        id="headerWalletStatus"
+        class="wallet-status">
 
-</button>
+        🔴 Disconnected
 
-        <nav>
+    </span>
 
-            <button
-                id="connectWallet"
-                class="primary-button">
+    <button
+        id="menuToggle"
+        class="menu-toggle">
 
-                Connect Wallet
+        ☰
 
-            </button>
+    </button>
 
-        </nav>
+</div>
 
     </div>
 
@@ -125,9 +125,41 @@
 
     <a href="./dashboard.html">
 
-        Dashboard
+    Dashboard
 
-    </a>
+</a>
+
+<hr>
+
+<div class="wallet-section">
+
+    <p>
+
+        Wallet Status
+
+    </p>
+
+    <span id="walletStatus">
+
+        Not Connected
+
+    </span>
+
+    <p id="walletAddress">
+
+        -
+
+    </p>
+
+    <button
+        id="connectWalletMobile"
+        class="primary-button">
+
+        Connect Wallet
+
+    </button>
+
+</div>
 
 </aside>
 
