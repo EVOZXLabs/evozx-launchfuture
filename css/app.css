@@ -84,25 +84,30 @@ body {
 BACKGROUND
 ========================================================== */
 
-body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
 
     background:
         radial-gradient(
-            circle at top left,
-            rgba(77,163,255,.05),
+            circle at 15% 20%,
+            rgba(77,163,255,.08),
             transparent 35%
         ),
         radial-gradient(
-            circle at bottom right,
-            rgba(217,164,65,.05),
+            circle at 85% 70%,
+            rgba(217,164,65,.08),
             transparent 30%
+        ),
+        radial-gradient(
+            circle at 50% 40%,
+            rgba(217,164,65,.04),
+            transparent 45%
         );
 
-    z-index: -2;
+    z-index:-2;
 }
 
 body::after {
@@ -124,7 +129,7 @@ body::after {
 
     background-size: 42px 42px;
 
-opacity: .25;
+opacity: .08;
 
     z-index: -1;
 }
