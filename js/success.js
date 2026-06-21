@@ -225,23 +225,15 @@ function bindDownloadButton() {
 
     if (!button) return;
 
-    button.addEventListener("click", () => {
+    button.addEventListener(
+        "click",
+        () => {
 
-        const a = document.createElement("a");
+            window.location.href =
+                "./docs/standard-input.zip";
 
-        a.href =
-            "./docs/standard-input.json";
-
-        a.download =
-            "standard-input.json";
-
-        document.body.appendChild(a);
-
-        a.click();
-
-        a.remove();
-
-    });
+        }
+    );
 
 }
 
