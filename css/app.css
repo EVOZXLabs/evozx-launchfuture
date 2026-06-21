@@ -1964,3 +1964,15 @@ body.light-mode p {
     color: #4b5563;
 
 }
+
+body.light-mode {
+
+    filter: invert(1) hue-rotate(180deg);
+
+}
+
+body.light-mode img {
+
+    filter: invert(1) hue-rotate(180deg);
+
+}
