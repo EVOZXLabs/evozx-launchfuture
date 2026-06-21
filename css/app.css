@@ -1861,3 +1861,50 @@ WALLET BRAND
     text-align: center;
 
 }
+
+/* =========================================
+   BACK TO TOP
+========================================= */
+
+.back-to-top {
+
+    position: fixed;
+
+    right: 20px;
+    bottom: 20px;
+
+    width: 52px;
+    height: 52px;
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+    border-radius: 50%;
+
+    background: #ffffff;
+
+    color: #111111;
+
+    font-size: 28px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    z-index: 9999;
+
+    box-shadow:
+        0 4px 16px rgba(0,0,0,.25);
+
+    transition: .2s;
+
+}
+
+.back-to-top:hover {
+
+    transform:
+        translateY(-2px);
+
+}
