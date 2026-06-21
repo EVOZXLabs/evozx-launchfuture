@@ -1209,21 +1209,19 @@ footer {
 
 .footer-brand {
 
-    display: flex;
-
-    align-items: center;
-
-    gap: 20px;
+    text-align: left;
 
 }
 
 .footer-logo {
 
-    width: 72px;
+    width: 56px;
 
-    height: 72px;
+    height: auto;
 
-    flex-shrink: 0;
+    display: block;
+
+    margin-bottom: 16px;
 
 }
 
