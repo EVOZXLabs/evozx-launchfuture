@@ -3,6 +3,16 @@ import {
 } from "./factory.js";
 
 import {
+    Contract,
+    JsonRpcProvider
+} from "https://esm.sh/ethers@6";
+
+import {
+    NETWORK,
+    ABI,
+    explorerToken
+} from "./config.js";
+import {
     explorerToken
 } from "./config.js";
 
@@ -766,6 +776,59 @@ function renderPagination(tokens) {
 // LOAD
 // =====================================================
 
+let tokenAbi = null;
+
+async function loadTokenAbi() {
+
+    if (tokenAbi) {
+
+        return tokenAbi;
+
+    }
+
+    const response =
+        await fetch(
+            ABI.token
+        );
+
+    tokenAbi =
+        await response.json();
+
+    return tokenAbi;
+
+}
+
+async function getLogoURI(
+    address
+) {
+
+    try {
+
+        const contract =
+            new Contract(
+
+                address,
+
+                await loadTokenAbi(),
+
+                new JsonRpcProvider(
+                    NETWORK.rpcUrl
+                )
+
+            );
+
+        return await contract.logoURI();
+
+    }
+
+    catch {
+
+        return "./images/logo.png";
+
+    }
+
+}
+
 async function loadExplorer() {
 
     const loading =
@@ -816,7 +879,9 @@ async function loadExplorer() {
                     item[7],
 
                 logoURI:
-    "./images/logo.png"
+    await getLogoURI(
+        item[0]
+    )
 
             });
 
