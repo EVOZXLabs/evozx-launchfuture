@@ -1168,13 +1168,7 @@ if (form.logoFile) {
         "Only PNG files allowed."
     );
 
-    } {
-
-        throw new Error(
-            "Only image files allowed."
-        );
-
-    }
+    } 
 
     if (
     form.logoFile.size >
@@ -1182,7 +1176,7 @@ if (form.logoFile) {
 ) {
 
         throw new Error(
-            "Logo max 2 MB."
+            "Logo max 1 MB."
         );
 
     }
