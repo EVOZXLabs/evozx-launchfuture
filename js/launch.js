@@ -1391,39 +1391,9 @@ function setupLogoPreview() {
         event => {
 
             const file =
-    event.target.files?.[0];
+                event.target.files?.[0];
 
-if (!file) {
-
-    if (logoPreview) {
-        logoPreview.style.display =
-            "none";
-    }
-
-    return;
-}
-
-if (file.type !== "image/png") {
-
-    alert(
-        "Only PNG files are allowed."
-    );
-
-    logoInput.value = "";
-
-    return;
-}
-
-if (file.size > 1024 * 1024) {
-
-    alert(
-        "Maximum logo size is 1 MB."
-    );
-
-    logoInput.value = "";
-
-    return;
-}
+            if (!file) {
 
                 if (logoPreview) {
 
@@ -1432,35 +1402,93 @@ if (file.size > 1024 * 1024) {
 
                 }
 
-                if (clearLogo) {
+                return;
 
-                    clearLogo.style.display =
-                        "none";
+            }
 
-                }
+            if (
+                file.type !==
+                "image/png"
+            ) {
+
+                alert(
+                    "Only PNG files are allowed."
+                );
+
+                logoInput.value = "";
 
                 return;
 
             }
 
-            if (logoPreview) {
+            if (
+                file.size >
+                1024 * 1024
+            ) {
 
-                logoPreview.src =
-                    URL.createObjectURL(
-                        file
+                alert(
+                    "Maximum logo size is 1 MB."
+                );
+
+                logoInput.value = "";
+
+                return;
+
+            }
+
+            const image =
+                new Image();
+
+            image.onload =
+                () => {
+
+                if (
+                    image.width !== 512 ||
+                    image.height !== 512
+                ) {
+
+                    alert(
+                        "Logo must be exactly 512×512 px."
                     );
 
-                logoPreview.style.display =
-                    "block";
+                    logoInput.value = "";
 
-            }
+                    if (logoPreview) {
 
-            if (clearLogo) {
+                        logoPreview.style.display =
+                            "none";
 
-                clearLogo.style.display =
-                    "inline-block";
+                    }
 
-            }
+                    return;
+
+                }
+
+                if (logoPreview) {
+
+                    logoPreview.src =
+                        URL.createObjectURL(
+                            file
+                        );
+
+                    logoPreview.style.display =
+                        "block";
+
+                }
+
+                if (clearLogo) {
+
+                    clearLogo.style.display =
+                        "inline-block";
+
+                }
+
+            };
+
+            image.src =
+                URL.createObjectURL(
+                    file
+                );
 
         }
     );
