@@ -76,6 +76,8 @@ body {
 
     overflow-x: hidden;
 
+    -webkit-overflow-scrolling: touch;
+
 }
 
 /* ==========================================================
@@ -83,62 +85,48 @@ BACKGROUND
 ========================================================== */
 
 body::before {
-
     content: "";
-
     position: fixed;
-
     inset: 0;
-
     pointer-events: none;
 
     background:
-
         radial-gradient(
             circle at top left,
-            rgba(77,163,255,.08),
-            transparent 40%
+            rgba(77,163,255,.05),
+            transparent 35%
         ),
-
         radial-gradient(
             circle at bottom right,
-            rgba(217,164,65,.08),
-            transparent 35%
+            rgba(217,164,65,.05),
+            transparent 30%
         );
 
     z-index: -2;
-
 }
 
 body::after {
-
     content: "";
-
     position: fixed;
-
     inset: 0;
-
     pointer-events: none;
 
     background-image:
-
         linear-gradient(
-            rgba(255,255,255,.015) 1px,
+            rgba(255,255,255,.01) 1px,
             transparent 1px
         ),
-
         linear-gradient(
             90deg,
-            rgba(255,255,255,.015) 1px,
+            rgba(255,255,255,.01) 1px,
             transparent 1px
         );
 
-    background-size: 36px 36px;
+    background-size: 48px 48px;
 
-    opacity: .35;
+    opacity: .2;
 
     z-index: -1;
-
 }
 
 /* ==========================================================
@@ -495,21 +483,18 @@ CARDS
     background:
         linear-gradient(
             180deg,
-            rgba(255,255,255,.04),
-            rgba(255,255,255,.015)
+            rgba(255,255,255,.035),
+            rgba(255,255,255,.01)
         );
 
     border:
-        1px solid rgba(255,255,255,.06);
+        1px solid rgba(255,255,255,.05);
 
     border-radius:
         var(--radius-lg);
 
-    backdrop-filter:
-        blur(14px);
-
     box-shadow:
-        0 12px 35px rgba(0,0,0,.22);
+        0 8px 20px rgba(0,0,0,.18);
 
 }
 
@@ -1793,6 +1778,12 @@ WALLET BRAND
 }
 
 @media (max-width: 768px) {
+
+    .footer-brand-content {
+        padding-top: 18px;
+    }
+
+}
 
     .footer-grid {
 
