@@ -1409,20 +1409,27 @@ function setupLogoPreview() {
 
             }
 
-            if (
-                file.type !==
-                "image/png"
-            ) {
+            const allowedTypes = [
+    "image/png",
+    "image/jpeg",
+    "image/webp"
+];
 
-                alert(
-                    "Only PNG files are allowed."
-                );
+if (
+    !allowedTypes.includes(
+        file.type
+    )
+) {
 
-                logoInput.value = "";
+    alert(
+        "Supported formats: PNG, JPG, WEBP"
+    );
 
-                return;
+    logoInput.value = "";
 
-            }
+    return;
+
+}
 
             if (
                 file.size >
