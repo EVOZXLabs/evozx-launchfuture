@@ -1160,10 +1160,15 @@ async function onDeploy() {
 if (form.logoFile) {
 
     if (
-        !form.logoFile.type.startsWith(
-            "image/"
-        )
-    ) {
+    form.logoFile.type !==
+    "image/png"
+) {
+
+    throw new Error(
+        "Only PNG files allowed."
+    );
+
+    } {
 
         throw new Error(
             "Only image files allowed."
@@ -1172,9 +1177,9 @@ if (form.logoFile) {
     }
 
     if (
-        form.logoFile.size >
-        2 * 1024 * 1024
-    ) {
+    form.logoFile.size >
+    1024 * 1024
+) {
 
         throw new Error(
             "Logo max 2 MB."
@@ -1386,9 +1391,39 @@ function setupLogoPreview() {
         event => {
 
             const file =
-                event.target.files?.[0];
+    event.target.files?.[0];
 
-            if (!file) {
+if (!file) {
+
+    if (logoPreview) {
+        logoPreview.style.display =
+            "none";
+    }
+
+    return;
+}
+
+if (file.type !== "image/png") {
+
+    alert(
+        "Only PNG files are allowed."
+    );
+
+    logoInput.value = "";
+
+    return;
+}
+
+if (file.size > 1024 * 1024) {
+
+    alert(
+        "Maximum logo size is 1 MB."
+    );
+
+    logoInput.value = "";
+
+    return;
+}
 
                 if (logoPreview) {
 
