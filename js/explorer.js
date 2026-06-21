@@ -240,6 +240,22 @@ function createTokenCard(token) {
         .textContent =
         token.symbol;
 
+    const logo =
+
+    fragment.querySelector(
+        ".token-logo"
+    );
+
+if (
+    logo &&
+    token.logoURI
+) {
+
+    logo.src =
+        token.logoURI;
+
+}
+
     fragment
         .querySelector(
             ".token-address"
@@ -798,6 +814,9 @@ async function loadExplorer() {
 
                 active:
                     item[7]
+
+                logoURI:
+    "./images/logo.png"
 
             });
 
