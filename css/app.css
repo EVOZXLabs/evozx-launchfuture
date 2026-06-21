@@ -1435,6 +1435,8 @@ MOBILE MENU
 
     gap: 5px;
 
+    transform: translateY(-6px);
+
     background: transparent;
     border: none;
 
