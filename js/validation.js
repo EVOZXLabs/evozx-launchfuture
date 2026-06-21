@@ -24,9 +24,9 @@ export const LIMITS={
 
   MAX_TAX:10,
 
-  MIN_PERCENT:1,
+  MIN_PERCENT:0.5,
 
-  MAX_PERCENT:100,
+  MAX_PERCENT:10,
 
   MAX_URL_LENGTH:300,
 
@@ -220,8 +220,7 @@ export function validatePercent(value){
 
   ){
 
-    return "Percentage must be between 1 and 100.";
-
+    return "Percentage must be between 0.5 and 10.";
   }
 
   return "";
