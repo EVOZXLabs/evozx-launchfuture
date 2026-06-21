@@ -1861,3 +1861,11 @@ WALLET BRAND
     text-align: center;
 
 }
+
+.theme-toggle {
+    background: transparent;
+    border: none;
+    color: var(--gold);
+    font-size: 1.2rem;
+    cursor: pointer;
+}
