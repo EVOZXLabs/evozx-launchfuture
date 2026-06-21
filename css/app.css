@@ -1435,8 +1435,6 @@ MOBILE MENU
 
     gap: 5px;
 
-    transform: translateY(-6px);
-
     background: transparent;
     border: none;
 
@@ -1444,6 +1442,16 @@ MOBILE MENU
     margin: 0;
 
     cursor: pointer;
+
+}
+
+.header-actions {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
 
 }
 
