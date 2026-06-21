@@ -345,7 +345,11 @@ NAVIGATION
 
     .topbar nav {
 
-        display: none;
+        display: flex;
+
+        align-items: center;
+
+        gap: 10px;
 
     }
 
@@ -1841,5 +1845,19 @@ WALLET BRAND
     100% {
         box-shadow: 0 0 0 0 rgba(110,231,76,0);
     }
+
+}
+
+.live-clock {
+
+    color: var(--gold);
+
+    font-size: 1rem;
+
+    font-weight: 700;
+
+    min-width: 55px;
+
+    text-align: center;
 
 }
