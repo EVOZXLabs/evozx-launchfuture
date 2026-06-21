@@ -1417,11 +1417,11 @@ function setupLogoPreview() {
 
             if (
                 file.size >
-                1024 * 1024
+                2 * 1024 * 1024
             ) {
 
                 alert(
-                    "Maximum logo size is 1 MB."
+                    "Maximum logo size is 2 MB."
                 );
 
                 logoInput.value = "";
@@ -1437,12 +1437,12 @@ function setupLogoPreview() {
                 () => {
 
                 if (
-                    image.width !== 512 ||
-                    image.height !== 512
+                    image.width !==
+                    image.height
                 ) {
 
                     alert(
-                        "Logo must be exactly 512×512 px."
+                        "Logo must be square (1:1)."
                     );
 
                     logoInput.value = "";
