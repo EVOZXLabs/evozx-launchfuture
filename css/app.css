@@ -1430,26 +1430,38 @@ MOBILE MENU
 ========================================================== */
 
 .menu-toggle {
-    width: 65px;
-    height: 65px;
+
+    width: 54px;
+    height: 54px;
 
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    gap: 7px;
 
-    border: none;
+    justify-content: center;
+    align-items: center;
+
+    gap: 8px;
+
     background: transparent;
+    border: none;
+
+    padding: 0;
     cursor: pointer;
+
 }
 
 .menu-toggle span {
-    width: 30px;
-    height: 3px;
-    margin: 0 auto;
+
+    width: 42px;
+    height: 5px;
 
     background: #D6A84A;
+
     border-radius: 999px;
+
+    box-shadow:
+        0 0 10px rgba(214,168,74,.35);
+
 }
 
 .mobile-menu {
