@@ -1424,8 +1424,8 @@ MOBILE MENU
 
 .menu-toggle {
 
-    width: 54px;
-    height: 54px;
+    width: 42px;
+    height: 42px;
 
     display: flex;
     flex-direction: column;
@@ -1433,27 +1433,28 @@ MOBILE MENU
     justify-content: center;
     align-items: center;
 
-    gap: 8px;
+    gap: 5px;
 
     background: transparent;
     border: none;
 
     padding: 0;
+    margin: 0;
+
     cursor: pointer;
 
 }
 
 .menu-toggle span {
 
-    width: 42px;
-    height: 5px;
+    display: block;
+
+    width: 30px;
+    height: 4px;
 
     background: #D6A84A;
 
     border-radius: 999px;
-
-    box-shadow:
-        0 0 10px rgba(214,168,74,.35);
 
 }
 
