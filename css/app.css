@@ -1213,15 +1213,15 @@ footer {
 
     align-items: center;
 
-    gap: 18px;
+    gap: 24px;
 
 }
 
 .footer-logo {
 
-    width: 72px;
+    width: 90px;
 
-    height: 72px;
+    height: auto;
 
     flex-shrink: 0;
 
@@ -1237,7 +1237,7 @@ footer {
 
 .footer-brand-content h4 {
 
-    margin: 0 0 8px;
+    margin: 0 0 10px;
 
     color: var(--gold);
 
@@ -1247,7 +1247,7 @@ footer {
 
     margin: 0;
 
-    line-height: 1.7;
+    line-height: 1.8;
 
     color: var(--muted);
 
@@ -1797,9 +1797,7 @@ WALLET BRAND
     .footer-grid {
 
         display: flex;
-
         flex-direction: column;
-
         gap: 24px;
 
     }
@@ -1807,18 +1805,17 @@ WALLET BRAND
     .footer-brand {
 
         display: flex;
-
         align-items: center;
-
-        gap: 16px;
+        gap: 24px;
 
     }
 
     .footer-logo {
 
-        width: 64px;
-
+        width: 100px;
+        height: auto;
         margin: 0;
+        flex-shrink: 0;
 
     }
 
