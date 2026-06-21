@@ -1862,10 +1862,140 @@ WALLET BRAND
 
 }
 
+/* ==========================================================
+THEME TOGGLE
+========================================================== */
+
 .theme-toggle {
+
     background: transparent;
+
     border: none;
+
     color: var(--gold);
+
     font-size: 1.2rem;
+
     cursor: pointer;
+
+}
+
+/* ==========================================================
+LIGHT MODE
+========================================================== */
+
+body.light-mode {
+
+    --bg: #f4f6f8;
+
+    --surface: #ffffff;
+
+    --card: #ffffff;
+
+    --white: #111827;
+
+    --text: #374151;
+
+    --muted: #6b7280;
+
+    --border: rgba(0,0,0,.08);
+
+    background:
+        linear-gradient(
+            180deg,
+            #f8fafc 0%,
+            #eef2f7 100%
+        );
+
+    color: var(--text);
+
+}
+
+body.light-mode .topbar {
+
+    background:
+        rgba(255,255,255,.92);
+
+    border-bottom:
+        1px solid rgba(0,0,0,.08);
+
+}
+
+body.light-mode .card,
+body.light-mode .hero-card,
+body.light-mode .stat-card,
+body.light-mode .feature-card,
+body.light-mode .success-card {
+
+    background:
+        rgba(255,255,255,.95);
+
+    border:
+        1px solid rgba(0,0,0,.08);
+
+}
+
+body.light-mode footer {
+
+    background:
+        rgba(255,255,255,.7);
+
+}
+
+/* ==========================================================
+THEME TOGGLE
+========================================================== */
+
+.theme-toggle {
+
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    border:
+        1px solid rgba(217,164,65,.25);
+
+    background:
+        rgba(255,255,255,.04);
+
+    backdrop-filter:
+        blur(10px);
+
+    -webkit-backdrop-filter:
+        blur(10px);
+
+    cursor: pointer;
+
+    transition:
+        transform .25s,
+        background .25s,
+        box-shadow .25s;
+
+}
+
+.theme-toggle:hover {
+
+    transform:
+        translateY(-2px);
+
+    background:
+        rgba(217,164,65,.08);
+
+    box-shadow:
+        0 0 18px rgba(217,164,65,.25);
+
+}
+
+.theme-toggle span {
+
+    font-size: 1.1rem;
+
+    line-height: 1;
+
 }
