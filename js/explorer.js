@@ -12,9 +12,6 @@ import {
     ABI,
     explorerToken
 } from "./config.js";
-import {
-    explorerToken
-} from "./config.js";
 
 // =====================================================
 // STATE
