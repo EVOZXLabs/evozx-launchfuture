@@ -223,25 +223,16 @@ function bindDownloadButton() {
     const button =
         $("#downloadVerification");
 
-    if (!button) {
-
-        return;
-
-    }
+    if (!button) return;
 
     button.addEventListener(
-
         "click",
-
         () => {
 
-            window.open(
-                "./docs/standard-input.json",
-                "_blank"
-            );
+            window.location.href =
+                "./docs/standard-input.json";
 
         }
-
     );
 
 }
