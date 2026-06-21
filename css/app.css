@@ -1868,15 +1868,44 @@ THEME TOGGLE
 
 .theme-toggle {
 
-    background: transparent;
+    width: 42px;
+    height: 42px;
 
-    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    border:
+        1px solid rgba(217,164,65,.25);
+
+    background:
+        rgba(255,255,255,.04);
+
+    backdrop-filter:
+        blur(10px);
 
     color: var(--gold);
 
-    font-size: 1.2rem;
+    font-size: 1.1rem;
 
     cursor: pointer;
+
+    transition: .25s;
+
+}
+
+.theme-toggle:hover {
+
+    transform:
+        translateY(-2px);
+
+    background:
+        rgba(217,164,65,.10);
+
+    box-shadow:
+        0 0 16px rgba(217,164,65,.25);
 
 }
 
@@ -1886,28 +1915,14 @@ LIGHT MODE
 
 body.light-mode {
 
-    --bg: #f4f6f8;
-
-    --surface: #ffffff;
-
-    --card: #ffffff;
-
-    --white: #111827;
-
-    --text: #374151;
-
-    --muted: #6b7280;
-
-    --border: rgba(0,0,0,.08);
-
     background:
         linear-gradient(
             180deg,
-            #f8fafc 0%,
-            #eef2f7 100%
+            #f8fafc,
+            #edf2f7
         );
 
-    color: var(--text);
+    color: #111827;
 
 }
 
@@ -1916,15 +1931,8 @@ body.light-mode .topbar {
     background:
         rgba(255,255,255,.92);
 
-    border-bottom:
-        1px solid rgba(0,0,0,.08);
-
 }
 
-body.light-mode .card,
-body.light-mode .hero-card,
-body.light-mode .stat-card,
-body.light-mode .feature-card,
 body.light-mode .success-card {
 
     background:
@@ -1942,60 +1950,17 @@ body.light-mode footer {
 
 }
 
-/* ==========================================================
-THEME TOGGLE
-========================================================== */
+body.light-mode h1,
+body.light-mode h2,
+body.light-mode h3,
+body.light-mode h4 {
 
-.theme-toggle {
-
-    width: 42px;
-    height: 42px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 50%;
-
-    border:
-        1px solid rgba(217,164,65,.25);
-
-    background:
-        rgba(255,255,255,.04);
-
-    backdrop-filter:
-        blur(10px);
-
-    -webkit-backdrop-filter:
-        blur(10px);
-
-    cursor: pointer;
-
-    transition:
-        transform .25s,
-        background .25s,
-        box-shadow .25s;
+    color: #111827;
 
 }
 
-.theme-toggle:hover {
+body.light-mode p {
 
-    transform:
-        translateY(-2px);
-
-    background:
-        rgba(217,164,65,.08);
-
-    box-shadow:
-        0 0 18px rgba(217,164,65,.25);
-
-}
-
-.theme-toggle span {
-
-    font-size: 1.1rem;
-
-    line-height: 1;
+    color: #4b5563;
 
 }
