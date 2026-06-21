@@ -73,26 +73,27 @@
 
 <div class="header-actions">
 
-    <div id="liveClock" class="live-clock">
+    <div
+        id="liveClock"
+        class="live-clock">
         00:00
     </div>
 
     <button
-    id="themeToggle"
-    class="theme-toggle"
-    aria-label="Toggle Theme">
+        id="themeToggle"
+        class="theme-toggle">
 
-    <span id="themeIcon">
         🌙
-    </span>
 
     </button>
-    
+
     <span
         id="headerWalletStatus"
         class="wallet-status">
         🔴
     </span>
+
+</div>
 
     <button id="menuToggle" class="menu-toggle">
         <span></span>
@@ -688,7 +689,7 @@ if (
 
 }
 
-themeToggle?.addEventListener(
+themeToggle.addEventListener(
     "click",
     () => {
 
