@@ -1159,25 +1159,36 @@ async function onDeploy() {
 
 if (form.logoFile) {
 
-    if (
-    form.logoFile.type !==
-    "image/png"
+    const allowedTypes = [
+    "image/png",
+    "image/jpeg",
+    "image/webp"
+];
+
+if (
+    !allowedTypes.includes(
+        form.logoFile.type
+    )
 ) {
 
-    throw new Error(
-        "Only PNG files allowed."
+    alert(
+        "Supported formats: PNG, JPG, WEBP"
     );
 
-    } 
+    return;
+
+}
 
     if (
     form.logoFile.size >
-    1024 * 1024
+    2 * 1024 * 1024
 ) {
 
-        throw new Error(
-            "Logo max 1 MB."
-        );
+    alert(
+        "Logo max 2 MB."
+    );
+
+    return;
 
     }
 
@@ -1242,17 +1253,15 @@ await deployToken(
 
 catch (error) {
 
-    console.error(
-        error
-    );
+    console.error(error);
 
-    setStatus(
-
+    const message =
         error?.message ||
+        "Deployment failed.";
 
-        "Deployment failed."
+    setStatus(message);
 
-    );
+    alert(message);
 
 }
 
