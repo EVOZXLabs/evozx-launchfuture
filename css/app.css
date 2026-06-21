@@ -1209,19 +1209,29 @@ footer {
 
 .footer-brand {
 
-    text-align: left;
+    display: flex;
+
+    align-items: center;
+
+    gap: 18px;
 
 }
 
 .footer-logo {
 
-    width: 56px;
+    width: 72px;
 
-    height: auto;
+    height: 72px;
 
-    display: block;
+    flex-shrink: 0;
 
-    margin-bottom: 16px;
+    margin: 0;
+
+}
+
+.footer-brand-content {
+
+    flex: 1;
 
 }
 
@@ -1237,9 +1247,9 @@ footer {
 
     margin: 0;
 
-    color: var(--muted);
-
     line-height: 1.7;
+
+    color: var(--muted);
 
 }
 
