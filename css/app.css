@@ -361,6 +361,8 @@ WALLET
 
     justify-content: center;
 
+    animation: walletPulse 2s infinite;
+
 }
 
 /* ==========================================================
@@ -1822,6 +1824,22 @@ WALLET BRAND
 
         flex-shrink: 0;
 
+    }
+
+}
+
+@keyframes walletPulse {
+
+    0% {
+        box-shadow: 0 0 0 0 rgba(110,231,76,.6);
+    }
+
+    70% {
+        box-shadow: 0 0 0 10px rgba(110,231,76,0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(110,231,76,0);
     }
 
 }
