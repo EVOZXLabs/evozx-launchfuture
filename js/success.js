@@ -233,67 +233,12 @@ function bindDownloadButton() {
 
         "click",
 
-        async () => {
+        () => {
 
-            try {
-
-                const response =
-                    await fetch(
-                        "./docs/standard-input.json"
-                    );
-
-                if (!response.ok) {
-
-                    throw new Error(
-                        "Unable to download file."
-                    );
-
-                }
-
-                const blob =
-                    await response.blob();
-
-                const url =
-                    URL.createObjectURL(
-                        blob
-                    );
-
-                const link =
-                    document.createElement(
-                        "a"
-                    );
-
-                link.href =
-                    url;
-
-                link.download =
-                    "standard-input.json";
-
-                document.body.appendChild(
-                    link
-                );
-
-                link.click();
-
-                link.remove();
-
-                URL.revokeObjectURL(
-                    url
-                );
-
-            }
-
-            catch (error) {
-
-                console.error(
-                    error
-                );
-
-                alert(
-                    "Unable to download standard-input.json"
-                );
-
-            }
+            window.open(
+                "./docs/standard-input.json",
+                "_blank"
+            );
 
         }
 
