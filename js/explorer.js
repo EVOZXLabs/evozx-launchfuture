@@ -813,7 +813,7 @@ async function loadExplorer() {
                     item[6],
 
                 active:
-                    item[7]
+                    item[7],
 
                 logoURI:
     "./images/logo.png"
