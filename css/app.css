@@ -1365,16 +1365,11 @@ RESPONSIVE
     .topbar .container {
 
         flex-direction: row;
-
         justify-content: space-between;
-
         align-items: center;
-
         padding: 12px 0;
 
     }
-
-}
 
     .hero {
 
@@ -1385,7 +1380,6 @@ RESPONSIVE
     .hero-content {
 
         text-align: center;
-
         align-items: center;
 
     }
@@ -1393,7 +1387,6 @@ RESPONSIVE
     .hero-buttons {
 
         width: 100%;
-
         justify-content: center;
 
     }
@@ -1554,6 +1547,8 @@ MOBILE MENU
     width: 100%;
 
     min-height: 48px;
+
+}
 
 }
 
