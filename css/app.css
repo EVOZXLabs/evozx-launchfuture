@@ -122,9 +122,9 @@ body::after {
             transparent 1px
         );
 
-    background-size: 48px 48px;
+    background-size: 42px 42px;
 
-    opacity: .2;
+opacity: .25;
 
     z-index: -1;
 }
@@ -500,7 +500,8 @@ CARDS
         var(--radius-lg);
 
     box-shadow:
-        0 8px 20px rgba(0,0,0,.18);
+    0 8px 20px rgba(0,0,0,.18),
+    0 0 18px rgba(214,168,74,.05);
 
 }
 
@@ -701,7 +702,7 @@ HERO
     width: min(320px,80%);
 
     animation:
-        floating 5s ease-in-out infinite;
+        floating 7s ease-in-out infinite;
 
 }
 
@@ -1785,16 +1786,12 @@ WALLET BRAND
 
 @media (max-width: 768px) {
 
-    .footer-brand-content {
-        padding-top: 18px;
-    }
-
-}
-
     .footer-grid {
 
         display: flex;
+
         flex-direction: column;
+
         gap: 24px;
 
     }
@@ -1802,16 +1799,27 @@ WALLET BRAND
     .footer-brand {
 
         display: flex;
+
         align-items: center;
+
         gap: 24px;
+
+    }
+
+    .footer-brand-content {
+
+        padding-top: 8px;
 
     }
 
     .footer-logo {
 
         width: 100px;
+
         height: auto;
+
         margin: 0;
+
         flex-shrink: 0;
 
     }
