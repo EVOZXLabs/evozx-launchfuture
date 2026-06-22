@@ -23,6 +23,8 @@ let provider = null;
 
 let tokenAbi = null;
 
+let signer = null;
+
 // =====================================================
 // DOM
 // =====================================================
@@ -117,6 +119,32 @@ function formatStatus(value) {
         ? "Enabled"
 
         : "Disabled";
+
+}
+
+function setOwnerStatus(
+    message,
+    type = ""
+) {
+
+    const el =
+        document.getElementById(
+            "ownerStatus"
+        );
+
+    if (!el) {
+        return;
+    }
+
+    el.className =
+        "status-panel";
+
+    if (type) {
+        el.classList.add(type);
+    }
+
+    el.textContent =
+        message;
 
 }
 
@@ -388,6 +416,80 @@ export async function loadTokenData() {
         pairInitialized
 
     };
+
+}
+
+// =====================================================
+// OWNER TOOLS
+// =====================================================
+
+async function detectOwner(
+    token
+) {
+
+    if (
+        !window.ethereum
+    ) {
+        return false;
+    }
+
+    const accounts =
+        await window.ethereum.request({
+            method:
+                "eth_accounts"
+        });
+
+    if (
+        !accounts.length
+    ) {
+        return false;
+    }
+
+    return (
+
+        accounts[0]
+            .toLowerCase()
+
+        ===
+
+        token.owner
+            .toLowerCase()
+
+    );
+
+}
+
+async function renderOwnerTools(
+    token
+) {
+
+    const section =
+        document.getElementById(
+            "ownerTools"
+        );
+
+    if (!section) {
+        return;
+    }
+
+    const isOwner =
+        await detectOwner(
+            token
+        );
+
+    if (!isOwner) {
+
+        section.classList.add(
+            "hidden"
+        );
+
+        return;
+
+    }
+
+    section.classList.remove(
+        "hidden"
+    );
 
 }
 
@@ -989,10 +1091,16 @@ export async function renderToken() {
 
         bindActions(
 
-            token
+    token
 
-        );
+);
 
+await renderOwnerTools(
+
+    token
+
+);
+        
     }
 
     catch (error) {
