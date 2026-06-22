@@ -1170,6 +1170,61 @@ document.addEventListener(
 );
 
 // =====================================================
+// OWNER ACTIONS
+// =====================================================
+
+async function mintToken() {
+
+    alert(
+        "Mint button clicked"
+    );
+
+}
+
+async function enableTradingAction() {
+
+    alert(
+        "Enable Trading clicked"
+    );
+
+}
+
+async function disableTradingAction() {
+
+    alert(
+        "Disable Trading clicked"
+    );
+
+}
+
+document
+    .getElementById(
+        "mintButton"
+    )
+    ?.addEventListener(
+        "click",
+        mintToken
+    );
+
+document
+    .getElementById(
+        "enableTradingButton"
+    )
+    ?.addEventListener(
+        "click",
+        enableTradingAction
+    );
+
+document
+    .getElementById(
+        "disableTradingButton"
+    )
+    ?.addEventListener(
+        "click",
+        disableTradingAction
+    );
+
+// =====================================================
 // EXPORTS
 // =====================================================
 
