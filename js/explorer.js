@@ -48,12 +48,14 @@ function shortAddress(address) {
 
 }
 
-function formatSupply(value) {
+function formatSupply(
+    value
+) {
 
     try {
 
-        return BigInt(
-            value
+        return Number(
+            value / 1000000000000000000n
         ).toLocaleString();
 
     }
@@ -797,7 +799,40 @@ async function loadTokenAbi() {
 
 async function getLogoURI(
     address
+)
+
+async function getTotalSupply(
+    address
 ) {
+
+    try {
+
+        const contract =
+            new Contract(
+
+                address,
+
+                await loadTokenAbi(),
+
+                new JsonRpcProvider(
+                    NETWORK.rpcUrl
+                )
+
+            );
+
+        return await contract.totalSupply();
+
+    }
+
+    catch {
+
+        return 0n;
+
+    }
+
+}
+
+{
 
     try {
 
@@ -849,38 +884,43 @@ async function loadExplorer() {
 
         for (const item of tokens) {
 
-            allTokens.push({
-
-                address:
-                    item[0],
-
-                creator:
-                    item[1],
-
-                name:
-                    item[2],
-
-                symbol:
-                    item[3],
-
-                supply:
-                    item[4],
-
-                createdAt:
-                    item[5],
-
-                chainId:
-                    item[6],
-
-                active:
-                    item[7],
-
-                logoURI:
-    await getLogoURI(
+            const currentSupply =
+    await getTotalSupply(
         item[0]
-    )
+    );
 
-            });
+allTokens.push({
+
+    address:
+        item[0],
+
+    creator:
+        item[1],
+
+    name:
+        item[2],
+
+    symbol:
+        item[3],
+
+    supply:
+        currentSupply,
+
+    createdAt:
+        item[5],
+
+    chainId:
+        item[6],
+
+    active:
+        item[7],
+
+    logoURI:
+        await getLogoURI(
+            item[0]
+        )
+
+});
 
         }
 
