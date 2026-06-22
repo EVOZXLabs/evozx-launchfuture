@@ -801,6 +801,7 @@ async function getLogoURI(
     address
 )
 
+}
 async function getTotalSupply(
     address
 ) {
