@@ -1290,9 +1290,71 @@ async function mintToken() {
 
 async function enableTradingAction() {
 
-    alert(
-        "Enable Trading clicked"
-    );
+    try {
+
+        if (!window.ethereum) {
+
+            setOwnerStatus(
+                "Wallet not found",
+                "error"
+            );
+
+            return;
+
+        }
+
+        const signerProvider =
+            new BrowserProvider(
+                window.ethereum
+            );
+
+        const signer =
+            await signerProvider.getSigner();
+
+        const abi =
+            await loadAbi();
+
+        const contract =
+            new Contract(
+                getTokenAddress(),
+                abi,
+                signer
+            );
+
+        setOwnerStatus(
+            "Waiting wallet confirmation..."
+        );
+
+        const tx =
+            await contract.enableTrading();
+
+        setOwnerStatus(
+            "Transaction submitted..."
+        );
+
+        await tx.wait();
+
+        await renderToken();
+
+        setOwnerStatus(
+            "Trading enabled",
+            "success"
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        setOwnerStatus(
+            error.reason ||
+            error.message ||
+            "Enable trading failed",
+            "error"
+        );
+
+    }
 
 }
 
