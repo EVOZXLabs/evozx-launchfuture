@@ -1,6 +1,7 @@
 import {
     Contract,
     JsonRpcProvider,
+    BrowserProvider,
     formatUnits
 } from "https://esm.sh/ethers@6";
 
@@ -1175,9 +1176,115 @@ document.addEventListener(
 
 async function mintToken() {
 
-    alert(
-        "Mint button clicked"
-    );
+    try {
+
+        const recipient =
+            document
+                .getElementById(
+                    "mintRecipient"
+                )
+                .value
+                .trim();
+
+        const amount =
+            document
+                .getElementById(
+                    "mintAmount"
+                )
+                .value
+                .trim();
+
+        if (!recipient) {
+
+            setOwnerStatus(
+                "Recipient required",
+                "error"
+            );
+
+            return;
+        }
+
+        if (!amount || Number(amount) <= 0) {
+
+            setOwnerStatus(
+                "Invalid amount",
+                "error"
+            );
+
+            return;
+        }
+
+        if (!window.ethereum) {
+
+            setOwnerStatus(
+                "Wallet not found",
+                "error"
+            );
+
+            return;
+        }
+
+        const accounts =
+            await window.ethereum.request({
+                method:
+                    "eth_requestAccounts"
+            });
+
+        const signerProvider =
+            new BrowserProvider(
+                window.ethereum
+            );
+
+        const signer =
+            await signerProvider.getSigner();
+
+        const abi =
+            await loadAbi();
+
+        const contract =
+            new Contract(
+                getTokenAddress(),
+                abi,
+                signer
+            );
+
+        setOwnerStatus(
+            "Waiting wallet confirmation..."
+        );
+
+        const tx =
+            await contract.mint(
+                recipient,
+                amount
+            );
+
+        setOwnerStatus(
+            "Transaction submitted..."
+        );
+
+        await tx.wait();
+
+        setOwnerStatus(
+            "Mint success",
+            "success"
+        );
+
+        await renderToken();
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        setOwnerStatus(
+            error.reason ||
+            error.message ||
+            "Mint failed",
+            "error"
+        );
+
+    }
 
 }
 
