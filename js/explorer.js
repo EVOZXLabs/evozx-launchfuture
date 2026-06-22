@@ -799,9 +799,35 @@ async function loadTokenAbi() {
 
 async function getLogoURI(
     address
-)
+) {
+
+    try {
+
+        const contract =
+            new Contract(
+
+                address,
+
+                await loadTokenAbi(),
+
+                new JsonRpcProvider(
+                    NETWORK.rpcUrl
+                )
+
+            );
+
+        return await contract.logoURI();
+
+    }
+
+    catch {
+
+        return "./images/logo.png";
+
+    }
 
 }
+
 async function getTotalSupply(
     address
 ) {
@@ -828,35 +854,6 @@ async function getTotalSupply(
     catch {
 
         return 0n;
-
-    }
-
-}
-
-{
-
-    try {
-
-        const contract =
-            new Contract(
-
-                address,
-
-                await loadTokenAbi(),
-
-                new JsonRpcProvider(
-                    NETWORK.rpcUrl
-                )
-
-            );
-
-        return await contract.logoURI();
-
-    }
-
-    catch {
-
-        return "./images/logo.png";
 
     }
 
